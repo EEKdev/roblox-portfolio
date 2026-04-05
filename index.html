@@ -1652,7 +1652,9 @@ async function syncToGitHub() {
   toast("Syncing to GitHub…", "info");
   log(`[${new Date().toLocaleTimeString()}] Starting sync to ${githubRepo}/${githubFile}…`);
   
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify({settings: DATA.settings, posts: DATA.posts}, null, 2))));
+  // Strip sensitive fields before pushing — never write token or password to GitHub
+  const safeSettings = Object.assign({}, DATA.settings, { githubToken: "", password: "" });
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify({settings: safeSettings, posts: DATA.posts}, null, 2))));
   
   try {
     // Check if file exists to get SHA
