@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RobloxDev Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08090d;
+  --bg2: #0e1018;
+  --bg3: #141720;
+  --surface: #1a1e2e;
+  --surface2: #222840;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --accent: #4f8fff;
+  --accent2: #7c5fff;
+  --accent3: #ff5f8f;
+  --gold: #ffd060;
+  --green: #3dffa0;
+  --text: #e8eaf2;
+  --text2: #9aa0b8;
+  --text3: #5c6280;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --glow: 0 0 30px rgba(79,143,255,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 10px; }
+
+/* ─── NOISE TEXTURE OVERLAY ─── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ─── LAYOUT ─── */
+#app { position: relative; z-index: 1; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index: 100;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  background: rgba(8,9,13,0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.1rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.nav-links { display:flex; gap:8px; align-items:center; }
+.nav-links a {
+  color: var(--text2); text-decoration: none;
+  padding: 6px 14px; border-radius: 8px;
+  font-size: 0.875rem; font-weight: 500;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface); }
+.nav-admin-btn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text2) !important;
+  cursor: pointer;
+  font-size: 0.8rem !important;
+}
+.nav-admin-btn:hover { color: var(--accent) !important; border-color: var(--accent) !important; }
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  padding: 80px 20px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-glow {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:600px; height:600px; border-radius:50%;
+  background: radial-gradient(circle, rgba(79,143,255,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(79,143,255,0.1); border: 1px solid rgba(79,143,255,0.25);
+  padding: 6px 16px; border-radius: 100px;
+  font-size: 0.8rem; color: var(--accent); font-weight: 500;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-badge-dot { width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 800; line-height: 1.05;
+  margin-bottom: 20px;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+.hero-title span { 
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-subtitle {
+  font-size: 1.15rem; color: var(--text2); max-width: 560px;
+  line-height: 1.7; margin-bottom: 40px;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+.hero-cta {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; text-decoration: none; border: none;
+  transition: all 0.2s; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent); color: #fff;
+  box-shadow: 0 0 20px rgba(79,143,255,0.3);
+}
+.btn-primary:hover { background: #6ba3ff; transform: translateY(-1px); box-shadow: 0 0 30px rgba(79,143,255,0.5); }
+.btn-secondary {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border2);
+}
+.btn-secondary:hover { background: var(--surface2); transform: translateY(-1px); }
+.btn-accent3 {
+  background: linear-gradient(135deg, var(--accent3), #ff8f6b);
+  color: #fff; box-shadow: 0 0 20px rgba(255,95,143,0.3);
+}
+.btn-accent3:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(255,95,143,0.5); }
+
+.hero-stats {
+  display: flex; gap: 40px; margin-top: 60px;
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+.stat { text-align:center; }
+.stat-num {
+  font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--text), var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.stat-label { font-size: 0.8rem; color: var(--text3); margin-top: 2px; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ─── SECTION ─── */
+section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+.section-header { margin-bottom: 40px; }
+.section-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.section-tag::before { content:''; display:block; width:20px; height:1px; background:var(--accent); }
+.section-title {
+  font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700; line-height: 1.2;
+}
+.section-desc { color: var(--text2); margin-top: 10px; max-width: 500px; line-height: 1.7; }
+
+/* ─── PINNED POST ─── */
+.pinned-post {
+  background: linear-gradient(135deg, rgba(79,143,255,0.08), rgba(124,95,255,0.08));
+  border: 1px solid rgba(79,143,255,0.2);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+  position: relative; overflow: hidden;
+}
+.pinned-post::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.pin-icon { font-size: 1.2rem; flex-shrink:0; margin-top:2px; }
+.pinned-post-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:8px; }
+.pinned-post-body { color: var(--text2); line-height:1.7; }
+.pinned-badge {
+  position:absolute; top:12px; right:16px;
+  background: rgba(79,143,255,0.15); border:1px solid rgba(79,143,255,0.3);
+  color: var(--accent); font-size:0.7rem; padding:3px 10px; border-radius:100px; font-weight:600;
+}
+
+/* ─── POSTS GRID ─── */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.posts-grid.main-layout {
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+.side-col { display:flex; flex-direction:column; gap:20px; }
+
+.post-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all 0.25s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.post-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+.post-card.main {
+  padding: 32px;
+  border: 1px solid rgba(79,143,255,0.15);
+}
+.post-card.main:hover { border-color: rgba(79,143,255,0.35); }
+.post-card.game {
+  border-color: rgba(61,255,160,0.12);
+}
+.post-card.game:hover { border-color: rgba(61,255,160,0.3); }
+.post-card.group {
+  border-color: rgba(255,95,143,0.12);
+}
+.post-card.group:hover { border-color: rgba(255,95,143,0.3); }
+.post-card.side {
+  padding: 18px 20px;
+}
+
+.post-type-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 100px;
+  margin-bottom: 14px;
+}
+.badge-main { background: rgba(79,143,255,0.1); color: var(--accent); border: 1px solid rgba(79,143,255,0.2); }
+.badge-game { background: rgba(61,255,160,0.1); color: var(--green); border: 1px solid rgba(61,255,160,0.2); }
+.badge-group { background: rgba(255,95,143,0.1); color: var(--accent3); border: 1px solid rgba(255,95,143,0.2); }
+.badge-portfolio { background: rgba(255,208,96,0.1); color: var(--gold); border: 1px solid rgba(255,208,96,0.2); }
+.badge-side { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
+
+.post-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; line-height: 1.3; }
+.post-card.main .post-title { font-size: 1.35rem; }
+.post-body { color: var(--text2); line-height: 1.7; font-size: 0.9rem; }
+.post-card.side .post-body { font-size: 0.85rem; }
+.post-meta {
+  display:flex; align-items:center; gap:12px; margin-top: 16px;
+  font-size: 0.78rem; color: var(--text3);
+}
+.post-link-btn {
+  margin-top: 18px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.82rem; color: var(--accent); font-weight: 500; text-decoration: none;
+}
+.post-link-btn:hover { color: #6ba3ff; }
+
+.post-image {
+  width:100%; border-radius: 8px; margin-bottom: 16px;
+  aspect-ratio: 16/8; object-fit: cover;
+  background: var(--surface2);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 2.5rem;
+}
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  grid-column: 1/-1;
+  text-align:center; padding: 60px 20px;
+  color: var(--text3);
+}
+.empty-state-icon { font-size: 3rem; margin-bottom: 16px; opacity:0.4; }
+.empty-state p { font-size: 0.9rem; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:200;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+  opacity:0; pointer-events:none; transition: opacity 0.2s;
+}
+.modal-overlay.active { opacity:1; pointer-events:all; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  width: 100%; max-width: 900px;
+  max-height: 92vh; overflow-y: auto;
+  padding: 32px;
+  transform: scale(0.95); transition: transform 0.2s;
+  position: relative;
+}
+.modal-overlay.active .modal { transform: scale(1); }
+.modal-close {
+  position: absolute; top:20px; right:20px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); width:32px; height:32px; border-radius:8px;
+  font-size: 1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--surface2); color: var(--text); }
+.modal-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; margin-bottom:4px; }
+.modal-subtitle { color:var(--text2); font-size:0.875rem; margin-bottom:28px; }
+
+/* ─── ADMIN PANEL ─── */
+#admin-panel {
+  background: var(--bg);
+  min-height: 100vh;
+  padding-top: 64px;
+  display: none;
+}
+#admin-panel.active { display: block; }
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+.admin-sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: sticky; top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+.admin-sidebar-title {
+  padding: 0 20px 16px;
+  font-family:'Syne',sans-serif; font-size:0.7rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--text3);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.admin-nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 10px 20px; cursor:pointer;
+  font-size: 0.875rem; color: var(--text2);
+  transition: all 0.15s; border-left: 3px solid transparent;
+}
+.admin-nav-item:hover { background: var(--surface); color: var(--text); }
+.admin-nav-item.active { background: rgba(79,143,255,0.08); color: var(--accent); border-left-color: var(--accent); }
+.admin-nav-icon { font-size: 1rem; width:20px; text-align:center; }
+.admin-nav-badge {
+  margin-left:auto; background: var(--surface2);
+  font-size:0.7rem; padding:2px 7px; border-radius:100px; color:var(--text3);
+}
+
+.admin-main {
+  padding: 32px;
+  background: var(--bg);
+}
+
+.admin-topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 32px; flex-wrap:wrap; gap:16px;
+}
+.admin-topbar-title { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; }
+.admin-topbar-actions { display:flex; gap:10px; }
+
+/* ─── ADMIN STATS ─── */
+.admin-stats-grid {
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px; margin-bottom: 32px;
+}
+.admin-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+}
+.admin-stat-label { font-size:0.78rem; color:var(--text3); margin-bottom:6px; }
+.admin-stat-val { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:700; }
+.admin-stat-sub { font-size:0.75rem; color:var(--text3); margin-top:4px; }
+
+/* ─── FORM ─── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.form-grid.cols-1 { grid-template-columns:1fr; }
+.form-group { display:flex; flex-direction:column; gap:7px; }
+.form-group.span2 { grid-column: 1/-1; }
+label { font-size:0.8rem; font-weight:500; color:var(--text2); }
+.required-dot { color:var(--accent3); }
+input[type=text], input[type=url], input[type=password], textarea, select {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width:100%;
+}
+input:focus, textarea:focus, select:focus {
+  outline:none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79,143,255,0.1);
+}
+textarea { resize: vertical; min-height: 100px; }
+select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c6280' fill='none' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; }
+.input-hint { font-size:0.75rem; color:var(--text3); }
+.form-divider { grid-column:1/-1; border:none; border-top:1px solid var(--border); margin: 8px 0; }
+
+/* Toggle */
+.toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 14px; background: var(--surface); border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.toggle-label { font-size:0.85rem; }
+.toggle-sub { font-size:0.75rem; color:var(--text3); }
+.toggle {
+  width:42px; height:24px; border-radius:100px; background:var(--surface2);
+  border:1px solid var(--border2); cursor:pointer; position:relative;
+  transition: background 0.2s; flex-shrink:0;
+}
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle::after {
+  content:''; position:absolute; top:3px; left:3px;
+  width:16px; height:16px; border-radius:50%; background:#fff;
+  transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle.on::after { transform:translateX(18px); }
+
+/* ─── POST TABLE ─── */
+.post-table { width:100%; border-collapse:collapse; }
+.post-table th {
+  text-align:left; padding:10px 14px;
+  font-size:0.75rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--text3); border-bottom:1px solid var(--border);
+}
+.post-table td {
+  padding: 14px; border-bottom: 1px solid var(--border);
+  font-size:0.875rem; vertical-align:middle;
+}
+.post-table tr:hover td { background: rgba(255,255,255,0.02); }
+.post-table tr:last-child td { border-bottom: none; }
+.post-table-actions { display:flex; gap:8px; }
+.icon-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); width:30px; height:30px; border-radius:6px;
+  font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+  transition: all 0.15s;
+}
+.icon-btn:hover { background:var(--surface2); color:var(--text); }
+.icon-btn.danger:hover { background:rgba(255,80,80,0.1); border-color:rgba(255,80,80,0.3); color:#ff5050; }
+.icon-btn.accent:hover { background:rgba(79,143,255,0.1); border-color:rgba(79,143,255,0.3); color:var(--accent); }
+
+/* Status */
+.status-dot {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.78rem; font-weight:500;
+}
+.status-dot::before {
+  content:''; width:6px; height:6px; border-radius:50%;
+}
+.status-dot.published::before { background:var(--green); box-shadow:0 0 6px var(--green); }
+.status-dot.draft::before { background:var(--text3); }
+.status-dot.pinned::before { background:var(--gold); box-shadow:0 0 6px var(--gold); }
+
+/* ─── SETTINGS PANEL ─── */
+.settings-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.settings-section-title { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:18px; font-size:1rem; }
+
+/* ─── TOAST ─── */
+#toast-container {
+  position:fixed; bottom:24px; right:24px; z-index:999;
+  display:flex; flex-direction:column; gap:10px;
+}
+.toast {
+  display:flex; align-items:center; gap:12px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 12px 18px;
+  font-size: 0.875rem; color: var(--text);
+  box-shadow: var(--shadow); min-width:260px;
+  animation: toastIn 0.3s ease both;
+}
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid #ff5050; }
+.toast.info { border-left: 3px solid var(--accent); }
+@keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+/* ─── GITHUB SETTINGS ─── */
+.github-status {
+  display:flex; align-items:center; gap:10px;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  font-size: 0.875rem; margin-top: 12px;
+}
+.github-status.connected { background:rgba(61,255,160,0.08); border:1px solid rgba(61,255,160,0.2); color:var(--green); }
+.github-status.disconnected { background:rgba(255,80,80,0.08); border:1px solid rgba(255,80,80,0.2); color:#ff8080; }
+
+/* ─── CONFIRM DIALOG ─── */
+.confirm-dialog {
+  background: var(--bg2); border:1px solid var(--border2);
+  border-radius: var(--radius); padding: 28px; max-width:400px; width:100%;
+  transform: scale(0.9); transition: transform 0.2s;
+}
+.modal-overlay.active .confirm-dialog { transform:scale(1); }
+.confirm-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:10px; }
+.confirm-body { color:var(--text2); font-size:0.875rem; line-height:1.6; margin-bottom:24px; }
+.confirm-actions { display:flex; gap:10px; justify-content:flex-end; }
+
+/* ─── TABS ─── */
+.tabs {
+  display:flex; gap:4px; margin-bottom:24px;
+  background:var(--surface); border-radius:10px; padding:4px;
+  border: 1px solid var(--border);
+  width:fit-content;
+}
+.tab-btn {
+  padding:7px 18px; border-radius:8px; cursor:pointer;
+  font-size:0.85rem; font-weight:500; color:var(--text2);
+  background:transparent; border:none; font-family:'DM Sans',sans-serif;
+  transition:all 0.15s;
+}
+.tab-btn.active { background:var(--surface2); color:var(--text); }
+.tab-btn:hover:not(.active) { color:var(--text); }
+
+/* ─── HERO POSTS (MAIN CONTENT PAGE) ─── */
+.homepage-hero {
+  background: linear-gradient(135deg, rgba(79,143,255,0.06), rgba(124,95,255,0.06));
+  border: 1px solid rgba(79,143,255,0.12);
+  border-radius: 20px;
+  padding: 48px;
+  margin-bottom: 32px;
+  display:grid; grid-template-columns:1fr auto;
+  gap:32px; align-items:center;
+}
+.homepage-hero-text h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; margin-bottom:12px; }
+.homepage-hero-text p { color:var(--text2); line-height:1.7; max-width:500px; }
+.homepage-hero-cta { display:flex; flex-direction:column; gap:10px; }
+
+/* ─── HIRE CTA ─── */
+.hire-cta {
+  background: linear-gradient(135deg, rgba(255,95,143,0.08), rgba(255,143,107,0.08));
+  border: 1px solid rgba(255,95,143,0.2);
+  border-radius: var(--radius);
+  padding: 36px; text-align:center;
+  margin: 60px auto; max-width:640px;
+}
+.hire-cta h3 { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; margin-bottom:12px; }
+.hire-cta p { color:var(--text2); margin-bottom:24px; line-height:1.7; }
+
+/* ─── LOGIN SCREEN ─── */
+#login-screen {
+  position:fixed; inset:0; z-index:500;
+  background: var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.login-card {
+  background: var(--bg2); border:1px solid var(--border2);
+  border-radius:20px; padding:40px;
+  max-width:420px; width:100%;
+  text-align:center;
+}
+.login-icon { font-size:2.5rem; margin-bottom:20px; }
+.login-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; margin-bottom:6px; }
+.login-subtitle { color:var(--text2); font-size:0.875rem; margin-bottom:28px; }
+.login-form { display:flex; flex-direction:column; gap:14px; text-align:left; }
+.login-err { font-size:0.8rem; color:#ff5050; text-align:center; display:none; }
+.login-err.show { display:block; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px) {
+  .admin-layout { grid-template-columns:1fr; }
+  .admin-sidebar { display:none; }
+  .posts-grid.main-layout { grid-template-columns:1fr; }
+  nav { padding:0 20px; }
+  section { padding:60px 20px; }
+  .hero-stats { gap:24px; }
+  .homepage-hero { grid-template-columns:1fr; }
+  .form-grid { grid-template-columns:1fr; }
+  .form-group.span2 { grid-column:auto; }
+}
+
+/* ─── SKELETON ─── */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+  background-size:200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px;
+  text-align:center;
+  color:var(--text3); font-size:0.8rem;
+}
+footer a { color:var(--text2); text-decoration:none; }
+footer a:hover { color:var(--text); }
+
+/* ─── SECTION DIVIDER ─── */
+.section-divider {
+  border:none; border-top:1px solid var(--border);
+  margin: 0 40px;
+}
+
+/* ─── POST DETAIL MODAL ─── */
+.post-detail-header { margin-bottom:20px; }
+.post-detail-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:10px; }
+.post-detail-meta { color:var(--text3); font-size:0.82rem; display:flex; gap:16px; flex-wrap:wrap; }
+.post-detail-body { color:var(--text2); line-height:1.8; white-space:pre-wrap; margin-top:20px; }
+.post-detail-links { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN SCREEN ─── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">🛡️</div>
+    <div class="login-title">Admin Access</div>
+    <div class="login-subtitle">Enter your password to access the admin panel.</div>
+    <div class="login-form">
+      <div class="form-group">
+        <label>Admin Password</label>
+        <input type="password" id="login-pw" placeholder="Enter admin password…" autocomplete="current-password">
+      </div>
+      <div class="login-err" id="login-err">Incorrect password. Please try again.</div>
+      <button class="btn btn-primary" onclick="attemptLogin()" style="width:100%;justify-content:center">
+        Unlock Admin Panel →
+      </button>
+      <button class="btn btn-secondary" onclick="closeLogin()" style="width:100%;justify-content:center;margin-top:4px">
+        View Public Site
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    <span id="nav-username">RobloxDev</span>
+  </div>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('games')">Games</a>
+    <a href="#" onclick="showPage('portfolio')">Portfolio</a>
+    <a href="#" onclick="showPage('group')">Group</a>
+    <a href="#" class="nav-admin-btn" onclick="openAdminNav()">⚙ Admin</a>
+  </div>
+</nav>
+
+<!-- ─── PUBLIC SITE ─── -->
+<div id="public-site">
+
+  <!-- HERO -->
+  <div id="hero" style="padding-top:64px">
+    <div class="hero-glow"></div>
+    <div class="hero-badge"><div class="hero-badge-dot"></div><span id="hero-badge-text">Available for hire</span></div>
+    <h1 class="hero-title" id="hero-title-el">Professional<br><span>Roblox Developer</span></h1>
+    <p class="hero-subtitle" id="hero-subtitle-el">Building immersive Roblox experiences, scripting systems, and growing communities. Open to projects, commissions, and collaborations.</p>
+    <div class="hero-cta" id="hero-cta-container">
+      <a href="#" class="btn btn-primary" onclick="showPage('games')">🎮 View My Games</a>
+      <a href="#" class="btn btn-secondary" onclick="showPage('portfolio')">📁 Portfolio</a>
+      <a href="#" class="btn btn-accent3" onclick="showPage('group')">👥 Join My Group</a>
+    </div>
+    <div class="hero-stats" id="hero-stats-container">
+      <div class="stat"><div class="stat-num" id="stat1-val">50+</div><div class="stat-label">Games Built</div></div>
+      <div class="stat"><div class="stat-num" id="stat2-val">10K+</div><div class="stat-label">Group Members</div></div>
+      <div class="stat"><div class="stat-num" id="stat3-val">3yrs</div><div class="stat-label">Experience</div></div>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page-section">
+    <section>
+      <div id="pinned-posts-container"></div>
+      <div id="main-posts-area"></div>
+    </section>
+    <div class="hire-cta" id="hire-cta-section">
+      <h3>🚀 Ready to Build Something?</h3>
+      <p id="hire-body-el">Whether you need a full game built from scratch, scripting fixes, UI design, or a group manager — I've got you covered. Let's create something epic together.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="#" class="btn btn-accent3">💼 Hire Me Now</a>
+        <a href="#" class="btn btn-secondary">💬 Discord</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAMES PAGE -->
+  <div id="page-games" class="page-section" style="display:none">
+    <section>
+      <div class="section-header">
+        <div class="section-tag">My Work</div>
+        <h2 class="section-title">Games I've Built</h2>
+        <p class="section-desc">A selection of Roblox games I've developed — from concept to launch.</p>
+      </div>
+      <div class="posts-grid" id="game-posts-container"></div>
+    </section>
+  </div>
+
+  <!-- PORTFOLIO PAGE -->
+  <div id="page-portfolio" class="page-section" style="display:none">
+    <section>
+      <div class="section-header">
+        <div class="section-tag">Portfolio</div>
+        <h2 class="section-title">Projects & Highlights</h2>
+        <p class="section-desc">Scripts, systems, UI, and other work I'm proud of.</p>
+      </div>
+      <div class="posts-grid" id="portfolio-posts-container"></div>
+    </section>
+  </div>
+
+  <!-- GROUP PAGE -->
+  <div id="page-group" class="page-section" style="display:none">
+    <section>
+      <div class="section-header">
+        <div class="section-tag">Community</div>
+        <h2 class="section-title">Join My Roblox Group</h2>
+        <p class="section-desc">A growing community of Roblox players, developers, and fans.</p>
+      </div>
+      <div class="posts-grid" id="group-posts-container"></div>
+    </section>
+  </div>
+
+  <footer>
+    <p id="footer-text">© 2025 <a href="#" id="footer-name">RobloxDev</a> · Built with passion on Roblox</p>
+  </footer>
+</div>
+
+<!-- ─── ADMIN PANEL ─── -->
+<div id="admin-panel">
+  <div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-title">Admin Panel</div>
+      <div class="admin-nav-item active" onclick="adminNav('dashboard')" id="anav-dashboard">
+        <span class="admin-nav-icon">📊</span> Dashboard
+      </div>
+      <div class="admin-nav-item" onclick="adminNav('posts')" id="anav-posts">
+        <span class="admin-nav-icon">📝</span> All Posts
+        <span class="admin-nav-badge" id="posts-count-badge">0</span>
+      </div>
+      <div class="admin-nav-item" onclick="adminNav('new-post')" id="anav-new-post">
+        <span class="admin-nav-icon">✨</span> New Post
+      </div>
+      <div class="admin-nav-item" onclick="adminNav('pinned')" id="anav-pinned">
+        <span class="admin-nav-icon">📌</span> Pinned Posts
+      </div>
+      <div class="admin-nav-item" onclick="adminNav('hero')" id="anav-hero">
+        <span class="admin-nav-icon">🏠</span> Hero / Homepage
+      </div>
+      <div class="admin-nav-item" onclick="adminNav('github')" id="anav-github">
+        <span class="admin-nav-icon">🐙</span> GitHub Sync
+      </div>
+      <div class="admin-nav-item" onclick="adminNav('settings')" id="anav-settings">
+        <span class="admin-nav-icon">⚙️</span> Settings
+      </div>
+      <div style="margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="exitAdmin()" style="width:100%;justify-content:center;font-size:0.82rem">← Back to Site</button>
+        <button class="btn" onclick="confirmLogout()" style="width:100%;justify-content:center;font-size:0.82rem;margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.2);color:#ff8080">🔒 Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="admin-main" id="admin-main">
+      <!-- Will be rendered by JS -->
+    </main>
+  </div>
+</div>
+
+<!-- ─── MODALS ─── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content"></div>
+</div>
+<div class="modal-overlay" id="confirm-overlay" onclick="closeConfirm(event)">
+  <div class="confirm-dialog" id="confirm-content"></div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div id="toast-container"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let DATA = {
+  settings: {
+    username: "RobloxDev",
+    password: "admin123",
+    heroTitle: "Professional\nRoblox Developer",
+    heroSubtitle: "Building immersive Roblox experiences, scripting systems, and growing communities. Open to projects, commissions, and collaborations.",
+    heroBadge: "Available for hire",
+    stat1Val: "50+", stat1Label: "Games Built",
+    stat2Val: "10K+", stat2Label: "Group Members",
+    stat3Val: "3yrs", stat3Label: "Experience",
+    footerText: "© 2025 RobloxDev · Built with passion on Roblox",
+    hireCTABody: "Whether you need a full game built from scratch, scripting fixes, UI design, or a group manager — I've got you covered. Let's create something epic together.",
+    discordLink: "",
+    robloxGroupLink: "",
+    githubToken: "",
+    githubRepo: "",
+    githubFile: "posts.json",
+    autoSync: false
+  },
+  posts: []
+};
+
+let adminLoggedIn = false;
+let editingPostId = null;
+let currentAdminPage = "dashboard";
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+function init() {
+  const saved = localStorage.getItem("robloxdev_data");
+  if (saved) {
+    try { DATA = Object.assign(DATA, JSON.parse(saved)); } catch(e){}
+  }
+  applySettings();
+  renderPublicSite();
+  
+  // Check if already logged in this session
+  if (sessionStorage.getItem("robloxdev_auth") === "1") {
+    adminLoggedIn = true;
+    document.getElementById("login-screen").style.display = "none";
+  }
+}
+
+function save() {
+  localStorage.setItem("robloxdev_data", JSON.stringify(DATA));
+}
+
+function applySettings() {
+  const s = DATA.settings;
+  document.getElementById("nav-username").textContent = s.username;
+  document.getElementById("hero-title-el").innerHTML = s.heroTitle.replace(/\n/g, "<br>").replace(/(Roblox Developer|[A-Z][a-z]+ Developer)/g, '<span>$1</span>');
+  if (s.heroTitle.includes("\n")) {
+    const parts = s.heroTitle.split("\n");
+    document.getElementById("hero-title-el").innerHTML = parts[0] + "<br><span>" + (parts[1]||"") + "</span>";
+  } else {
+    document.getElementById("hero-title-el").textContent = s.heroTitle;
+  }
+  document.getElementById("hero-subtitle-el").textContent = s.heroSubtitle;
+  document.getElementById("hero-badge-text").textContent = s.heroBadge;
+  document.getElementById("stat1-val").textContent = s.stat1Val;
+  document.getElementById("stat2-val").textContent = s.stat2Val;
+  document.getElementById("stat3-val").textContent = s.stat3Val;
+  document.getElementById("footer-text").innerHTML = `© 2025 <a href="#" id="footer-name">${s.username}</a> · ${s.footerText.split("·")[1]||"Built with passion on Roblox"}`;
+  document.getElementById("hire-body-el").textContent = s.hireCTABody;
+}
+
+// ═══════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════
+function attemptLogin() {
+  const pw = document.getElementById("login-pw").value;
+  if (pw === DATA.settings.password) {
+    adminLoggedIn = true;
+    sessionStorage.setItem("robloxdev_auth", "1");
+    document.getElementById("login-screen").style.display = "none";
+    openAdminNav();
+  } else {
+    document.getElementById("login-err").classList.add("show");
+    document.getElementById("login-pw").style.borderColor = "#ff5050";
+  }
+}
+
+function closeLogin() {
+  document.getElementById("login-screen").style.display = "none";
+}
+
+function openAdminNav() {
+  if (!adminLoggedIn) {
+    document.getElementById("login-screen").style.display = "flex";
+    return;
+  }
+  document.getElementById("public-site").style.display = "none";
+  document.getElementById("admin-panel").classList.add("active");
+  adminNav("dashboard");
+}
+
+function exitAdmin() {
+  document.getElementById("admin-panel").classList.remove("active");
+  document.getElementById("public-site").style.display = "block";
+}
+
+function confirmLogout() {
+  showConfirm("Logout?", "You will be returned to the public site.", () => {
+    sessionStorage.removeItem("robloxdev_auth");
+    adminLoggedIn = false;
+    exitAdmin();
+    toast("Logged out successfully.", "info");
+  });
+}
+
+document.getElementById("login-pw").addEventListener("keydown", e => { if(e.key==="Enter") attemptLogin(); });
+
+// ═══════════════════════════════════════════════
+// PUBLIC SITE
+// ═══════════════════════════════════════════════
+function showPage(page) {
+  document.querySelectorAll(".page-section").forEach(el => el.style.display = "none");
+  document.getElementById("hero").style.display = page === "home" ? "flex" : "none";
+  document.getElementById("page-" + page).style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+  renderPublicSite();
+}
+
+function renderPublicSite() {
+  renderPinnedPosts();
+  renderMainHomePosts();
+  renderTypePosts("game", "game-posts-container");
+  renderTypePosts("portfolio", "portfolio-posts-container");
+  renderTypePosts("group", "group-posts-container");
+}
+
+function renderPinnedPosts() {
+  const cont = document.getElementById("pinned-posts-container");
+  if (!cont) return;
+  const pinned = DATA.posts.filter(p => p.pinned && p.published);
+  cont.innerHTML = pinned.map(p => `
+    <div class="pinned-post" onclick="viewPost('${p.id}')">
+      <div class="pin-icon">📌</div>
+      <div>
+        <div class="pinned-post-title">${esc(p.title)}</div>
+        <div class="pinned-post-body">${esc(truncate(p.body,180))}</div>
+        ${p.link ? `<a class="post-link-btn" href="${esc(p.link)}" target="_blank" onclick="event.stopPropagation()">Open Link ↗</a>` : ""}
+      </div>
+      <span class="pinned-badge">📌 Pinned</span>
+    </div>
+  `).join("");
+}
+
+function renderMainHomePosts() {
+  const cont = document.getElementById("main-posts-area");
+  if (!cont) return;
+  const mains = DATA.posts.filter(p => p.type === "main" && p.published && !p.pinned);
+  const sides = DATA.posts.filter(p => p.type === "side" && p.published);
+  
+  if (!mains.length && !sides.length) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><p>No posts yet. Add some from the admin panel!</p></div>`;
+    return;
+  }
+  
+  if (sides.length > 0 && mains.length > 0) {
+    cont.innerHTML = `
+      <div class="posts-grid main-layout">
+        <div>${mains.map(p => postCard(p)).join("")}</div>
+        <div class="side-col">${sides.map(p => postCard(p)).join("")}</div>
+      </div>`;
+  } else {
+    cont.innerHTML = `<div class="posts-grid">${[...mains,...sides].map(p => postCard(p)).join("")}</div>`;
+  }
+}
+
+function renderTypePosts(type, containerId) {
+  const cont = document.getElementById(containerId);
+  if (!cont) return;
+  const posts = DATA.posts.filter(p => p.type === type && p.published);
+  if (!posts.length) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><p>No ${type} posts yet.</p></div>`;
+    return;
+  }
+  cont.innerHTML = posts.map(p => postCard(p)).join("");
+}
+
+function postCard(p) {
+  const typeClass = p.type === "main" ? "main" : p.type === "game" ? "game" : p.type === "group" ? "group" : p.type === "side" ? "side" : "";
+  const badgeClass = {main:"badge-main",game:"badge-game",group:"badge-group",portfolio:"badge-portfolio",side:"badge-side"}[p.type] || "badge-side";
+  const badgeLabel = {main:"📣 Main",game:"🎮 Game",group:"👥 Group",portfolio:"🗂 Portfolio",side:"📌 Update"}[p.type] || p.type;
+  
+  return `<div class="post-card ${typeClass}" onclick="viewPost('${p.id}')">
+    ${p.image ? `<div class="post-image" style="background:var(--surface2)"><img src="${esc(p.image)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display='none'" alt=""></div>` : ""}
+    <span class="post-type-badge ${badgeClass}">${badgeLabel}</span>
+    <div class="post-title">${esc(p.title)}</div>
+    <div class="post-body">${esc(truncate(p.body,200))}</div>
+    <div class="post-meta">
+      <span>${formatDate(p.date)}</span>
+      ${p.tags ? `<span>${p.tags.split(",").map(t=>`<span style="background:var(--surface2);padding:2px 8px;border-radius:100px;font-size:0.72rem">${esc(t.trim())}</span>`).join(" ")}</span>` : ""}
+    </div>
+    ${p.link ? `<a class="post-link-btn" href="${esc(p.link)}" target="_blank" onclick="event.stopPropagation()">Open Link ↗</a>` : ""}
+  </div>`;
+}
+
+function viewPost(id) {
+  const p = DATA.posts.find(x => x.id === id);
+  if (!p) return;
+  const badgeClass = {main:"badge-main",game:"badge-game",group:"badge-group",portfolio:"badge-portfolio",side:"badge-side"}[p.type] || "badge-side";
+  const badgeLabel = {main:"📣 Main",game:"🎮 Game",group:"👥 Group",portfolio:"🗂 Portfolio",side:"📌 Update"}[p.type] || p.type;
+  
+  document.getElementById("modal-content").innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="post-detail-header">
+      <span class="post-type-badge ${badgeClass}" style="margin-bottom:12px">${badgeLabel}</span>
+      ${p.pinned ? `<span class="post-type-badge badge-main" style="margin-bottom:12px;margin-left:6px">📌 Pinned</span>` : ""}
+      <div class="post-detail-title">${esc(p.title)}</div>
+      <div class="post-detail-meta">
+        <span>📅 ${formatDate(p.date)}</span>
+        ${p.tags ? p.tags.split(",").map(t=>`<span style="background:var(--surface);padding:2px 8px;border-radius:100px;border:1px solid var(--border)">${esc(t.trim())}</span>`).join("") : ""}
+      </div>
+    </div>
+    ${p.image ? `<img src="${esc(p.image)}" style="width:100%;border-radius:10px;margin-bottom:16px;max-height:320px;object-fit:cover" onerror="this.style.display='none'" alt="">` : ""}
+    <div class="post-detail-body">${esc(p.body)}</div>
+    ${p.link ? `<div class="post-detail-links"><a href="${esc(p.link)}" target="_blank" class="btn btn-primary">Open Link ↗</a></div>` : ""}
+    ${p.link2 ? `<div style="margin-top:8px"><a href="${esc(p.link2)}" target="_blank" class="btn btn-secondary">🔗 ${esc(p.link2label||"Secondary Link")} ↗</a></div>` : ""}
+  `;
+  openModal();
+}
+
+// ═══════════════════════════════════════════════
+// ADMIN NAVIGATION
+// ═══════════════════════════════════════════════
+function adminNav(page) {
+  currentAdminPage = page;
+  document.querySelectorAll(".admin-nav-item").forEach(el => el.classList.remove("active"));
+  const el = document.getElementById("anav-" + page);
+  if (el) el.classList.add("active");
+  
+  const main = document.getElementById("admin-main");
+  
+  switch(page) {
+    case "dashboard": main.innerHTML = renderDashboard(); break;
+    case "posts": main.innerHTML = renderPostsTable(); break;
+    case "new-post": main.innerHTML = renderPostForm(null); break;
+    case "pinned": main.innerHTML = renderPinnedManager(); break;
+    case "hero": main.innerHTML = renderHeroEditor(); break;
+    case "github": main.innerHTML = renderGitHub(); break;
+    case "settings": main.innerHTML = renderSettings(); break;
+  }
+  
+  updateBadge();
+}
+
+function updateBadge() {
+  document.getElementById("posts-count-badge").textContent = DATA.posts.length;
+}
+
+// ─── DASHBOARD ───
+function renderDashboard() {
+  const total = DATA.posts.length;
+  const published = DATA.posts.filter(p=>p.published).length;
+  const pinned = DATA.posts.filter(p=>p.pinned).length;
+  const typeCount = {};
+  DATA.posts.forEach(p => { typeCount[p.type] = (typeCount[p.type]||0)+1; });
+  
+  return `
+    <div class="admin-topbar">
+      <div>
+        <div class="admin-topbar-title">Dashboard</div>
+        <div style="color:var(--text2);font-size:0.875rem;margin-top:4px">Overview of your portfolio site</div>
+      </div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-primary" onclick="adminNav('new-post')">✨ New Post</button>
+      </div>
+    </div>
+    <div class="admin-stats-grid">
+      <div class="admin-stat-card">
+        <div class="admin-stat-label">Total Posts</div>
+        <div class="admin-stat-val">${total}</div>
+        <div class="admin-stat-sub">${published} published</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-label">Pinned Posts</div>
+        <div class="admin-stat-val">${pinned}</div>
+        <div class="admin-stat-sub">shown at top</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-label">Game Posts</div>
+        <div class="admin-stat-val">${typeCount.game||0}</div>
+        <div class="admin-stat-sub">on games page</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-label">GitHub Sync</div>
+        <div class="admin-stat-val" style="font-size:1.2rem;color:${DATA.settings.githubToken ? "var(--green)" : "var(--text3)"}">${DATA.settings.githubToken ? "✓ Ready" : "Not Set"}</div>
+        <div class="admin-stat-sub">${DATA.settings.githubRepo || "No repo set"}</div>
+      </div>
+    </div>
+    
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Post Breakdown</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px">
+        ${["main","side","game","portfolio","group"].map(type => `
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center">
+            <div style="font-size:1.5rem;font-family:'Syne',sans-serif;font-weight:800">${typeCount[type]||0}</div>
+            <div style="font-size:0.78rem;color:var(--text3);text-transform:capitalize;margin-top:4px">${type}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+    
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700">Recent Posts</div>
+        <button class="btn btn-secondary" onclick="adminNav('posts')" style="font-size:0.8rem;padding:6px 14px">View All</button>
+      </div>
+      ${DATA.posts.slice(-5).reverse().map(p => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:0.78rem;background:var(--surface2);padding:2px 8px;border-radius:100px;color:var(--text2)">${p.type}</span>
+          <span style="flex:1;font-size:0.875rem">${esc(p.title)}</span>
+          <span class="status-dot ${p.pinned ? "pinned" : p.published ? "published" : "draft"}">${p.pinned ? "pinned" : p.published ? "published" : "draft"}</span>
+          <button class="icon-btn accent" onclick="adminNav('new-post');editPost('${p.id}')" title="Edit">✏️</button>
+        </div>
+      `).join("") || `<div style="color:var(--text3);font-size:0.875rem;padding:16px 0">No posts yet. <a href="#" onclick="adminNav('new-post')" style="color:var(--accent)">Create your first post →</a></div>`}
+    </div>
+  `;
+}
+
+// ─── POSTS TABLE ───
+function renderPostsTable() {
+  let filterType = "all";
+  let filterStatus = "all";
+  let search = "";
+  
+  const filtered = () => DATA.posts.filter(p => {
+    if (filterType !== "all" && p.type !== filterType) return false;
+    if (filterStatus === "published" && !p.published) return false;
+    if (filterStatus === "draft" && p.published) return false;
+    if (filterStatus === "pinned" && !p.pinned) return false;
+    if (search && !p.title.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+  
+  const tableRows = (posts) => posts.length ? posts.map(p => `
+    <tr>
+      <td>
+        <div style="font-weight:500">${esc(p.title)}</div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${esc(truncate(p.body,60))}</div>
+      </td>
+      <td><span style="background:var(--surface2);padding:2px 9px;border-radius:100px;font-size:0.75rem">${p.type}</span></td>
+      <td><span class="status-dot ${p.pinned ? "pinned" : p.published ? "published" : "draft"}">${p.pinned ? "Pinned" : p.published ? "Published" : "Draft"}</span></td>
+      <td style="color:var(--text2)">${formatDate(p.date)}</td>
+      <td>
+        <div class="post-table-actions">
+          <button class="icon-btn accent" onclick="startEditPost('${p.id}')" title="Edit">✏️</button>
+          <button class="icon-btn" onclick="togglePin('${p.id}')" title="${p.pinned ? 'Unpin' : 'Pin'}" style="${p.pinned ? 'color:var(--gold)' : ''}">📌</button>
+          <button class="icon-btn" onclick="togglePublish('${p.id}')" title="${p.published ? 'Unpublish' : 'Publish'}">👁</button>
+          <button class="icon-btn danger" onclick="deletePost('${p.id}')" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>
+  `).join("") : `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3)">No posts match your filter.</td></tr>`;
+  
+  return `
+    <div class="admin-topbar">
+      <div>
+        <div class="admin-topbar-title">All Posts</div>
+        <div style="color:var(--text2);font-size:0.875rem;margin-top:4px">${DATA.posts.length} total posts</div>
+      </div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-primary" onclick="adminNav('new-post')">✨ New Post</button>
+        <button class="btn btn-secondary" onclick="exportJSON()">⬇ Export JSON</button>
+        <button class="btn btn-secondary" onclick="importJSON()">⬆ Import JSON</button>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <input type="text" id="search-posts" placeholder="🔍  Search posts…" style="flex:1;min-width:200px" oninput="refreshPostsTable()" value="${search}">
+      <select id="filter-type" onchange="refreshPostsTable()" style="width:auto">
+        <option value="all">All Types</option>
+        <option value="main">Main</option>
+        <option value="side">Side</option>
+        <option value="game">Game</option>
+        <option value="portfolio">Portfolio</option>
+        <option value="group">Group</option>
+      </select>
+      <select id="filter-status" onchange="refreshPostsTable()" style="width:auto">
+        <option value="all">All Status</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+        <option value="pinned">Pinned</option>
+      </select>
+    </div>
+    
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+      <table class="post-table" id="posts-table-el">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="posts-tbody">
+          ${tableRows(DATA.posts)}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function refreshPostsTable() {
+  const search = document.getElementById("search-posts")?.value || "";
+  const fType = document.getElementById("filter-type")?.value || "all";
+  const fStatus = document.getElementById("filter-status")?.value || "all";
+  
+  const filtered = DATA.posts.filter(p => {
+    if (fType !== "all" && p.type !== fType) return false;
+    if (fStatus === "published" && !p.published) return false;
+    if (fStatus === "draft" && p.published) return false;
+    if (fStatus === "pinned" && !p.pinned) return false;
+    if (search && !p.title.toLowerCase().includes(search.toLowerCase()) && !p.body.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+  
+  document.getElementById("posts-tbody").innerHTML = filtered.length ? filtered.map(p => `
+    <tr>
+      <td>
+        <div style="font-weight:500">${esc(p.title)}</div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${esc(truncate(p.body,60))}</div>
+      </td>
+      <td><span style="background:var(--surface2);padding:2px 9px;border-radius:100px;font-size:0.75rem">${p.type}</span></td>
+      <td><span class="status-dot ${p.pinned ? "pinned" : p.published ? "published" : "draft"}">${p.pinned ? "Pinned" : p.published ? "Published" : "Draft"}</span></td>
+      <td style="color:var(--text2)">${formatDate(p.date)}</td>
+      <td>
+        <div class="post-table-actions">
+          <button class="icon-btn accent" onclick="startEditPost('${p.id}')" title="Edit">✏️</button>
+          <button class="icon-btn" onclick="togglePin('${p.id}')" title="${p.pinned ? 'Unpin' : 'Pin'}" style="${p.pinned ? 'color:var(--gold)' : ''}">📌</button>
+          <button class="icon-btn" onclick="togglePublish('${p.id}')" title="${p.published ? 'Unpublish' : 'Publish'}">👁</button>
+          <button class="icon-btn danger" onclick="deletePost('${p.id}')" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>
+  `).join("") : `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3)">No posts match your filter.</td></tr>`;
+}
+
+// ─── POST FORM ───
+function renderPostForm(postId) {
+  const p = postId ? DATA.posts.find(x => x.id === postId) : null;
+  editingPostId = postId || null;
+  
+  return `
+    <div class="admin-topbar">
+      <div>
+        <div class="admin-topbar-title">${p ? "Edit Post" : "New Post"}</div>
+        <div style="color:var(--text2);font-size:0.875rem;margin-top:4px">${p ? `Editing: ${esc(p.title)}` : "Create a new post for your site"}</div>
+      </div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-secondary" onclick="adminNav('posts')">← Back</button>
+        <button class="btn btn-secondary" onclick="savePostDraft()">Save Draft</button>
+        <button class="btn btn-primary" onclick="savePost(true)">✓ Publish</button>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px">
+      <div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:18px">Post Content</div>
+          <div class="form-grid cols-1">
+            <div class="form-group">
+              <label>Title <span class="required-dot">*</span></label>
+              <input type="text" id="pf-title" placeholder="Post title…" value="${esc(p?.title||'')}">
+            </div>
+            <div class="form-group">
+              <label>Body / Description <span class="required-dot">*</span></label>
+              <textarea id="pf-body" style="min-height:200px" placeholder="Write your post content here…">${esc(p?.body||'')}</textarea>
+            </div>
+          </div>
+        </div>
+        
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:18px">Links & Media</div>
+          <div class="form-grid">
+            <div class="form-group span2">
+              <label>Image URL</label>
+              <input type="url" id="pf-image" placeholder="https://…/image.png" value="${esc(p?.image||'')}">
+              <div class="input-hint">Will display as a thumbnail on the post card</div>
+            </div>
+            <div class="form-group">
+              <label>Primary Link</label>
+              <input type="url" id="pf-link" placeholder="https://roblox.com/games/…" value="${esc(p?.link||'')}">
+            </div>
+            <div class="form-group">
+              <label>Primary Link Label</label>
+              <input type="text" id="pf-linklabel" placeholder="Play Game, Join Group…" value="${esc(p?.linklabel||'')}">
+            </div>
+            <div class="form-group">
+              <label>Secondary Link</label>
+              <input type="url" id="pf-link2" placeholder="Optional second link…" value="${esc(p?.link2||'')}">
+            </div>
+            <div class="form-group">
+              <label>Secondary Link Label</label>
+              <input type="text" id="pf-link2label" placeholder="Label for second link…" value="${esc(p?.link2label||'')}">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SIDEBAR -->
+      <div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Post Settings</div>
+          <div class="form-grid cols-1" style="gap:14px">
+            <div class="form-group">
+              <label>Post Type <span class="required-dot">*</span></label>
+              <select id="pf-type">
+                <option value="main" ${p?.type==="main"?"selected":""}>📣 Main Post (Homepage featured)</option>
+                <option value="side" ${p?.type==="side"?"selected":""}>📌 Side Post (Homepage sidebar)</option>
+                <option value="game" ${p?.type==="game"?"selected":""}>🎮 Game Post</option>
+                <option value="portfolio" ${p?.type==="portfolio"?"selected":""}>🗂 Portfolio Post</option>
+                <option value="group" ${p?.type==="group"?"selected":""}>👥 Group Post</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tags</label>
+              <input type="text" id="pf-tags" placeholder="roblox, scripting, ui…" value="${esc(p?.tags||'')}">
+              <div class="input-hint">Comma-separated</div>
+            </div>
+            <div class="form-group">
+              <label>Custom Date</label>
+              <input type="text" id="pf-date" placeholder="Leave blank for today" value="${esc(p?.date||'')}">
+            </div>
+          </div>
+        </div>
+        
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">Visibility</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="toggle-row">
+              <div><div class="toggle-label">Published</div><div class="toggle-sub">Visible on site</div></div>
+              <div class="toggle ${p?.published ? 'on' : ''}" id="tog-published" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">📌 Pinned</div><div class="toggle-sub">Show at top of homepage</div></div>
+              <div class="toggle ${p?.pinned ? 'on' : ''}" id="tog-pinned" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+        
+        ${p ? `<button class="btn" onclick="deletePost('${p.id}')" style="width:100%;justify-content:center;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.2);color:#ff8080">🗑 Delete Post</button>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function savePost(publish) {
+  const title = document.getElementById("pf-title")?.value?.trim();
+  const body = document.getElementById("pf-body")?.value?.trim();
+  
+  if (!title) { toast("Title is required.", "error"); return; }
+  if (!body) { toast("Body is required.", "error"); return; }
+  
+  const isPublished = publish || document.getElementById("tog-published")?.classList.contains("on");
+  const isPinned = document.getElementById("tog-pinned")?.classList.contains("on");
+  
+  const post = {
+    id: editingPostId || "p" + Date.now(),
+    title,
+    body,
+    type: document.getElementById("pf-type")?.value || "main",
+    tags: document.getElementById("pf-tags")?.value?.trim() || "",
+    image: document.getElementById("pf-image")?.value?.trim() || "",
+    link: document.getElementById("pf-link")?.value?.trim() || "",
+    linklabel: document.getElementById("pf-linklabel")?.value?.trim() || "",
+    link2: document.getElementById("pf-link2")?.value?.trim() || "",
+    link2label: document.getElementById("pf-link2label")?.value?.trim() || "",
+    date: document.getElementById("pf-date")?.value?.trim() || new Date().toISOString().split("T")[0],
+    published: !!isPublished,
+    pinned: !!isPinned
+  };
+  
+  if (editingPostId) {
+    const idx = DATA.posts.findIndex(p => p.id === editingPostId);
+    if (idx > -1) DATA.posts[idx] = post;
+  } else {
+    DATA.posts.unshift(post);
+  }
+  
+  save();
+  renderPublicSite();
+  toast(publish ? "✓ Post published!" : "Post saved as draft.", "success");
+  
+  if (DATA.settings.autoSync && DATA.settings.githubToken) {
+    syncToGitHub();
+  }
+  
+  editingPostId = null;
+  adminNav("posts");
+}
+
+function savePostDraft() { savePost(false); }
+
+function startEditPost(id) {
+  editingPostId = id;
+  document.getElementById("admin-main").innerHTML = renderPostForm(id);
+  window.scrollTo({top:0,behavior:"smooth"});
+  document.querySelectorAll(".admin-nav-item").forEach(el => el.classList.remove("active"));
+}
+
+function togglePin(id) {
+  const p = DATA.posts.find(x => x.id === id);
+  if (p) { p.pinned = !p.pinned; save(); renderPublicSite(); refreshPostsTable(); toast(`${p.pinned ? "📌 Pinned" : "Unpinned"}: ${p.title}`, "info"); }
+}
+
+function togglePublish(id) {
+  const p = DATA.posts.find(x => x.id === id);
+  if (p) { p.published = !p.published; save(); renderPublicSite(); refreshPostsTable(); toast(`${p.published ? "👁 Published" : "Draft saved"}: ${p.title}`, "info"); }
+}
+
+function deletePost(id) {
+  const p = DATA.posts.find(x => x.id === id);
+  showConfirm("Delete Post", `Are you sure you want to delete "${p?.title}"? This cannot be undone.`, () => {
+    DATA.posts = DATA.posts.filter(x => x.id !== id);
+    save(); renderPublicSite(); updateBadge();
+    if (currentAdminPage === "posts") adminNav("posts");
+    else adminNav("dashboard");
+    toast("Post deleted.", "info");
+  });
+}
+
+// ─── PINNED MANAGER ───
+function renderPinnedManager() {
+  const pinned = DATA.posts.filter(p => p.pinned);
+  const unpinned = DATA.posts.filter(p => !p.pinned && p.published);
+  
+  return `
+    <div class="admin-topbar">
+      <div><div class="admin-topbar-title">Pinned Posts</div><div style="color:var(--text2);font-size:0.875rem;margin-top:4px">Control what appears pinned at the top of your homepage</div></div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">📌 Currently Pinned (${pinned.length})</div>
+          ${pinned.length ? pinned.map(p => `
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,208,96,0.05);border:1px solid rgba(255,208,96,0.15);border-radius:8px;margin-bottom:8px">
+              <span style="flex:1;font-size:0.875rem;font-weight:500">${esc(p.title)}</span>
+              <span style="font-size:0.75rem;background:var(--surface2);padding:1px 7px;border-radius:100px">${p.type}</span>
+              <button class="icon-btn danger" onclick="togglePin('${p.id}');adminNav('pinned')" title="Unpin">📌</button>
+            </div>
+          `).join("") : `<div style="color:var(--text3);font-size:0.875rem;padding:12px">No pinned posts.</div>`}
+        </div>
+      </div>
+      <div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">Available to Pin</div>
+          ${unpinned.length ? unpinned.map(p => `
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
+              <span style="flex:1;font-size:0.875rem">${esc(p.title)}</span>
+              <span style="font-size:0.75rem;background:var(--surface2);padding:1px 7px;border-radius:100px">${p.type}</span>
+              <button class="icon-btn accent" onclick="togglePin('${p.id}');adminNav('pinned')" title="Pin">📌</button>
+            </div>
+          `).join("") : `<div style="color:var(--text3);font-size:0.875rem;padding:12px">No published posts available.</div>`}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── HERO EDITOR ───
+function renderHeroEditor() {
+  const s = DATA.settings;
+  return `
+    <div class="admin-topbar">
+      <div><div class="admin-topbar-title">Hero & Homepage</div><div style="color:var(--text2);font-size:0.875rem;margin-top:4px">Edit the hero section and homepage appearance</div></div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-primary" onclick="saveHero()">✓ Save Changes</button>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="settings-section">
+        <div class="settings-section-title">Hero Text</div>
+        <div class="form-grid cols-1">
+          <div class="form-group">
+            <label>Hero Title (use \\n for line break)</label>
+            <input type="text" id="he-title" value="${esc(s.heroTitle)}" placeholder="Professional\\nRoblox Developer">
+          </div>
+          <div class="form-group">
+            <label>Hero Subtitle</label>
+            <textarea id="he-subtitle" style="min-height:80px">${esc(s.heroSubtitle)}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Badge Text (green dot label)</label>
+            <input type="text" id="he-badge" value="${esc(s.heroBadge)}">
+          </div>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <div class="settings-section-title">Stats</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Stat 1 Value</label>
+            <input type="text" id="he-s1v" value="${esc(s.stat1Val)}" placeholder="50+">
+          </div>
+          <div class="form-group">
+            <label>Stat 1 Label</label>
+            <input type="text" id="he-s1l" value="${esc(s.stat1Label)}" placeholder="Games Built">
+          </div>
+          <div class="form-group">
+            <label>Stat 2 Value</label>
+            <input type="text" id="he-s2v" value="${esc(s.stat2Val)}" placeholder="10K+">
+          </div>
+          <div class="form-group">
+            <label>Stat 2 Label</label>
+            <input type="text" id="he-s2l" value="${esc(s.stat2Label)}" placeholder="Group Members">
+          </div>
+          <div class="form-group">
+            <label>Stat 3 Value</label>
+            <input type="text" id="he-s3v" value="${esc(s.stat3Val)}" placeholder="3yrs">
+          </div>
+          <div class="form-group">
+            <label>Stat 3 Label</label>
+            <input type="text" id="he-s3l" value="${esc(s.stat3Label)}" placeholder="Experience">
+          </div>
+        </div>
+      </div>
+      
+      <div class="settings-section span2" style="grid-column:1/-1">
+        <div class="settings-section-title">Hire CTA Section</div>
+        <div class="form-group">
+          <label>Hire CTA Body Text</label>
+          <textarea id="he-hirebod" style="min-height:80px">${esc(s.hireCTABody)}</textarea>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function saveHero() {
+  DATA.settings.heroTitle = document.getElementById("he-title").value;
+  DATA.settings.heroSubtitle = document.getElementById("he-subtitle").value;
+  DATA.settings.heroBadge = document.getElementById("he-badge").value;
+  DATA.settings.stat1Val = document.getElementById("he-s1v").value;
+  DATA.settings.stat1Label = document.getElementById("he-s1l").value;
+  DATA.settings.stat2Val = document.getElementById("he-s2v").value;
+  DATA.settings.stat2Label = document.getElementById("he-s2l").value;
+  DATA.settings.stat3Val = document.getElementById("he-s3v").value;
+  DATA.settings.stat3Label = document.getElementById("he-s3l").value;
+  DATA.settings.hireCTABody = document.getElementById("he-hirebod").value;
+  save(); applySettings();
+  toast("✓ Hero section updated!", "success");
+}
+
+// ─── GITHUB SYNC ───
+function renderGitHub() {
+  const s = DATA.settings;
+  const connected = !!s.githubToken && !!s.githubRepo;
+  return `
+    <div class="admin-topbar">
+      <div><div class="admin-topbar-title">GitHub Sync</div><div style="color:var(--text2);font-size:0.875rem;margin-top:4px">Sync your posts.json to a GitHub repo so posts are globally persistent</div></div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-secondary" onclick="saveGitHub()">💾 Save Config</button>
+        <button class="btn btn-primary" onclick="syncToGitHub()">🔄 Sync Now</button>
+      </div>
+    </div>
+    
+    <div style="background:rgba(61,255,160,0.04);border:1px solid rgba(61,255,160,0.15);border-radius:var(--radius);padding:20px;margin-bottom:20px">
+      <div style="font-weight:600;color:var(--green);margin-bottom:8px">ℹ️ How GitHub Sync Works</div>
+      <div style="font-size:0.875rem;color:var(--text2);line-height:1.7">
+        Posts are saved to <strong>localStorage</strong> by default. When you click <strong>Sync Now</strong>, all posts are pushed to a <code>posts.json</code> file in your GitHub repo using the GitHub API. Your site then loads posts from that file on startup (if configured), making them globally persistent across all visitors.
+        <br><br>
+        <strong>Setup:</strong> Create a GitHub repo → Go to Settings → Developer Settings → Personal Access Tokens → Create token with <code>repo</code> scope.
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <div class="settings-section-title">GitHub Configuration</div>
+      <div class="form-grid">
+        <div class="form-group span2">
+          <label>Personal Access Token (saved locally only)</label>
+          <input type="password" id="gh-token" value="${esc(s.githubToken)}" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="input-hint">⚠️ Never share your token. It's stored only in your browser's localStorage.</div>
+        </div>
+        <div class="form-group">
+          <label>Repository (owner/repo)</label>
+          <input type="text" id="gh-repo" value="${esc(s.githubRepo)}" placeholder="yourusername/roblox-portfolio">
+        </div>
+        <div class="form-group">
+          <label>JSON File Path</label>
+          <input type="text" id="gh-file" value="${esc(s.githubFile||'posts.json')}" placeholder="posts.json">
+        </div>
+        <div class="form-group span2">
+          <div class="toggle-row">
+            <div><div class="toggle-label">Auto-Sync on Post Save</div><div class="toggle-sub">Push to GitHub every time a post is saved</div></div>
+            <div class="toggle ${s.autoSync ? 'on' : ''}" id="tog-autosync" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="github-status ${connected ? 'connected' : 'disconnected'}" style="margin-top:16px">
+        ${connected ? '✓ Configuration saved. Ready to sync.' : '⚠ No GitHub config set. Fill in the fields above and save.'}
+      </div>
+    </div>
+    
+    <div class="settings-section" style="margin-top:16px">
+      <div class="settings-section-title">Manual Actions</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="syncToGitHub()">🔄 Push posts.json to GitHub</button>
+        <button class="btn btn-secondary" onclick="pullFromGitHub()">⬇ Pull from GitHub</button>
+        <button class="btn btn-secondary" onclick="exportJSON()">📋 Download posts.json locally</button>
+      </div>
+      <div id="sync-log" style="margin-top:16px;font-size:0.8rem;color:var(--text3);font-family:monospace;line-height:1.8"></div>
+    </div>
+  `;
+}
+
+function saveGitHub() {
+  DATA.settings.githubToken = document.getElementById("gh-token").value.trim();
+  DATA.settings.githubRepo = document.getElementById("gh-repo").value.trim();
+  DATA.settings.githubFile = document.getElementById("gh-file").value.trim() || "posts.json";
+  DATA.settings.autoSync = document.getElementById("tog-autosync").classList.contains("on");
+  save();
+  toast("✓ GitHub config saved!", "success");
+  adminNav("github");
+}
+
+async function syncToGitHub() {
+  const { githubToken, githubRepo, githubFile } = DATA.settings;
+  if (!githubToken || !githubRepo) { toast("Please configure GitHub token and repo first.", "error"); return; }
+  
+  const logEl = document.getElementById("sync-log");
+  const log = (msg) => { if(logEl) logEl.innerHTML += msg + "<br>"; };
+  
+  toast("Syncing to GitHub…", "info");
+  log(`[${new Date().toLocaleTimeString()}] Starting sync to ${githubRepo}/${githubFile}…`);
+  
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify({settings: DATA.settings, posts: DATA.posts}, null, 2))));
+  
+  try {
+    // Check if file exists to get SHA
+    let sha = null;
+    const check = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${githubFile}`, {
+      headers: { Authorization: `token ${githubToken}`, Accept: "application/vnd.github.v3+json" }
+    });
+    if (check.ok) {
+      const existing = await check.json();
+      sha = existing.sha;
+      log(`[${new Date().toLocaleTimeString()}] File exists, updating…`);
+    } else {
+      log(`[${new Date().toLocaleTimeString()}] File does not exist, creating…`);
+    }
+    
+    const body = { message: `Update ${githubFile} - ${new Date().toISOString()}`, content };
+    if (sha) body.sha = sha;
+    
+    const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${githubFile}`, {
+      method: "PUT",
+      headers: { Authorization: `token ${githubToken}`, "Content-Type": "application/json", Accept: "application/vnd.github.v3+json" },
+      body: JSON.stringify(body)
+    });
+    
+    if (res.ok) {
+      toast("✓ Synced to GitHub successfully!", "success");
+      log(`[${new Date().toLocaleTimeString()}] ✓ Success! ${DATA.posts.length} posts synced.`);
+    } else {
+      const err = await res.json();
+      toast("GitHub sync failed: " + (err.message || res.status), "error");
+      log(`[${new Date().toLocaleTimeString()}] ✗ Error: ${err.message}`);
+    }
+  } catch(e) {
+    toast("Sync error: " + e.message, "error");
+    log(`[${new Date().toLocaleTimeString()}] ✗ Network error: ${e.message}`);
+  }
+}
+
+async function pullFromGitHub() {
+  const { githubToken, githubRepo, githubFile } = DATA.settings;
+  if (!githubToken || !githubRepo) { toast("Please configure GitHub first.", "error"); return; }
+  
+  toast("Pulling from GitHub…", "info");
+  try {
+    const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${githubFile}`, {
+      headers: { Authorization: `token ${githubToken}`, Accept: "application/vnd.github.v3+json" }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const decoded = decodeURIComponent(escape(atob(data.content)));
+      const parsed = JSON.parse(decoded);
+      if (parsed.posts) { DATA.posts = parsed.posts; save(); renderPublicSite(); updateBadge(); }
+      toast("✓ Pulled from GitHub successfully!", "success");
+    } else {
+      toast("Pull failed: file not found.", "error");
+    }
+  } catch(e) {
+    toast("Pull error: " + e.message, "error");
+  }
+}
+
+// ─── SETTINGS ───
+function renderSettings() {
+  const s = DATA.settings;
+  return `
+    <div class="admin-topbar">
+      <div><div class="admin-topbar-title">Settings</div><div style="color:var(--text2);font-size:0.875rem;margin-top:4px">General site configuration</div></div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-primary" onclick="saveSettings()">✓ Save Settings</button>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <div class="settings-section-title">Site Identity</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Your Username / Name</label>
+          <input type="text" id="st-username" value="${esc(s.username)}" placeholder="RobloxDev">
+        </div>
+        <div class="form-group">
+          <label>Footer Text</label>
+          <input type="text" id="st-footer" value="${esc(s.footerText)}" placeholder="© 2025 RobloxDev…">
+        </div>
+        <div class="form-group">
+          <label>Discord Link</label>
+          <input type="url" id="st-discord" value="${esc(s.discordLink)}" placeholder="https://discord.gg/…">
+        </div>
+        <div class="form-group">
+          <label>Roblox Group Link</label>
+          <input type="url" id="st-roblox" value="${esc(s.robloxGroupLink)}" placeholder="https://roblox.com/groups/…">
+        </div>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <div class="settings-section-title">🔒 Security</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="st-pw" value="${esc(s.password)}" placeholder="New password…">
+          <div class="input-hint">⚠️ Change this from the default "admin123"</div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="st-pw2" placeholder="Repeat password…">
+        </div>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <div class="settings-section-title">⚠️ Danger Zone</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="exportJSON()">⬇ Export All Data</button>
+        <button class="btn" onclick="importJSON()" style="background:rgba(79,143,255,0.08);border:1px solid rgba(79,143,255,0.2);color:var(--accent)">⬆ Import Data</button>
+        <button class="btn" onclick="clearAllData()" style="background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.2);color:#ff8080">🗑 Clear All Posts</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveSettings() {
+  const pw = document.getElementById("st-pw").value;
+  const pw2 = document.getElementById("st-pw2").value;
+  
+  if (pw && pw !== pw2) { toast("Passwords do not match.", "error"); return; }
+  if (pw) DATA.settings.password = pw;
+  
+  DATA.settings.username = document.getElementById("st-username").value;
+  DATA.settings.footerText = document.getElementById("st-footer").value;
+  DATA.settings.discordLink = document.getElementById("st-discord").value;
+  DATA.settings.robloxGroupLink = document.getElementById("st-roblox").value;
+  
+  save(); applySettings();
+  toast("✓ Settings saved!", "success");
+}
+
+// ─── IMPORT / EXPORT ───
+function exportJSON() {
+  const blob = new Blob([JSON.stringify({settings: DATA.settings, posts: DATA.posts}, null, 2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "posts.json"; a.click(); URL.revokeObjectURL(a.href);
+  toast("✓ Exported posts.json", "success");
+}
+
+function importJSON() {
+  const input = document.createElement("input"); input.type = "file"; input.accept = ".json";
+  input.onchange = (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target.result);
+        showConfirm("Import Data", "This will merge imported posts with your existing ones. Continue?", () => {
+          if (parsed.posts) DATA.posts = [...DATA.posts, ...parsed.posts.filter(p => !DATA.posts.find(x => x.id === p.id))];
+          if (parsed.settings) Object.assign(DATA.settings, parsed.settings);
+          save(); renderPublicSite(); updateBadge(); applySettings();
+          toast(`✓ Imported ${parsed.posts?.length || 0} posts!`, "success");
+          adminNav(currentAdminPage);
+        });
+      } catch(e) { toast("Invalid JSON file.", "error"); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function clearAllData() {
+  showConfirm("Clear All Posts", "⚠️ This will permanently delete ALL posts. This cannot be undone!", () => {
+    DATA.posts = []; save(); renderPublicSite(); updateBadge();
+    toast("All posts cleared.", "info");
+    adminNav("dashboard");
+  });
+}
+
+// ═══════════════════════════════════════════════
+// MODALS & CONFIRMS
+// ═══════════════════════════════════════════════
+function openModal() {
+  document.getElementById("modal-overlay").classList.add("active");
+}
+function closeModal(e) {
+  if (!e || e.target === document.getElementById("modal-overlay")) {
+    document.getElementById("modal-overlay").classList.remove("active");
+  }
+}
+
+let confirmCallback = null;
+function showConfirm(title, body, onConfirm) {
+  confirmCallback = onConfirm;
+  document.getElementById("confirm-content").innerHTML = `
+    <div class="confirm-title">${esc(title)}</div>
+    <div class="confirm-body">${esc(body)}</div>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-primary" onclick="runConfirm()">Confirm</button>
+    </div>
+  `;
+  document.getElementById("confirm-overlay").classList.add("active");
+}
+function closeConfirm(e) {
+  if (!e || e.target === document.getElementById("confirm-overlay")) {
+    document.getElementById("confirm-overlay").classList.remove("active");
+    confirmCallback = null;
+  }
+}
+function runConfirm() {
+  document.getElementById("confirm-overlay").classList.remove("active");
+  if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function toast(msg, type="info") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  const icons = {success:"✓",error:"✗",info:"ℹ"};
+  el.innerHTML = `<span>${icons[type]||"ℹ"}</span> ${esc(msg)}`;
+  document.getElementById("toast-container").appendChild(el);
+  setTimeout(() => { el.style.opacity="0"; el.style.transform="translateX(20px)"; el.style.transition="all 0.3s"; setTimeout(()=>el.remove(),300); }, 3000);
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function truncate(s, n) { return s?.length > n ? s.slice(0,n)+"…" : s||""; }
+function formatDate(d) { if (!d) return ""; try { return new Date(d).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"}); } catch(e){ return d; } }
+
+// ═══════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
