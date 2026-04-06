@@ -1,1 +1,39 @@
-
+{
+  "posts": [
+    {
+      "id": "post_1775506383175",
+      "title": "What is EEK-Developers?",
+      "type": "main",
+      "content": "**EEK Developers** is a Roblox community owned by @PimaroonOfficial and @Enes585bey. We are trying to work on games, and grow the community. This is our original Homepage.",
+      "excerpt": "Short description for EEK-Developers",
+      "imageUrl": "https://tr.rbxcdn.com/180DAY-406cd58a21df383b35bcd248e3ab6d69/150/150/Image/Webp/noFilter",
+      "accentColor": "",
+      "linkLabel": "Join our Group",
+      "linkUrl": "https://www.roblox.com/communities/35451795/EEK-Developers#!/about",
+      "pinned": true,
+      "featured": true,
+      "date": 1775506383175
+    }
+  ],
+  "settings": {
+    "heroTitle": "EEKDevelopers",
+    "heroDesc": "We try to work on games.",
+    "heroBtnLabel": "Join Our Group",
+    "heroBtnUrl": "https://www.roblox.com/communities/35451795/EEK-Developers#!/about",
+    "footerText": "Roblox Development Group",
+    "groupName": "EEK Developers",
+    "groupTag": "Building experiences since 2024",
+    "groupAvatar": "EEK",
+    "groupLink": "https://www.roblox.com/communities/35451795/EEK-Developers#!/about",
+    "statMembers": "7",
+    "statGames": "1",
+    "statProjects": "1",
+    "pinnedPostId": "post_1775506383175"
+  },
+  "github": {
+    "owner": "EEKdev",
+    "repo": "roblox-portfolio",
+    "branch": "main",
+    "path": "data.json"
+  }
+}
