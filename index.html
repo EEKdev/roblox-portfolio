@@ -2,1324 +2,411 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<meta name="description" content="EEK Developers — Professional Roblox Development Group">
 <title>EEK Developers</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #080808;
-    --bg2: #0f0f0f;
-    --bg3: #141414;
-    --bg4: #1a1a1a;
-    --border: #222;
-    --border2: #2a2a2a;
-    --text: #f0f0f0;
-    --text2: #888;
-    --text3: #555;
-    --accent: #e8e8e8;
-    --red: #e05252;
-    --green: #52c97a;
-    --blue: #5292e0;
-    --yellow: #e0b952;
-    --purple: #9b52e0;
-    --mono: 'DM Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
-    --display: 'Syne', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ─── SCROLLBAR ─── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-
-  /* ─── NOISE OVERLAY ─── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.4;
-  }
-
-  /* ─── VIEWS ─── */
-  .view { display: none; }
-  .view.active { display: block; }
-
-  /* ─── NAV ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 60px;
-    background: rgba(8,8,8,0.92);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-    z-index: 100;
-    justify-content: space-between;
-  }
-
-  .nav-logo {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 17px;
-    letter-spacing: -0.5px;
-    color: var(--text);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .nav-logo span { color: var(--text3); }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-    align-items: center;
-  }
-
-  .nav-links a {
-    color: var(--text2);
-    text-decoration: none;
-    font-size: 13px;
-    font-family: var(--mono);
-    letter-spacing: 0.02em;
-    transition: color 0.2s;
-    cursor: pointer;
-  }
-
-  .nav-links a:hover { color: var(--text); }
-
-  .nav-admin-btn {
-    background: none;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    padding: 7px 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-
-  .nav-admin-btn:hover {
-    border-color: var(--text3);
-    color: var(--text);
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    padding-top: 60px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 60px 60px;
-    opacity: 0.3;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 100%);
-  }
-
-  .hero-content {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 40px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-tag {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .hero-tag::before {
-    content: '';
-    width: 24px;
-    height: 1px;
-    background: var(--text3);
-  }
-
-  .hero-title {
-    font-family: var(--display);
-    font-size: clamp(52px, 8vw, 96px);
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -3px;
-    color: var(--text);
-    margin-bottom: 32px;
-  }
-
-  .hero-title .dim { color: var(--text3); }
-
-  .hero-desc {
-    font-size: 16px;
-    color: var(--text2);
-    max-width: 480px;
-    line-height: 1.7;
-    margin-bottom: 48px;
-    font-weight: 300;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    padding: 13px 28px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-
-  .btn-primary:hover { background: #d0d0d0; transform: translateY(-1px); }
-
-  .btn-secondary {
-    background: none;
-    color: var(--text2);
-    border: 1px solid var(--border2);
-    padding: 13px 28px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-
-  .btn-secondary:hover { border-color: var(--text3); color: var(--text); }
-
-  .hero-stats {
-    display: flex;
-    gap: 48px;
-    margin-top: 80px;
-    padding-top: 40px;
-    border-top: 1px solid var(--border);
-  }
-
-  .hero-stat-num {
-    font-family: var(--display);
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -1px;
-  }
-
-  .hero-stat-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-
-  /* ─── SECTIONS ─── */
-  section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 80px 40px;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 48px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 20px;
-  }
-
-  .section-title {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-
-  .section-count {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-  }
-
-  /* ─── PINNED POST ─── */
-  .pinned-post {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 32px;
-    margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .pinned-post::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--text);
-  }
-
-  .pinned-post:hover { border-color: var(--border2); }
-
-  .post-pin-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  /* ─── POSTS GRID ─── */
-  .posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1px;
-    background: var(--border);
-  }
-
-  .post-card {
-    background: var(--bg);
-    padding: 28px;
-    cursor: pointer;
-    transition: background 0.15s;
-    position: relative;
-  }
-
-  .post-card:hover { background: var(--bg2); }
-
-  .post-type-badge {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    margin-bottom: 14px;
-    border: 1px solid;
-  }
-
-  .badge-game { color: var(--blue); border-color: rgba(82,146,224,0.3); }
-  .badge-portfolio { color: var(--purple); border-color: rgba(155,82,224,0.3); }
-  .badge-group { color: var(--green); border-color: rgba(82,201,122,0.3); }
-  .badge-update { color: var(--yellow); border-color: rgba(224,185,82,0.3); }
-  .badge-announcement { color: var(--red); border-color: rgba(224,82,82,0.3); }
-  .badge-main { color: var(--text2); border-color: var(--border2); }
-
-  .post-title {
-    font-family: var(--display);
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 8px;
-    line-height: 1.3;
-    letter-spacing: -0.3px;
-  }
-
-  .post-excerpt {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.6;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .post-meta {
-    display: flex;
-    gap: 16px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .post-meta-item {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.08em;
-  }
-
-  /* ─── SIDE POSTS ─── */
-  .main-layout {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 40px;
-    align-items: start;
-  }
-
-  .side-posts { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
-
-  .side-post {
-    background: var(--bg);
-    padding: 20px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .side-post:hover { background: var(--bg2); }
-
-  .side-post-title {
-    font-family: var(--display);
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    line-height: 1.3;
-  }
-
-  .side-post-excerpt {
-    font-size: 12px;
-    color: var(--text2);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* ─── FULL POST MODAL ─── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 500;
-    backdrop-filter: blur(8px);
-    overflow-y: auto;
-    padding: 40px 20px;
-  }
-
-  .modal-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
-
-  .modal-box {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    max-width: 760px;
-    width: 100%;
-    padding: 48px;
-    position: relative;
-    margin: auto;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 20px; right: 20px;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text2);
-    width: 36px; height: 36px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono);
-  }
-
-  .modal-close:hover { border-color: var(--text3); color: var(--text); }
-
-  .modal-title {
-    font-family: var(--display);
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 20px;
-    line-height: 1.1;
-  }
-
-  .modal-body {
-    color: var(--text2);
-    line-height: 1.8;
-    font-size: 15px;
-    white-space: pre-wrap;
-  }
-
-  .modal-body a { color: var(--text); }
-
-  /* ─── ADMIN LOGIN OVERLAY ─── */
-  #admin-login-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    z-index: 600;
-    backdrop-filter: blur(20px);
-    justify-content: center;
-    align-items: center;
-  }
-
-  #admin-login-overlay.open { display: flex; }
-
-  .login-box {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    padding: 48px;
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .login-title {
-    font-family: var(--display);
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-
-  .login-sub {
-    font-size: 12px;
-    color: var(--text3);
-    margin-bottom: 32px;
-    font-family: var(--mono);
-  }
-
-  .form-group { margin-bottom: 16px; }
-
-  .form-label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 6px;
-  }
-
-  .form-input {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .form-input:focus { border-color: var(--border2); }
-
-  .form-input::placeholder { color: var(--text3); }
-
-  textarea.form-input {
-    resize: vertical;
-    min-height: 120px;
-    line-height: 1.6;
-  }
-
-  select.form-input {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-  }
-
-  .form-error {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--red);
-    margin-top: 8px;
-    display: none;
-  }
-
-  /* ─── ADMIN PANEL ─── */
-  #admin-panel {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 700;
-    overflow: hidden;
-  }
-
-  #admin-panel.open { display: flex; }
-
-  .admin-sidebar {
-    width: 220px;
-    min-width: 220px;
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
-  }
-
-  .admin-logo {
-    padding: 24px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .admin-logo-text {
-    font-family: var(--display);
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-  }
-
-  .admin-logo-sub {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    margin-top: 2px;
-  }
-
-  .admin-nav { flex: 1; padding: 12px 0; }
-
-  .admin-nav-section {
-    padding: 12px 16px 4px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text3);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-
-  .admin-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 16px;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-size: 13px;
-    color: var(--text2);
-    border-left: 2px solid transparent;
-    user-select: none;
-  }
-
-  .admin-nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .admin-nav-item.active { color: var(--text); border-left-color: var(--text); background: rgba(255,255,255,0.05); }
-
-  .admin-nav-icon { width: 16px; font-size: 13px; text-align: center; }
-
-  .admin-footer {
-    padding: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .admin-logout-btn {
-    width: 100%;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text3);
-    padding: 8px;
-    font-family: var(--mono);
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .admin-logout-btn:hover { border-color: var(--red); color: var(--red); }
-
-  .admin-main {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .admin-topbar {
-    height: 56px;
-    min-height: 56px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    padding: 0 32px;
-    justify-content: space-between;
-  }
-
-  .admin-page-title {
-    font-family: var(--display);
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-  }
-
-  .admin-content {
-    flex: 1;
-    padding: 32px;
-    overflow-y: auto;
-  }
-
-  /* Admin Tabs */
-  .admin-tab { display: none; }
-  .admin-tab.active { display: block; }
-
-  /* Dashboard cards */
-  .dash-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    margin-bottom: 32px;
-  }
-
-  .dash-card {
-    background: var(--bg2);
-    padding: 24px;
-  }
-
-  .dash-card-num {
-    font-family: var(--display);
-    font-size: 36px;
-    font-weight: 800;
-    letter-spacing: -1.5px;
-    margin-bottom: 4px;
-  }
-
-  .dash-card-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  /* Admin table */
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  .admin-table th {
-    text-align: left;
-    padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .admin-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-    color: var(--text2);
-  }
-
-  .admin-table tr:hover td { background: var(--bg2); }
-
-  .admin-table td:first-child { color: var(--text); font-weight: 500; }
-
-  .table-action-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text3);
-    padding: 4px 10px;
-    font-family: var(--mono);
-    font-size: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-    margin-right: 4px;
-    letter-spacing: 0.05em;
-  }
-
-  .table-action-btn:hover { border-color: var(--text3); color: var(--text); }
-  .table-action-btn.danger:hover { border-color: var(--red); color: var(--red); }
-  .table-action-btn.pin:hover { border-color: var(--yellow); color: var(--yellow); }
-
-  /* Create post form */
-  .create-form {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 32px;
-    max-width: 800px;
-  }
-
-  .create-form-title {
-    font-family: var(--display);
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-    letter-spacing: -0.3px;
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-  }
-
-  .btn-admin-primary {
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    padding: 10px 24px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.15s;
-  }
-
-  .btn-admin-primary:hover { background: #d0d0d0; }
-
-  .btn-admin-secondary {
-    background: none;
-    color: var(--text2);
-    border: 1px solid var(--border);
-    padding: 10px 24px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-admin-secondary:hover { border-color: var(--text3); color: var(--text); }
-
-  .btn-danger {
-    background: none;
-    color: var(--red);
-    border: 1px solid rgba(224,82,82,0.3);
-    padding: 10px 24px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-danger:hover { border-color: var(--red); background: rgba(224,82,82,0.08); }
-
-  /* Settings form */
-  .settings-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    max-width: 900px;
-  }
-
-  .settings-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 28px;
-  }
-
-  .settings-card-title {
-    font-family: var(--display);
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .settings-card.full { grid-column: 1 / -1; }
-
-  /* Alert */
-  .alert {
-    padding: 12px 16px;
-    font-family: var(--mono);
-    font-size: 12px;
-    margin-bottom: 20px;
-    display: none;
-    border: 1px solid;
-  }
-
-  .alert.success { color: var(--green); border-color: rgba(82,201,122,0.3); background: rgba(82,201,122,0.05); }
-  .alert.error { color: var(--red); border-color: rgba(224,82,82,0.3); background: rgba(224,82,82,0.05); }
-  .alert.show { display: block; }
-
-  /* Token display */
-  .token-display {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text2);
-    word-break: break-all;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 6px;
-  }
-
-  .token-copy {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text3);
-    padding: 4px 10px;
-    font-family: var(--mono);
-    font-size: 10px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-  }
-
-  .token-copy:hover { color: var(--text); border-color: var(--text3); }
-
-  /* Status badge */
-  .status-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-right: 6px;
-  }
-
-  .status-dot.pinned { background: var(--yellow); }
-  .status-dot.active { background: var(--green); }
-  .status-dot.draft { background: var(--text3); }
-
-  /* Toast */
-  #toast {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    padding: 14px 20px;
-    font-family: var(--mono);
-    font-size: 12px;
-    z-index: 9000;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s;
-    pointer-events: none;
-    max-width: 320px;
-  }
-
-  #toast.show { transform: translateY(0); opacity: 1; }
-
-  /* Footer */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    nav { padding: 0 20px; }
-    .hero-content { padding: 0 20px; }
-    section { padding: 60px 20px; }
-    .main-layout { grid-template-columns: 1fr; }
-    .admin-sidebar { display: none; }
-    .form-row { grid-template-columns: 1fr; }
-    .settings-grid { grid-template-columns: 1fr; }
-    .hero-stats { gap: 24px; flex-wrap: wrap; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero-content > * {
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .hero-tag { animation-delay: 0.05s; }
-  .hero-title { animation-delay: 0.1s; }
-  .hero-desc { animation-delay: 0.15s; }
-  .hero-actions { animation-delay: 0.2s; }
-  .hero-stats { animation-delay: 0.25s; }
-
-  /* Checkbox group for color/image */
-  .color-picker-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-top: 6px;
-  }
-
-  .color-swatch {
-    width: 28px; height: 28px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: border-color 0.15s;
-    flex-shrink: 0;
-  }
-
-  .color-swatch.selected { border-color: var(--text); }
-
-  /* Image in post */
-  .post-image {
-    width: 100%;
-    max-height: 280px;
-    object-fit: cover;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .modal-image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    margin-bottom: 28px;
-    display: block;
-  }
-
-  /* Game post card special */
-  .post-card.game-style {
-    border-top: 2px solid var(--blue);
-  }
-
-  .post-card.portfolio-style {
-    border-top: 2px solid var(--purple);
-  }
-
-  /* Divider */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 40px 0;
-  }
-
-  .empty-state {
-    padding: 40px 0;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text3);
-    letter-spacing: 0.08em;
-  }
-
-  .badge-pinned {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    color: var(--yellow);
-    border: 1px solid rgba(224,185,82,0.3);
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-
-  /* ── GitHub token save indicator ── */
-  .token-saved-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--green);
-    letter-spacing: 0.08em;
-    padding: 3px 10px;
-    border: 1px solid rgba(82,201,122,0.3);
-    background: rgba(82,201,122,0.05);
-  }
-
-  .token-saved-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: pulse 1.8s infinite; }
-
-  @keyframes pulse {
-    0%,100% { opacity:1; }
-    50% { opacity:0.3; }
-  }
-
-  /* Rich text toolbar */
-  .rich-toolbar {
-    display: flex;
-    gap: 2px;
-    padding: 6px 8px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    flex-wrap: wrap;
-  }
-
-  .rich-btn {
-    background: none;
-    border: 1px solid transparent;
-    color: var(--text2);
-    padding: 4px 8px;
-    font-family: var(--mono);
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .rich-btn:hover { border-color: var(--border); color: var(--text); }
-
-  /* Link field toggle */
-  .link-type-options {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  .link-type-opt {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text3);
-    padding: 4px 12px;
-    font-family: var(--mono);
-    font-size: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.08em;
-  }
-
-  .link-type-opt.active { border-color: var(--text3); color: var(--text); }
-
-  .toggle-field { display: none; }
-  .toggle-field.show { display: block; }
-
-  /* Group info card */
-  .group-info-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 32px;
-    display: flex;
-    gap: 28px;
-    align-items: center;
-    margin-bottom: 1px;
-  }
-
-  .group-avatar {
-    width: 72px; height: 72px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-
-  .group-name {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    margin-bottom: 4px;
-  }
-
-  .group-tag {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.08em;
-  }
-
-  .group-join-btn {
-    margin-left: auto;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    padding: 11px 24px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    transition: background 0.2s;
-    text-decoration: none;
-  }
-
-  .group-join-btn:hover { background: #ccc; }
-
-  /* Checkbox */
-  .form-check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .form-check input[type=checkbox] { accent-color: var(--text); width: 14px; height: 14px; cursor: pointer; }
-  .form-check label { font-size: 12px; color: var(--text2); cursor: pointer; }
+/* ════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════ */
+:root {
+  --bg:#080808; --bg2:#0f0f0f; --bg3:#141414; --bg4:#1c1c1c;
+  --border:#1e1e1e; --border2:#2a2a2a;
+  --text:#f0f0f0; --text2:#888; --text3:#444;
+  --red:#e05252; --green:#52c97a; --blue:#5292e0; --yellow:#e0b952; --purple:#9b52e0;
+  --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif; --display:'Syne',sans-serif;
+  --nav-h:60px; --sidebar:220px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:#2a2a2a;}
+img{display:block;max-width:100%;}
+a{color:inherit;}
+button{font-family:inherit;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:.5;}
+
+/* ══ NAV ══ */
+#public-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(8,8,8,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 clamp(16px,4vw,40px);z-index:200;gap:12px;}
+.nav-logo{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:-.5px;cursor:pointer;flex-shrink:0;white-space:nowrap;}
+.nav-logo span{color:var(--text3);}
+.nav-links{display:flex;gap:26px;list-style:none;align-items:center;margin-left:auto;}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:12px;font-family:var(--mono);letter-spacing:.04em;transition:color .15s;cursor:pointer;white-space:nowrap;}
+.nav-links a:hover{color:var(--text);}
+.nav-admin-btn{background:none;border:1px solid var(--border2);color:var(--text2);padding:6px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;cursor:pointer;transition:all .2s;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
+.nav-admin-btn:hover{border-color:var(--text3);color:var(--text);}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.nav-hamburger span{display:block;width:22px;height:1.5px;background:var(--text2);transition:all .25s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.nav-mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:rgba(8,8,8,.99);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);z-index:199;flex-direction:column;padding:8px 0 16px;}
+.nav-mobile-menu.open{display:flex;}
+.nav-mobile-menu a{display:block;padding:13px 20px;color:var(--text2);text-decoration:none;font-family:var(--mono);font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);transition:color .15s;}
+.nav-mobile-menu a:last-child{border-bottom:none;}
+.nav-mobile-menu a:hover{color:var(--text);}
+.nav-mobile-sep{height:1px;background:var(--border2);margin:6px 0;}
+
+/* ══ HERO ══ */
+.hero{padding-top:var(--nav-h);min-height:100svh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.22;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 20%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 20%,transparent 100%);}
+.hero-content{max-width:1100px;margin:0 auto;padding:clamp(40px,7vw,90px) clamp(16px,4vw,40px);position:relative;z-index:2;}
+.hero-tag{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.hero-tag::before{content:'';width:20px;height:1px;background:var(--text3);}
+.hero-title{font-family:var(--display);font-size:clamp(44px,9vw,96px);font-weight:800;line-height:.92;letter-spacing:clamp(-2px,-0.04em,-3px);margin-bottom:28px;}
+.hero-title .dim{color:var(--text3);}
+.hero-desc{font-size:clamp(14px,2vw,16px);color:var(--text2);max-width:500px;line-height:1.75;margin-bottom:40px;font-weight:300;}
+.hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.btn-primary{background:var(--text);color:var(--bg);border:none;padding:12px 26px;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase;text-decoration:none;display:inline-block;-webkit-tap-highlight-color:transparent;}
+.btn-primary:hover{background:#d8d8d8;transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0);}
+.btn-secondary{background:none;color:var(--text2);border:1px solid var(--border2);padding:12px 26px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;cursor:pointer;transition:all .2s;text-transform:uppercase;text-decoration:none;display:inline-block;-webkit-tap-highlight-color:transparent;}
+.btn-secondary:hover{border-color:var(--text3);color:var(--text);}
+.hero-stats{display:flex;gap:clamp(24px,5vw,48px);margin-top:clamp(40px,7vw,80px);padding-top:clamp(24px,4vw,40px);border-top:1px solid var(--border);flex-wrap:wrap;}
+.hero-stat-num{font-family:var(--display);font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-1px;}
+.hero-stat-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+
+/* ══ SECTIONS ══ */
+section{max-width:1100px;margin:0 auto;padding:clamp(40px,6vw,80px) clamp(16px,4vw,40px);}
+.section-header{display:flex;align-items:baseline;gap:14px;margin-bottom:clamp(24px,4vw,48px);border-bottom:1px solid var(--border);padding-bottom:16px;}
+.section-title{font-family:var(--display);font-size:clamp(16px,2.5vw,22px);font-weight:700;letter-spacing:-.4px;}
+.section-count{font-family:var(--mono);font-size:11px;color:var(--text3);}
+
+/* ══ GROUP CARD ══ */
+.group-info-card{background:var(--bg2);border:1px solid var(--border);padding:clamp(20px,4vw,32px);display:flex;gap:clamp(14px,3vw,28px);align-items:center;flex-wrap:wrap;}
+.group-avatar{width:clamp(52px,8vw,72px);height:clamp(52px,8vw,72px);background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:clamp(16px,3vw,22px);font-weight:800;flex-shrink:0;}
+.group-name{font-family:var(--display);font-size:clamp(16px,3vw,22px);font-weight:800;letter-spacing:-.4px;margin-bottom:4px;}
+.group-tag{font-family:var(--mono);font-size:11px;color:var(--text3);}
+.group-join-btn{margin-left:auto;background:var(--text);color:var(--bg);border:none;padding:10px 22px;font-family:var(--display);font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;transition:background .2s;text-decoration:none;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.group-join-btn:hover{background:#ccc;}
+
+/* ══ PINNED ══ */
+.pinned-post{background:var(--bg2);border:1px solid var(--border);padding:clamp(20px,4vw,32px);position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.pinned-post::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--text);}
+.pinned-post:hover{border-color:var(--border2);}
+.post-pin-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;}
+
+/* ══ POST GRID ══ */
+.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:1px;background:var(--border);}
+.post-card{background:var(--bg);padding:clamp(16px,3vw,28px);cursor:pointer;transition:background .15s;position:relative;-webkit-tap-highlight-color:transparent;}
+.post-card:hover{background:var(--bg2);}
+.post-card.game-style{border-top:2px solid var(--blue);}
+.post-card.portfolio-style{border-top:2px solid var(--purple);}
+.post-type-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;margin-bottom:12px;border:1px solid;}
+.badge-game{color:var(--blue);border-color:rgba(82,146,224,.25);}
+.badge-portfolio{color:var(--purple);border-color:rgba(155,82,224,.25);}
+.badge-group{color:var(--green);border-color:rgba(82,201,122,.25);}
+.badge-update{color:var(--yellow);border-color:rgba(224,185,82,.25);}
+.badge-announcement{color:var(--red);border-color:rgba(224,82,82,.25);}
+.badge-main,.badge-side{color:var(--text2);border-color:var(--border2);}
+.post-title{font-family:var(--display);font-size:clamp(14px,2.5vw,17px);font-weight:700;letter-spacing:-.3px;margin-bottom:8px;line-height:1.3;color:var(--text);}
+.post-excerpt{font-size:13px;color:var(--text2);line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.post-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+.post-meta-item{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.06em;}
+
+/* Post link chips */
+.post-links-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;}
+.post-link-chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--text2);border:1px solid var(--border2);padding:3px 9px;text-decoration:none;transition:all .15s;letter-spacing:.04em;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.post-link-chip:hover{border-color:var(--text3);color:var(--text);}
+
+/* ══ SIDE POSTS ══ */
+.main-layout{display:grid;grid-template-columns:1fr 300px;gap:clamp(20px,4vw,40px);align-items:start;}
+.side-panel-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;}
+.side-posts{display:flex;flex-direction:column;gap:1px;background:var(--border);}
+.side-post{background:var(--bg);padding:18px 20px;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent;}
+.side-post:hover{background:var(--bg2);}
+.side-post-title{font-family:var(--display);font-size:14px;font-weight:600;margin-bottom:6px;line-height:1.3;}
+.side-post-excerpt{font-size:12px;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* ══ POST MODAL ══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:clamp(10px,4vw,40px) clamp(10px,3vw,20px);}
+.modal-overlay.open{display:flex;justify-content:center;align-items:flex-start;}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);max-width:760px;width:100%;padding:clamp(20px,5vw,48px);position:relative;margin:auto;}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);color:var(--text2);width:32px;height:32px;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:var(--mono);-webkit-tap-highlight-color:transparent;}
+.modal-close:hover{border-color:var(--text3);color:var(--text);}
+.modal-title{font-family:var(--display);font-size:clamp(20px,5vw,32px);font-weight:800;letter-spacing:-1px;margin-bottom:16px;line-height:1.1;}
+.modal-image{width:100%;max-height:360px;object-fit:cover;margin-bottom:22px;}
+.modal-body{color:var(--text2);line-height:1.8;font-size:15px;white-space:pre-wrap;}
+.modal-links-section{margin-top:26px;padding-top:20px;border-top:1px solid var(--border);}
+.modal-links-title{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;}
+.modal-links-grid{display:flex;gap:10px;flex-wrap:wrap;}
+.modal-link-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .2s;border:1px solid var(--border2);color:var(--text2);background:none;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.modal-link-btn:hover{border-color:var(--text3);color:var(--text);}
+.modal-link-btn.primary-link{background:var(--text);color:var(--bg);border-color:var(--text);}
+.modal-link-btn.primary-link:hover{background:#d0d0d0;border-color:#d0d0d0;}
+
+/* ══ ADMIN LOGIN ══ */
+#admin-login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:600;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);justify-content:center;align-items:center;padding:16px;}
+#admin-login-overlay.open{display:flex;}
+.login-box{background:var(--bg2);border:1px solid var(--border2);padding:clamp(24px,6vw,48px);width:100%;max-width:420px;}
+.login-title{font-family:var(--display);font-size:20px;font-weight:800;margin-bottom:6px;letter-spacing:-.4px;}
+.login-sub{font-size:12px;color:var(--text3);margin-bottom:28px;font-family:var(--mono);}
+
+/* ══ FORMS ══ */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 13px;font-family:var(--mono);font-size:16px;outline:none;transition:border-color .2s;-webkit-appearance:none;border-radius:0;}
+.form-input:focus{border-color:var(--border2);}
+.form-input::placeholder{color:var(--text3);}
+textarea.form-input{resize:vertical;min-height:110px;line-height:1.6;font-size:14px;}
+select.form-input{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;}
+.form-error{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:7px;display:none;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-check{display:flex;align-items:center;gap:9px;margin-top:8px;}
+.form-check input[type=checkbox]{accent-color:var(--text);width:14px;height:14px;cursor:pointer;flex-shrink:0;}
+.form-check label{font-size:13px;color:var(--text2);cursor:pointer;}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;padding-top:22px;border-top:1px solid var(--border);}
+
+/* ══ ADMIN BTNS ══ */
+.btn-admin-primary{background:var(--text);color:var(--bg);border:none;padding:10px 22px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;font-weight:500;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.btn-admin-primary:hover{background:#d0d0d0;}
+.btn-admin-secondary{background:none;color:var(--text2);border:1px solid var(--border);padding:10px 22px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.btn-admin-secondary:hover{border-color:var(--text3);color:var(--text);}
+.btn-danger{background:none;color:var(--red);border:1px solid rgba(224,82,82,.3);padding:10px 22px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-danger:hover{border-color:var(--red);background:rgba(224,82,82,.07);}
+
+/* ══ ADMIN PANEL ══ */
+#admin-panel{display:none;position:fixed;inset:0;background:var(--bg);z-index:700;overflow:hidden;}
+#admin-panel.open{display:flex;}
+.admin-sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;transition:transform .28s ease;flex-shrink:0;}
+.admin-logo{padding:20px 18px;border-bottom:1px solid var(--border);}
+.admin-logo-text{font-family:var(--display);font-size:14px;font-weight:800;letter-spacing:-.3px;}
+.admin-logo-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.12em;margin-top:2px;}
+.admin-nav{flex:1;padding:10px 0;}
+.admin-nav-section{padding:12px 16px 4px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.18em;text-transform:uppercase;}
+.admin-nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.admin-nav-item:hover{color:var(--text);background:rgba(255,255,255,.03);}
+.admin-nav-item.active{color:var(--text);border-left-color:var(--text);background:rgba(255,255,255,.04);}
+.admin-nav-icon{width:15px;font-size:12px;text-align:center;flex-shrink:0;}
+.admin-footer{padding:14px 16px;border-top:1px solid var(--border);}
+.admin-logout-btn{width:100%;background:none;border:1px solid var(--border);color:var(--text3);padding:8px;font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .2s;letter-spacing:.1em;text-transform:uppercase;}
+.admin-logout-btn:hover{border-color:var(--red);color:var(--red);}
+.admin-main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0;}
+.admin-topbar{height:54px;min-height:54px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 clamp(14px,3vw,28px);gap:14px;flex-shrink:0;}
+.admin-hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:5px;-webkit-tap-highlight-color:transparent;}
+.admin-hamburger span{display:block;width:18px;height:1.5px;background:var(--text2);}
+.admin-page-title{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.3px;flex:1;}
+.admin-content{flex:1;overflow-y:auto;padding:clamp(14px,3vw,28px);-webkit-overflow-scrolling:touch;}
+.admin-tab{display:none;}
+.admin-tab.active{display:block;}
+.admin-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:699;}
+.admin-drawer-overlay.open{display:block;}
+
+/* ══ DASHBOARD ══ */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:var(--border);margin-bottom:28px;}
+.dash-card{background:var(--bg2);padding:22px 20px;}
+.dash-card-num{font-family:var(--display);font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-1.5px;margin-bottom:4px;}
+.dash-card-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;}
+
+/* ══ TABLE ══ */
+.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px;}
+.admin-table th{text-align:left;padding:10px 13px;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+.admin-table td{padding:11px 13px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);}
+.admin-table tr:hover td{background:var(--bg2);}
+.admin-table td:first-child{color:var(--text);}
+.table-action-btn{background:none;border:1px solid var(--border);color:var(--text3);padding:4px 9px;font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .15s;margin-right:3px;letter-spacing:.04em;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.table-action-btn:hover{border-color:var(--text3);color:var(--text);}
+.table-action-btn.danger:hover{border-color:var(--red);color:var(--red);}
+.table-action-btn.pin:hover{border-color:var(--yellow);color:var(--yellow);}
+
+/* ══ CREATE FORM ══ */
+.create-form{background:var(--bg2);border:1px solid var(--border);padding:clamp(18px,4vw,32px);max-width:820px;}
+.create-form-title{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border);letter-spacing:-.3px;}
+.rich-toolbar{display:flex;gap:2px;flex-wrap:wrap;padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-bottom:none;}
+.rich-btn{background:none;border:1px solid transparent;color:var(--text2);padding:4px 8px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.rich-btn:hover{border-color:var(--border);color:var(--text);}
+
+/* ══ LINKS EDITOR ══ */
+.links-editor{border:1px solid var(--border);background:var(--bg3);}
+.links-editor-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);}
+.links-editor-title{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;}
+.links-add-btn{background:none;border:1px solid var(--border);color:var(--text3);padding:4px 12px;font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .15s;letter-spacing:.06em;-webkit-tap-highlight-color:transparent;}
+.links-add-btn:hover{border-color:var(--text3);color:var(--text);}
+.link-row{display:grid;grid-template-columns:120px 1fr 1fr auto;border-bottom:1px solid var(--border);align-items:stretch;}
+.link-row:last-child{border-bottom:none;}
+.link-row>*{border-right:1px solid var(--border);}
+.link-row>*:last-child{border-right:none;}
+.link-row-input{background:none;border:none;outline:none;color:var(--text);font-family:var(--mono);font-size:12px;padding:9px 11px;width:100%;-webkit-appearance:none;font-size:16px;}
+.link-row-input::placeholder{color:var(--text3);}
+.link-row-input:focus{background:rgba(255,255,255,.02);}
+.link-type-sel{background:none;border:none;outline:none;color:var(--text2);font-family:var(--mono);font-size:11px;padding:9px 10px;cursor:pointer;appearance:none;-webkit-appearance:none;width:100%;}
+.link-type-sel option{background:var(--bg2);}
+.link-row-remove{background:none;border:none;color:var(--text3);padding:9px 13px;cursor:pointer;font-family:var(--mono);font-size:13px;transition:color .15s;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.link-row-remove:hover{color:var(--red);}
+
+/* ══ NAV LINKS EDITOR ══ */
+.nav-link-row{display:grid;grid-template-columns:1fr 1fr auto;gap:0;border:1px solid var(--border);margin-bottom:4px;background:var(--bg3);}
+.nav-link-row>*{border-right:1px solid var(--border);}
+.nav-link-row>*:last-child{border-right:none;}
+
+/* ══ SETTINGS ══ */
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:20px;max-width:900px;}
+.settings-card{background:var(--bg2);border:1px solid var(--border);padding:clamp(18px,3vw,28px);}
+.settings-card.full{grid-column:1/-1;}
+.settings-card-title{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.filter-bar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+
+/* ══ MISC ══ */
+.alert{padding:11px 15px;font-family:var(--mono);font-size:11px;margin-bottom:18px;border:1px solid;display:none;letter-spacing:.03em;}
+.alert.success{color:var(--green);border-color:rgba(82,201,122,.25);background:rgba(82,201,122,.05);}
+.alert.error{color:var(--red);border-color:rgba(224,82,82,.25);background:rgba(224,82,82,.05);}
+.alert.show{display:block;}
+.token-saved-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--green);padding:3px 10px;border:1px solid rgba(82,201,122,.25);background:rgba(82,201,122,.05);}
+.token-saved-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.badge-pinned{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;color:var(--yellow);border:1px solid rgba(224,185,82,.3);margin-left:6px;vertical-align:middle;}
+.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;}
+.status-dot.pinned{background:var(--yellow);}
+.status-dot.active{background:var(--green);}
+.empty-state{padding:32px 0;font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.08em;}
+#toast{position:fixed;bottom:clamp(16px,3vw,28px);right:clamp(16px,3vw,28px);background:var(--bg2);border:1px solid var(--border2);padding:12px 18px;font-family:var(--mono);font-size:12px;z-index:9999;transform:translateY(12px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px;}
+#toast.show{transform:translateY(0);opacity:1;}
+footer{border-top:1px solid var(--border);padding:clamp(24px,4vw,40px) clamp(16px,4vw,40px);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:11px;color:var(--text3);max-width:1100px;margin:0 auto;}
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero-content>*{animation:fadeUp .55s ease both;}
+.hero-tag{animation-delay:.05s;}
+.hero-title{animation-delay:.1s;}
+.hero-desc{animation-delay:.15s;}
+.hero-actions{animation-delay:.2s;}
+.hero-stats{animation-delay:.25s;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:900px){
+  .main-layout{grid-template-columns:1fr;}
+}
+@media(max-width:680px){
+  .nav-links{display:none;}
+  .nav-admin-btn{display:none;}
+  .nav-hamburger{display:flex;}
+  .admin-sidebar{position:fixed;top:0;left:0;bottom:0;z-index:800;transform:translateX(-100%);box-shadow:4px 0 24px rgba(0,0,0,.6);}
+  .admin-sidebar.open{transform:translateX(0);}
+  .admin-hamburger{display:flex;}
+}
+@media(max-width:480px){
+  .form-row{grid-template-columns:1fr;}
+  .link-row{grid-template-columns:1fr 1fr;}
+  .link-row .link-type-sel{grid-column:1/-1;border-right:none;border-bottom:1px solid var(--border);}
+  .dash-grid{grid-template-columns:1fr 1fr;}
+  .modal-box{padding:18px 14px;}
+}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     PUBLIC WEBSITE VIEW
-══════════════════════════════════════════ -->
-<div id="public-view" class="view active">
+<!-- NAV -->
+<nav id="public-nav">
+  <span class="nav-logo" onclick="scrollToTop()">EEK <span>Developers</span></span>
+  <ul class="nav-links" id="desktop-nav-links">
+    <li><a onclick="scrollToSection('posts-section')">Posts</a></li>
+    <li><a onclick="scrollToSection('games-section')">Games</a></li>
+    <li><a onclick="scrollToSection('portfolio-section')">Portfolio</a></li>
+    <li><a onclick="scrollToSection('group-section')">Group</a></li>
+  </ul>
+  <button class="nav-admin-btn" onclick="openAdminLogin()">Admin</button>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-  <!-- NAV -->
-  <nav>
-    <span class="nav-logo" onclick="scrollToTop()">EEK <span>Developers</span></span>
-    <ul class="nav-links">
-      <li><a onclick="scrollToSection('posts-section')">Posts</a></li>
-      <li><a onclick="scrollToSection('games-section')">Games</a></li>
-      <li><a onclick="scrollToSection('portfolio-section')">Portfolio</a></li>
-      <li><a onclick="scrollToSection('group-section')">Group</a></li>
-    </ul>
-    <button class="nav-admin-btn" onclick="openAdminLogin()">Admin</button>
-  </nav>
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a onclick="mobileNav('posts-section')">Posts</a>
+  <a onclick="mobileNav('games-section')">Games</a>
+  <a onclick="mobileNav('portfolio-section')">Portfolio</a>
+  <a onclick="mobileNav('group-section')">Group</a>
+  <div id="mobile-extra-links"></div>
+  <div class="nav-mobile-sep"></div>
+  <a onclick="closeMobileMenu();openAdminLogin();">Admin Panel</a>
+</div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-content">
-      <div class="hero-tag">Roblox Development Group</div>
-      <h1 class="hero-title" id="hero-title-text">EEK<br><span class="dim">Developers</span></h1>
-      <p class="hero-desc" id="hero-desc-text">A dedicated Roblox development group building high-quality games, systems, and experiences. Professional. Passionate. Community-driven.</p>
-      <div class="hero-actions">
-        <a class="btn-primary" id="hero-cta-btn" href="#" target="_blank" rel="noopener">Join Our Group</a>
-        <span class="btn-secondary" onclick="scrollToSection('posts-section')">View Posts</span>
-      </div>
-      <div class="hero-stats">
-        <div>
-          <div class="hero-stat-num" id="stat-members">—</div>
-          <div class="hero-stat-label">Group Members</div>
-        </div>
-        <div>
-          <div class="hero-stat-num" id="stat-games">—</div>
-          <div class="hero-stat-label">Games Released</div>
-        </div>
-        <div>
-          <div class="hero-stat-num" id="stat-projects">—</div>
-          <div class="hero-stat-label">Active Projects</div>
-        </div>
-      </div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Roblox Development Group</div>
+    <h1 class="hero-title" id="hero-title-text">EEK<br><span class="dim">Developers</span></h1>
+    <p class="hero-desc" id="hero-desc-text">A dedicated Roblox development group building high-quality games, systems, and experiences. Professional. Passionate. Community-driven.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" id="hero-cta-btn" href="#" target="_blank" rel="noopener">Join Our Group</a>
+      <span class="btn-secondary" onclick="scrollToSection('posts-section')">View Posts</span>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num" id="stat-members">—</div><div class="hero-stat-label">Members</div></div>
+      <div><div class="hero-stat-num" id="stat-games">—</div><div class="hero-stat-label">Games</div></div>
+      <div><div class="hero-stat-num" id="stat-projects">—</div><div class="hero-stat-label">Projects</div></div>
     </div>
   </div>
+</div>
 
-  <!-- GROUP INFO CARD -->
-  <section id="group-section" style="padding-top:0">
-    <div class="group-info-card">
-      <div class="group-avatar" id="group-avatar-display">EEK</div>
-      <div>
-        <div class="group-name" id="group-name-display">EEK Developers</div>
-        <div class="group-tag" id="group-tag-display">Roblox Development Group · Building quality experiences since 2024</div>
-      </div>
-      <a class="group-join-btn" id="group-join-link" href="#" target="_blank" rel="noopener">Join on Roblox</a>
+<!-- GROUP CARD -->
+<section id="group-section" style="padding-top:0">
+  <div class="group-info-card">
+    <div class="group-avatar" id="group-avatar-display">EEK</div>
+    <div>
+      <div class="group-name" id="group-name-display">EEK Developers</div>
+      <div class="group-tag" id="group-tag-display">Roblox Development Group</div>
     </div>
-  </section>
+    <a class="group-join-btn" id="group-join-link" href="#" target="_blank" rel="noopener">Join on Roblox</a>
+  </div>
+</section>
 
-  <!-- PINNED POST -->
-  <section style="padding-top:0; padding-bottom:0;" id="pinned-section">
-    <div id="pinned-container"></div>
-  </section>
+<!-- PINNED -->
+<section style="padding-top:0;padding-bottom:0">
+  <div id="pinned-container"></div>
+</section>
 
-  <!-- MAIN POSTS + SIDE POSTS -->
-  <section id="posts-section">
-    <div class="section-header">
-      <h2 class="section-title">Latest Posts</h2>
-      <span class="section-count" id="posts-count-label">0 posts</span>
+<!-- MAIN + SIDE -->
+<section id="posts-section">
+  <div class="section-header">
+    <h2 class="section-title">Latest Posts</h2>
+    <span class="section-count" id="posts-count-label">0 posts</span>
+  </div>
+  <div class="main-layout">
+    <div>
+      <div id="main-posts-grid" class="posts-grid"></div>
+      <div id="main-posts-empty" class="empty-state">No posts yet.</div>
     </div>
-    <div class="main-layout">
-      <div>
-        <div id="main-posts-grid" class="posts-grid"></div>
-        <div id="main-posts-empty" class="empty-state">No posts yet.</div>
-      </div>
-      <div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;">Side Posts</div>
-        <div id="side-posts-list" class="side-posts"></div>
-        <div id="side-posts-empty" class="empty-state" style="font-size:11px;">No side posts.</div>
-      </div>
+    <div>
+      <div class="side-panel-label">Side Posts</div>
+      <div id="side-posts-list" class="side-posts"></div>
+      <div id="side-posts-empty" class="empty-state" style="font-size:11px">No side posts.</div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- GAMES SECTION -->
-  <section id="games-section" style="border-top:1px solid var(--border)">
-    <div class="section-header">
-      <h2 class="section-title">Games</h2>
-      <span class="section-count" id="games-count-label">0 games</span>
-    </div>
-    <div id="games-grid" class="posts-grid"></div>
-    <div id="games-empty" class="empty-state">No game posts yet.</div>
-  </section>
+<!-- GAMES -->
+<section id="games-section" style="border-top:1px solid var(--border)">
+  <div class="section-header">
+    <h2 class="section-title">Games</h2>
+    <span class="section-count" id="games-count-label">0 games</span>
+  </div>
+  <div id="games-grid" class="posts-grid"></div>
+  <div id="games-empty" class="empty-state">No game posts yet.</div>
+</section>
 
-  <!-- PORTFOLIO SECTION -->
-  <section id="portfolio-section" style="border-top:1px solid var(--border)">
-    <div class="section-header">
-      <h2 class="section-title">Portfolio</h2>
-      <span class="section-count" id="portfolio-count-label">0 items</span>
-    </div>
-    <div id="portfolio-grid" class="posts-grid"></div>
-    <div id="portfolio-empty" class="empty-state">No portfolio posts yet.</div>
-  </section>
+<!-- PORTFOLIO -->
+<section id="portfolio-section" style="border-top:1px solid var(--border)">
+  <div class="section-header">
+    <h2 class="section-title">Portfolio</h2>
+    <span class="section-count" id="portfolio-count-label">0 items</span>
+  </div>
+  <div id="portfolio-grid" class="posts-grid"></div>
+  <div id="portfolio-empty" class="empty-state">No portfolio posts yet.</div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <span>EEK Developers &copy; <span id="footer-year"></span></span>
-    <span id="footer-text">Professional Roblox Development Group</span>
-  </footer>
+<footer>
+  <span>EEK Developers &copy; <span id="footer-year"></span></span>
+  <span id="footer-text">Professional Roblox Development Group</span>
+</footer>
 
-</div><!-- /public-view -->
-
-<!-- ══════════════════════════════════════════
-     POST MODAL
-══════════════════════════════════════════ -->
+<!-- POST MODAL -->
 <div class="modal-overlay" id="post-modal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">&#x2715;</button>
@@ -1327,14 +414,17 @@
     <h2 class="modal-title" id="modal-title"></h2>
     <img class="modal-image" id="modal-image" src="" alt="" style="display:none">
     <div class="modal-body" id="modal-body"></div>
-    <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap" id="modal-links"></div>
-    <div class="post-meta" id="modal-meta"></div>
+    <div id="modal-links-section" style="display:none">
+      <div class="modal-links-section">
+        <div class="modal-links-title">Links &amp; Resources</div>
+        <div class="modal-links-grid" id="modal-links-grid"></div>
+      </div>
+    </div>
+    <div class="post-meta" id="modal-meta" style="margin-top:20px"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     ADMIN LOGIN
-══════════════════════════════════════════ -->
+<!-- ADMIN LOGIN -->
 <div id="admin-login-overlay">
   <div class="login-box">
     <div class="login-title">Admin Access</div>
@@ -1344,105 +434,73 @@
       <input type="password" class="form-input" id="login-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
       <div class="form-error" id="login-error">Incorrect password.</div>
     </div>
-    <div class="form-actions" style="margin-top:0;padding-top:0;border:none;">
-      <button class="btn-admin-primary" onclick="doLogin()" style="margin-top:16px">Access Panel</button>
-      <button class="btn-admin-secondary" onclick="closeAdminLogin()" style="margin-top:16px">Cancel</button>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn-admin-primary" onclick="doLogin()">Access Panel</button>
+      <button class="btn-admin-secondary" onclick="closeAdminLogin()">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     ADMIN PANEL
-══════════════════════════════════════════ -->
+<!-- ADMIN PANEL -->
 <div id="admin-panel">
+  <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="closeAdminDrawer()"></div>
 
-  <!-- SIDEBAR -->
-  <div class="admin-sidebar">
+  <div class="admin-sidebar" id="admin-sidebar">
     <div class="admin-logo">
       <div class="admin-logo-text">EEK Admin</div>
-      <div class="admin-logo-sub">Control Panel v1.0</div>
+      <div class="admin-logo-sub">Control Panel v2.0</div>
     </div>
     <nav class="admin-nav">
       <div class="admin-nav-section">Overview</div>
-      <div class="admin-nav-item active" onclick="switchTab('dashboard')">
-        <span class="admin-nav-icon">&#9632;</span> Dashboard
-      </div>
-
+      <div class="admin-nav-item active" onclick="switchTab('dashboard')"><span class="admin-nav-icon">&#9632;</span> Dashboard</div>
       <div class="admin-nav-section">Posts</div>
-      <div class="admin-nav-item" onclick="switchTab('create-post')">
-        <span class="admin-nav-icon">+</span> Create Post
-      </div>
-      <div class="admin-nav-item" onclick="switchTab('manage-posts')">
-        <span class="admin-nav-icon">&#9776;</span> Manage Posts
-      </div>
-      <div class="admin-nav-item" onclick="switchTab('pinned')">
-        <span class="admin-nav-icon">&#9650;</span> Pinned Post
-      </div>
-
+      <div class="admin-nav-item" onclick="switchTab('create-post')"><span class="admin-nav-icon">+</span> Create Post</div>
+      <div class="admin-nav-item" onclick="switchTab('manage-posts')"><span class="admin-nav-icon">&#9776;</span> Manage Posts</div>
+      <div class="admin-nav-item" onclick="switchTab('pinned')"><span class="admin-nav-icon">&#9650;</span> Pinned Post</div>
       <div class="admin-nav-section">Website</div>
-      <div class="admin-nav-item" onclick="switchTab('homepage')">
-        <span class="admin-nav-icon">&#9675;</span> Homepage
-      </div>
-      <div class="admin-nav-item" onclick="switchTab('group-info')">
-        <span class="admin-nav-icon">&#9632;</span> Group Info
-      </div>
-      <div class="admin-nav-item" onclick="switchTab('stats-settings')">
-        <span class="admin-nav-icon">&#9650;</span> Stats & Links
-      </div>
-
+      <div class="admin-nav-item" onclick="switchTab('homepage')"><span class="admin-nav-icon">&#9675;</span> Homepage</div>
+      <div class="admin-nav-item" onclick="switchTab('group-info')"><span class="admin-nav-icon">&#9632;</span> Group Info</div>
+      <div class="admin-nav-item" onclick="switchTab('nav-links')"><span class="admin-nav-icon">&#9670;</span> Nav Links</div>
+      <div class="admin-nav-item" onclick="switchTab('stats-settings')"><span class="admin-nav-icon">&#9650;</span> Stats</div>
       <div class="admin-nav-section">Config</div>
-      <div class="admin-nav-item" onclick="switchTab('github-settings')">
-        <span class="admin-nav-icon">&#9670;</span> GitHub Sync
-      </div>
-      <div class="admin-nav-item" onclick="switchTab('security')">
-        <span class="admin-nav-icon">&#9632;</span> Security
-      </div>
+      <div class="admin-nav-item" onclick="switchTab('github-settings')"><span class="admin-nav-icon">&#9670;</span> GitHub Sync</div>
+      <div class="admin-nav-item" onclick="switchTab('security')"><span class="admin-nav-icon">&#9632;</span> Security</div>
     </nav>
     <div class="admin-footer">
       <button class="admin-logout-btn" onclick="adminLogout()">Logout</button>
     </div>
   </div>
 
-  <!-- MAIN -->
   <div class="admin-main">
     <div class="admin-topbar">
+      <button class="admin-hamburger" id="admin-hamburger-btn" onclick="openAdminDrawer()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
       <div class="admin-page-title" id="admin-page-title">Dashboard</div>
       <div id="github-status-indicator"></div>
     </div>
     <div class="admin-content">
 
-      <!-- ── DASHBOARD ── -->
+      <!-- DASHBOARD -->
       <div class="admin-tab active" id="tab-dashboard">
         <div class="dash-grid">
-          <div class="dash-card">
-            <div class="dash-card-num" id="dash-total">0</div>
-            <div class="dash-card-label">Total Posts</div>
-          </div>
-          <div class="dash-card">
-            <div class="dash-card-num" id="dash-pinned">0</div>
-            <div class="dash-card-label">Pinned Posts</div>
-          </div>
-          <div class="dash-card">
-            <div class="dash-card-num" id="dash-games">0</div>
-            <div class="dash-card-label">Game Posts</div>
-          </div>
-          <div class="dash-card">
-            <div class="dash-card-num" id="dash-portfolio">0</div>
-            <div class="dash-card-label">Portfolio Posts</div>
-          </div>
+          <div class="dash-card"><div class="dash-card-num" id="dash-total">0</div><div class="dash-card-label">Total Posts</div></div>
+          <div class="dash-card"><div class="dash-card-num" id="dash-pinned">0</div><div class="dash-card-label">Pinned</div></div>
+          <div class="dash-card"><div class="dash-card-num" id="dash-games">0</div><div class="dash-card-label">Games</div></div>
+          <div class="dash-card"><div class="dash-card-num" id="dash-portfolio">0</div><div class="dash-card-label">Portfolio</div></div>
         </div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:16px;letter-spacing:0.08em;">RECENT POSTS</div>
-        <table class="admin-table" id="dash-recent-table">
-          <thead><tr>
-            <th>Title</th><th>Type</th><th>Date</th><th>Status</th>
-          </tr></thead>
-          <tbody id="dash-recent-body"></tbody>
-        </table>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px">Recent Posts</div>
+        <div class="table-wrapper">
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody id="dash-recent-body"></tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- ── CREATE POST ── -->
+      <!-- CREATE POST -->
       <div class="admin-tab" id="tab-create-post">
-        <div class="create-form" id="create-form-container">
+        <div class="create-form">
           <div class="create-form-title" id="create-form-heading">Create New Post</div>
           <div class="alert" id="create-alert"></div>
           <input type="hidden" id="edit-post-id">
@@ -1465,20 +523,20 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Excerpt (short description)</label>
-            <input type="text" class="form-input" id="post-excerpt" placeholder="Short summary shown on cards...">
+            <label class="form-label">Excerpt (shown on cards)</label>
+            <input type="text" class="form-input" id="post-excerpt" placeholder="Short summary...">
           </div>
           <div class="form-group">
             <label class="form-label">Full Content *</label>
             <div class="rich-toolbar">
-              <button class="rich-btn" onclick="wrapText('**','**')" title="Bold">B</button>
-              <button class="rich-btn" onclick="wrapText('*','*')" title="Italic" style="font-style:italic">I</button>
-              <button class="rich-btn" onclick="wrapText('\n\n### ','')">H3</button>
+              <button class="rich-btn" onclick="wrapText('**','**')"><b>B</b></button>
+              <button class="rich-btn" onclick="wrapText('*','*')" style="font-style:italic">I</button>
+              <button class="rich-btn" onclick="insertLine('\n### ')">H3</button>
               <button class="rich-btn" onclick="insertLine('\n\n---\n\n')">—</button>
               <button class="rich-btn" onclick="insertLine('\n- ')">List</button>
               <button class="rich-btn" onclick="insertLine('\n> ')">Quote</button>
             </div>
-            <textarea class="form-input" id="post-content" placeholder="Full post content (supports markdown-style formatting)..." style="border-top:none;min-height:180px"></textarea>
+            <textarea class="form-input" id="post-content" placeholder="Full post content..." style="border-top:none;min-height:160px"></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -1486,7 +544,7 @@
               <input type="text" class="form-input" id="post-image" placeholder="https://...">
             </div>
             <div class="form-group">
-              <label class="form-label">Accent Color</label>
+              <label class="form-label">Card Style</label>
               <select class="form-input" id="post-color">
                 <option value="">Default</option>
                 <option value="blue">Blue (Games)</option>
@@ -1497,22 +555,23 @@
               </select>
             </div>
           </div>
+
+          <!-- MULTI-LINK EDITOR -->
           <div class="form-group">
-            <label class="form-label">Call-To-Action Button (optional)</label>
-            <div class="form-row">
-              <input type="text" class="form-input" id="post-link-label" placeholder="Button label (e.g. Play Game)">
-              <input type="text" class="form-input" id="post-link-url" placeholder="https://...">
+            <label class="form-label" style="margin-bottom:8px">Links &amp; Buttons — add any amount</label>
+            <div class="links-editor">
+              <div class="links-editor-header">
+                <span class="links-editor-title">Post Links</span>
+                <button class="links-add-btn" onclick="addLinkRow()">+ Add Link</button>
+              </div>
+              <div id="links-rows-container"></div>
             </div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:6px">Primary = white button on post page. Secondary = outlined. All open in new tab.</div>
           </div>
+
           <div class="form-group">
-            <div class="form-check">
-              <input type="checkbox" id="post-pinned">
-              <label for="post-pinned">Pin this post (shows at top of page)</label>
-            </div>
-            <div class="form-check">
-              <input type="checkbox" id="post-featured">
-              <label for="post-featured">Feature this post (larger card)</label>
-            </div>
+            <div class="form-check"><input type="checkbox" id="post-pinned"><label for="post-pinned">Pin this post (top of homepage)</label></div>
+            <div class="form-check"><input type="checkbox" id="post-featured"><label for="post-featured">Feature this post (larger card)</label></div>
           </div>
           <div class="form-actions">
             <button class="btn-admin-primary" onclick="savePost()">Publish Post</button>
@@ -1521,9 +580,9 @@
         </div>
       </div>
 
-      <!-- ── MANAGE POSTS ── -->
+      <!-- MANAGE POSTS -->
       <div class="admin-tab" id="tab-manage-posts">
-        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="filter-bar">
           <button class="table-action-btn" onclick="filterPosts('all')">All</button>
           <button class="table-action-btn" onclick="filterPosts('main')">Main</button>
           <button class="table-action-btn" onclick="filterPosts('game')">Games</button>
@@ -1531,184 +590,121 @@
           <button class="table-action-btn" onclick="filterPosts('group')">Group</button>
           <button class="table-action-btn" onclick="filterPosts('side')">Side</button>
           <button class="table-action-btn" onclick="filterPosts('announcement')">Announcements</button>
+          <button class="table-action-btn" onclick="filterPosts('update')">Updates</button>
         </div>
-        <table class="admin-table">
-          <thead><tr>
-            <th>Title</th><th>Type</th><th>Pinned</th><th>Date</th><th>Actions</th>
-          </tr></thead>
-          <tbody id="manage-posts-body"></tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Type</th><th>Links</th><th>Pinned</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="manage-posts-body"></tbody>
+          </table>
+        </div>
         <div id="manage-posts-empty" class="empty-state">No posts yet.</div>
       </div>
 
-      <!-- ── PINNED ── -->
+      <!-- PINNED -->
       <div class="admin-tab" id="tab-pinned">
-        <div class="settings-card" style="max-width:600px">
+        <div class="settings-card" style="max-width:560px">
           <div class="settings-card-title">Pinned Post Control</div>
-          <p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.7;">
-            Select which post appears pinned at the top of the homepage. Only one post can be pinned at a time.
-            You can also pin/unpin from the Manage Posts tab.
-          </p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.7">Select which post appears pinned at the top. Only one post can be pinned.</p>
           <div class="form-group">
             <label class="form-label">Select Post to Pin</label>
-            <select class="form-input" id="pinned-post-select">
-              <option value="">None (no pinned post)</option>
-            </select>
+            <select class="form-input" id="pinned-post-select"><option value="">None</option></select>
           </div>
-          <div class="form-actions">
-            <button class="btn-admin-primary" onclick="savePinnedPost()">Save Pinned Post</button>
-          </div>
+          <div class="form-actions"><button class="btn-admin-primary" onclick="savePinnedPost()">Save</button></div>
         </div>
       </div>
 
-      <!-- ── HOMEPAGE ── -->
+      <!-- HOMEPAGE -->
       <div class="admin-tab" id="tab-homepage">
         <div class="settings-grid">
           <div class="settings-card">
             <div class="settings-card-title">Hero Section</div>
-            <div class="form-group">
-              <label class="form-label">Hero Title</label>
-              <input type="text" class="form-input" id="set-hero-title" placeholder="EEK Developers">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Hero Description</label>
-              <textarea class="form-input" id="set-hero-desc" style="min-height:80px" placeholder="Describe your group..."></textarea>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Hero Button Label</label>
-              <input type="text" class="form-input" id="set-hero-btn-label" placeholder="Join Our Group">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Hero Button Link</label>
-              <input type="text" class="form-input" id="set-hero-btn-url" placeholder="https://roblox.com/groups/...">
-            </div>
-            <div class="form-actions">
-              <button class="btn-admin-primary" onclick="saveHomepage()">Save Hero</button>
-            </div>
+            <div class="form-group"><label class="form-label">Title (use line break for split)</label><input type="text" class="form-input" id="set-hero-title"></div>
+            <div class="form-group"><label class="form-label">Description</label><textarea class="form-input" id="set-hero-desc" style="min-height:80px"></textarea></div>
+            <div class="form-group"><label class="form-label">Button Label</label><input type="text" class="form-input" id="set-hero-btn-label"></div>
+            <div class="form-group"><label class="form-label">Button Link</label><input type="text" class="form-input" id="set-hero-btn-url" placeholder="https://roblox.com/groups/..."></div>
+            <div class="form-actions"><button class="btn-admin-primary" onclick="saveHomepage()">Save Hero</button></div>
           </div>
           <div class="settings-card">
             <div class="settings-card-title">Footer</div>
-            <div class="form-group">
-              <label class="form-label">Footer Text</label>
-              <input type="text" class="form-input" id="set-footer-text" placeholder="Professional Roblox Development Group">
-            </div>
-            <div class="form-actions">
-              <button class="btn-admin-primary" onclick="saveFooter()">Save Footer</button>
-            </div>
+            <div class="form-group"><label class="form-label">Footer Text</label><input type="text" class="form-input" id="set-footer-text"></div>
+            <div class="form-actions"><button class="btn-admin-primary" onclick="saveFooter()">Save Footer</button></div>
           </div>
         </div>
       </div>
 
-      <!-- ── GROUP INFO ── -->
+      <!-- GROUP INFO -->
       <div class="admin-tab" id="tab-group-info">
-        <div class="settings-card" style="max-width:600px">
-          <div class="settings-card-title">Group Card Settings</div>
-          <div class="form-group">
-            <label class="form-label">Group Name</label>
-            <input type="text" class="form-input" id="set-group-name" placeholder="EEK Developers">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Group Tagline</label>
-            <input type="text" class="form-input" id="set-group-tag" placeholder="Roblox Development Group · ...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Avatar Initials (2-3 chars)</label>
-            <input type="text" class="form-input" id="set-group-avatar" placeholder="EEK" maxlength="3">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Roblox Group Link</label>
-            <input type="text" class="form-input" id="set-group-link" placeholder="https://roblox.com/groups/...">
-          </div>
-          <div class="form-actions">
-            <button class="btn-admin-primary" onclick="saveGroupInfo()">Save Group Info</button>
-          </div>
+        <div class="settings-card" style="max-width:560px">
+          <div class="settings-card-title">Group Card</div>
+          <div class="form-group"><label class="form-label">Group Name</label><input type="text" class="form-input" id="set-group-name"></div>
+          <div class="form-group"><label class="form-label">Tagline</label><input type="text" class="form-input" id="set-group-tag"></div>
+          <div class="form-group"><label class="form-label">Avatar Initials (2-3 chars)</label><input type="text" class="form-input" id="set-group-avatar" maxlength="3"></div>
+          <div class="form-group"><label class="form-label">Roblox Group Link</label><input type="text" class="form-input" id="set-group-link" placeholder="https://roblox.com/groups/..."></div>
+          <div class="form-actions"><button class="btn-admin-primary" onclick="saveGroupInfo()">Save</button></div>
         </div>
       </div>
 
-      <!-- ── STATS & LINKS ── -->
+      <!-- NAV LINKS -->
+      <div class="admin-tab" id="tab-nav-links">
+        <div class="settings-card" style="max-width:640px">
+          <div class="settings-card-title">Navigation Extra Links</div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.7">Add custom links to the nav (Discord, Twitter, YouTube, etc.) These appear alongside the main menu items.</p>
+          <div id="nav-links-editor"></div>
+          <button class="links-add-btn" onclick="addNavLinkRow()" style="margin-top:10px">+ Add Link</button>
+          <div class="form-actions"><button class="btn-admin-primary" onclick="saveNavLinks()">Save Nav Links</button></div>
+        </div>
+      </div>
+
+      <!-- STATS -->
       <div class="admin-tab" id="tab-stats-settings">
-        <div class="settings-card" style="max-width:600px">
+        <div class="settings-card" style="max-width:540px">
           <div class="settings-card-title">Hero Stats</div>
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Members Stat</label>
-              <input type="text" class="form-input" id="set-stat-members" placeholder="0">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Games Stat</label>
-              <input type="text" class="form-input" id="set-stat-games" placeholder="0">
-            </div>
+            <div class="form-group"><label class="form-label">Members</label><input type="text" class="form-input" id="set-stat-members" placeholder="500+"></div>
+            <div class="form-group"><label class="form-label">Games</label><input type="text" class="form-input" id="set-stat-games" placeholder="3"></div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Active Projects Stat</label>
-            <input type="text" class="form-input" id="set-stat-projects" placeholder="0">
-          </div>
-          <div class="form-actions">
-            <button class="btn-admin-primary" onclick="saveStats()">Save Stats</button>
-          </div>
+          <div class="form-group"><label class="form-label">Active Projects</label><input type="text" class="form-input" id="set-stat-projects" placeholder="5"></div>
+          <div class="form-actions"><button class="btn-admin-primary" onclick="saveStats()">Save Stats</button></div>
         </div>
       </div>
 
-      <!-- ── GITHUB SYNC ── -->
+      <!-- GITHUB SYNC -->
       <div class="admin-tab" id="tab-github-settings">
-        <div class="settings-card" style="max-width:640px">
+        <div class="settings-card" style="max-width:620px">
           <div class="settings-card-title">GitHub Data Sync</div>
-          <p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.7;">
-            Connect a GitHub repository to store all posts and site settings in a <code style="font-family:var(--mono);background:var(--bg3);padding:1px 6px">data.json</code> file.
-            Your token is saved locally in the browser and never exposed publicly.
-          </p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.7">Store all posts and settings in a <code style="font-family:var(--mono);background:var(--bg3);padding:1px 5px">data.json</code> file in your repo. Token is saved only in this browser.</p>
           <div class="form-group">
             <label class="form-label">GitHub Personal Access Token</label>
             <input type="password" class="form-input" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
             <div id="token-status" style="margin-top:8px"></div>
           </div>
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Repository Owner</label>
-              <input type="text" class="form-input" id="gh-owner" placeholder="your-username">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Repository Name</label>
-              <input type="text" class="form-input" id="gh-repo" placeholder="eek-developers">
-            </div>
+            <div class="form-group"><label class="form-label">Repository Owner</label><input type="text" class="form-input" id="gh-owner" placeholder="username"></div>
+            <div class="form-group"><label class="form-label">Repository Name</label><input type="text" class="form-input" id="gh-repo" placeholder="eek-developers"></div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Branch (default: main)</label>
-            <input type="text" class="form-input" id="gh-branch" value="main" placeholder="main">
-          </div>
-          <div class="form-group">
-            <label class="form-label">JSON File Path</label>
-            <input type="text" class="form-input" id="gh-path" value="data.json" placeholder="data.json">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Branch</label><input type="text" class="form-input" id="gh-branch" value="main"></div>
+            <div class="form-group"><label class="form-label">File Path</label><input type="text" class="form-input" id="gh-path" value="data.json"></div>
           </div>
           <div class="form-actions">
-            <button class="btn-admin-primary" onclick="saveGithubSettings()">Save & Test Connection</button>
-            <button class="btn-admin-secondary" onclick="pushToGithub()">Push Data Now</button>
-            <button class="btn-admin-secondary" onclick="pullFromGithub()">Pull from GitHub</button>
+            <button class="btn-admin-primary" onclick="saveGithubSettings()">Save &amp; Test</button>
+            <button class="btn-admin-secondary" onclick="pushToGithub()">Push Now</button>
+            <button class="btn-admin-secondary" onclick="pullFromGithub()">Pull</button>
           </div>
-          <div class="alert" id="gh-alert" style="margin-top:16px"></div>
+          <div class="alert" id="gh-alert" style="margin-top:14px"></div>
         </div>
       </div>
 
-      <!-- ── SECURITY ── -->
+      <!-- SECURITY -->
       <div class="admin-tab" id="tab-security">
-        <div class="settings-card" style="max-width:500px">
+        <div class="settings-card" style="max-width:460px">
           <div class="settings-card-title">Change Admin Password</div>
-          <div class="form-group">
-            <label class="form-label">Current Password</label>
-            <input type="password" class="form-input" id="sec-current-pw" placeholder="Current password">
-          </div>
-          <div class="form-group">
-            <label class="form-label">New Password</label>
-            <input type="password" class="form-input" id="sec-new-pw" placeholder="New password">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Confirm New Password</label>
-            <input type="password" class="form-input" id="sec-confirm-pw" placeholder="Confirm new password">
-          </div>
-          <div class="form-actions">
-            <button class="btn-admin-primary" onclick="changePassword()">Update Password</button>
-          </div>
-          <div class="alert" id="sec-alert" style="margin-top:16px"></div>
+          <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" id="sec-current-pw"></div>
+          <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" id="sec-new-pw"></div>
+          <div class="form-group"><label class="form-label">Confirm New Password</label><input type="password" class="form-input" id="sec-confirm-pw"></div>
+          <div class="form-actions"><button class="btn-admin-primary" onclick="changePassword()">Update Password</button></div>
+          <div class="alert" id="sec-alert" style="margin-top:14px"></div>
         </div>
       </div>
 
@@ -1716,735 +712,579 @@
   </div><!-- /admin-main -->
 </div><!-- /admin-panel -->
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  DATA STORE
-// ══════════════════════════════════════════════
-
+/* ══════════ DATA ══════════ */
 const DEFAULT_DATA = {
-  posts: [],
-  settings: {
-    heroTitle: "EEK\nDevelopers",
-    heroDesc: "A dedicated Roblox development group building high-quality games, systems, and experiences. Professional. Passionate. Community-driven.",
-    heroBtnLabel: "Join Our Group",
-    heroBtnUrl: "#",
-    footerText: "Professional Roblox Development Group",
-    groupName: "EEK Developers",
-    groupTag: "Roblox Development Group · Building quality experiences since 2024",
-    groupAvatar: "EEK",
-    groupLink: "#",
-    statMembers: "—",
-    statGames: "—",
-    statProjects: "—",
-    pinnedPostId: null
+  posts:[],
+  settings:{
+    heroTitle:"EEK\nDevelopers",
+    heroDesc:"A dedicated Roblox development group building high-quality games, systems, and experiences. Professional. Passionate. Community-driven.",
+    heroBtnLabel:"Join Our Group", heroBtnUrl:"#",
+    footerText:"Professional Roblox Development Group",
+    groupName:"EEK Developers",
+    groupTag:"Roblox Development Group · Building quality experiences since 2024",
+    groupAvatar:"EEK", groupLink:"#",
+    statMembers:"—", statGames:"—", statProjects:"—",
+    pinnedPostId:null, navLinks:[]
   },
-  github: {
-    owner: "",
-    repo: "",
-    branch: "main",
-    path: "data.json"
-  }
+  github:{owner:"",repo:"",branch:"main",path:"data.json"}
 };
 
 let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let currentFilter = 'all';
 let ADMIN_PASSWORD = localStorage.getItem('eek_admin_pw') || 'admin123';
 
-// Load from localStorage
-function loadData() {
-  const raw = localStorage.getItem('eek_data');
-  if (raw) {
-    try {
+function loadData(){
+  try{
+    const raw = localStorage.getItem('eek_data');
+    if(raw){
       DATA = JSON.parse(raw);
-      if (!DATA.settings) DATA.settings = DEFAULT_DATA.settings;
-      if (!DATA.github) DATA.github = DEFAULT_DATA.github;
-    } catch(e) { DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
-  }
+      if(!DATA.settings)           DATA.settings = DEFAULT_DATA.settings;
+      if(!DATA.github)             DATA.github   = DEFAULT_DATA.github;
+      if(!DATA.settings.navLinks)  DATA.settings.navLinks = [];
+      DATA.posts.forEach(p=>{ if(!p.links) p.links=[]; });
+    }
+  }catch(e){ DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
 }
+function saveData(){ localStorage.setItem('eek_data', JSON.stringify(DATA)); }
+function getGHToken(){ return localStorage.getItem('eek_gh_token')||''; }
 
-function saveData() {
-  localStorage.setItem('eek_data', JSON.stringify(DATA));
-}
-
-function getGHToken() {
-  return localStorage.getItem('eek_gh_token') || '';
-}
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
-
+/* ══════════ INIT ══════════ */
 loadData();
 document.getElementById('footer-year').textContent = new Date().getFullYear();
 renderPublic();
 
-function renderPublic() {
-  const s = DATA.settings;
+/* ══════════ MOBILE NAV ══════════ */
+function toggleMobileMenu(){
+  const m=document.getElementById('nav-mobile-menu'), b=document.getElementById('nav-hamburger');
+  const open=m.classList.toggle('open');
+  b.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+}
+function closeMobileMenu(){
+  document.getElementById('nav-mobile-menu').classList.remove('open');
+  document.getElementById('nav-hamburger').classList.remove('open');
+  document.body.style.overflow='';
+}
+function mobileNav(id){ closeMobileMenu(); setTimeout(()=>scrollToSection(id),120); }
+document.addEventListener('click',function(e){
+  const m=document.getElementById('nav-mobile-menu'),b=document.getElementById('nav-hamburger');
+  if(m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target)) closeMobileMenu();
+});
 
-  // Hero
-  const titleLines = (s.heroTitle || 'EEK\nDevelopers').split('\n');
-  document.getElementById('hero-title-text').innerHTML =
-    titleLines.map((l,i) => i === 0 ? l : `<span class="dim">${l}</span>`).join('<br>');
-  document.getElementById('hero-desc-text').textContent = s.heroDesc || '';
-  const heroBtn = document.getElementById('hero-cta-btn');
-  heroBtn.textContent = s.heroBtnLabel || 'Join Our Group';
-  heroBtn.href = s.heroBtnUrl || '#';
-
-  // Stats
-  document.getElementById('stat-members').textContent = s.statMembers || '—';
-  document.getElementById('stat-games').textContent = s.statGames || '—';
-  document.getElementById('stat-projects').textContent = s.statProjects || '—';
-
-  // Group card
-  document.getElementById('group-name-display').textContent = s.groupName || 'EEK Developers';
-  document.getElementById('group-tag-display').textContent = s.groupTag || '';
-  document.getElementById('group-avatar-display').textContent = (s.groupAvatar || 'EEK').toUpperCase();
-  const joinLink = document.getElementById('group-join-link');
-  joinLink.href = s.groupLink || '#';
-
-  // Footer
-  document.getElementById('footer-text').textContent = s.footerText || '';
-
-  // Posts
+/* ══════════ RENDER PUBLIC ══════════ */
+function renderPublic(){
+  const s=DATA.settings;
+  const lines=(s.heroTitle||'EEK\nDevelopers').split('\n');
+  document.getElementById('hero-title-text').innerHTML=lines.map((l,i)=>i===0?esc(l):`<span class="dim">${esc(l)}</span>`).join('<br>');
+  document.getElementById('hero-desc-text').textContent=s.heroDesc||'';
+  const hb=document.getElementById('hero-cta-btn');
+  hb.textContent=s.heroBtnLabel||'Join Our Group'; hb.href=s.heroBtnUrl||'#';
+  document.getElementById('stat-members').textContent=s.statMembers||'—';
+  document.getElementById('stat-games').textContent=s.statGames||'—';
+  document.getElementById('stat-projects').textContent=s.statProjects||'—';
+  document.getElementById('group-name-display').textContent=s.groupName||'EEK Developers';
+  document.getElementById('group-tag-display').textContent=s.groupTag||'';
+  document.getElementById('group-avatar-display').textContent=(s.groupAvatar||'EEK').toUpperCase();
+  document.getElementById('group-join-link').href=s.groupLink||'#';
+  document.getElementById('footer-text').textContent=s.footerText||'';
+  renderNavLinks();
   renderPinnedPublic();
   renderPostsPublic();
   renderGamesPublic();
   renderPortfolioPublic();
 }
 
-// ── PINNED POST ──
-function renderPinnedPublic() {
-  const container = document.getElementById('pinned-container');
-  const pinnedId = DATA.settings.pinnedPostId;
-  if (!pinnedId) { container.innerHTML = ''; return; }
-  const post = DATA.posts.find(p => p.id === pinnedId);
-  if (!post) { container.innerHTML = ''; return; }
-  container.innerHTML = `
-    <div class="pinned-post" onclick="openPost('${post.id}')">
+function renderNavLinks(){
+  const links=DATA.settings.navLinks||[];
+  // Desktop nav
+  document.querySelectorAll('.nav-extra-link').forEach(el=>el.remove());
+  const navList=document.getElementById('desktop-nav-links');
+  links.forEach(l=>{
+    const li=document.createElement('li');
+    const a=document.createElement('a');
+    a.textContent=l.label; a.href=l.url; a.target='_blank'; a.rel='noopener';
+    a.className='nav-extra-link'; a.style.color='var(--text3)';
+    li.appendChild(a); navList.appendChild(li);
+  });
+  // Mobile
+  const mExt=document.getElementById('mobile-extra-links');
+  mExt.innerHTML='';
+  links.forEach(l=>{
+    const a=document.createElement('a');
+    a.textContent=l.label; a.href=l.url; a.target='_blank'; a.rel='noopener';
+    a.style.color='var(--text3)'; mExt.appendChild(a);
+  });
+}
+
+function renderPinnedPublic(){
+  const c=document.getElementById('pinned-container');
+  const id=DATA.settings.pinnedPostId;
+  if(!id){ c.innerHTML=''; return; }
+  const p=DATA.posts.find(x=>x.id===id);
+  if(!p){ c.innerHTML=''; return; }
+  c.innerHTML=`
+    <div class="pinned-post" onclick="openPost('${p.id}')">
       <div class="post-pin-label">Pinned Post</div>
-      ${post.imageUrl ? `<img class="post-image" src="${post.imageUrl}" alt="" onerror="this.style.display='none'">` : ''}
-      <div class="post-type-badge badge-${post.type}">${typeLabel(post.type)}</div>
-      <div class="post-title" style="font-size:22px">${esc(post.title)} <span class="badge-pinned">Pinned</span></div>
-      <div class="post-excerpt" style="-webkit-line-clamp:2;margin-top:10px">${esc(post.excerpt || post.content.slice(0,200))}</div>
-      <div class="post-meta">
-        <span class="post-meta-item">${formatDate(post.date)}</span>
-        <span class="post-meta-item">${typeLabel(post.type)}</span>
-      </div>
-    </div>
-  `;
+      ${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="" style="width:100%;max-height:240px;object-fit:cover;margin-bottom:14px" onerror="this.style.display='none'">` :''}
+      <span class="post-type-badge badge-${p.type}">${typeLabel(p.type)}</span>
+      <div class="post-title" style="font-size:clamp(18px,3vw,22px);margin-top:6px">${esc(p.title)} <span class="badge-pinned">Pinned</span></div>
+      <div class="post-excerpt" style="-webkit-line-clamp:2;margin-top:10px">${esc(p.excerpt||p.content.slice(0,200))}</div>
+      ${buildCardLinks(p.links||[])}
+      <div class="post-meta"><span class="post-meta-item">${formatDate(p.date)}</span><span class="post-meta-item">${typeLabel(p.type)}</span></div>
+    </div>`;
 }
 
-// ── MAIN + SIDE POSTS ──
-function renderPostsPublic() {
-  const mainPosts = DATA.posts.filter(p =>
-    ['main','group','update','announcement'].includes(p.type) && p.id !== DATA.settings.pinnedPostId
-  );
-  const sidePosts = DATA.posts.filter(p => p.type === 'side');
-
-  const mainGrid = document.getElementById('main-posts-grid');
-  const mainEmpty = document.getElementById('main-posts-empty');
-  const sideList = document.getElementById('side-posts-list');
-  const sideEmpty = document.getElementById('side-posts-empty');
-
-  mainGrid.innerHTML = mainPosts.map(postCard).join('');
-  mainEmpty.style.display = mainPosts.length ? 'none' : 'block';
-
-  sideList.innerHTML = sidePosts.map(p => `
+function renderPostsPublic(){
+  const main=DATA.posts.filter(p=>['main','group','update','announcement'].includes(p.type)&&p.id!==DATA.settings.pinnedPostId);
+  const side=DATA.posts.filter(p=>p.type==='side');
+  document.getElementById('main-posts-grid').innerHTML=main.map(p=>postCard(p)).join('');
+  document.getElementById('main-posts-empty').style.display=main.length?'none':'block';
+  document.getElementById('side-posts-list').innerHTML=side.map(p=>`
     <div class="side-post" onclick="openPost('${p.id}')">
-      <div class="post-type-badge badge-${p.type}" style="margin-bottom:8px">${typeLabel(p.type)}</div>
+      <span class="post-type-badge badge-${p.type}" style="margin-bottom:8px">${typeLabel(p.type)}</span>
       <div class="side-post-title">${esc(p.title)}</div>
-      <div class="side-post-excerpt">${esc(p.excerpt || p.content.slice(0,120))}</div>
+      <div class="side-post-excerpt">${esc(p.excerpt||p.content.slice(0,120))}</div>
       <div class="post-meta-item" style="margin-top:10px">${formatDate(p.date)}</div>
-    </div>
-  `).join('');
-  sideEmpty.style.display = sidePosts.length ? 'none' : 'block';
-
-  const total = mainPosts.length + sidePosts.length;
-  document.getElementById('posts-count-label').textContent = total + ' post' + (total !== 1 ? 's' : '');
+    </div>`).join('');
+  document.getElementById('side-posts-empty').style.display=side.length?'none':'block';
+  document.getElementById('posts-count-label').textContent=main.length+' post'+(main.length!==1?'s':'');
 }
 
-function renderGamesPublic() {
-  const games = DATA.posts.filter(p => p.type === 'game');
-  const grid = document.getElementById('games-grid');
-  const empty = document.getElementById('games-empty');
-  grid.innerHTML = games.map(p => postCard(p, 'game-style')).join('');
-  empty.style.display = games.length ? 'none' : 'block';
-  document.getElementById('games-count-label').textContent = games.length + ' game' + (games.length !== 1 ? 's' : '');
+function renderGamesPublic(){
+  const items=DATA.posts.filter(p=>p.type==='game');
+  document.getElementById('games-grid').innerHTML=items.map(p=>postCard(p,'game-style')).join('');
+  document.getElementById('games-empty').style.display=items.length?'none':'block';
+  document.getElementById('games-count-label').textContent=items.length+' game'+(items.length!==1?'s':'');
 }
 
-function renderPortfolioPublic() {
-  const items = DATA.posts.filter(p => p.type === 'portfolio');
-  const grid = document.getElementById('portfolio-grid');
-  const empty = document.getElementById('portfolio-empty');
-  grid.innerHTML = items.map(p => postCard(p, 'portfolio-style')).join('');
-  empty.style.display = items.length ? 'none' : 'block';
-  document.getElementById('portfolio-count-label').textContent = items.length + ' item' + (items.length !== 1 ? 's' : '');
+function renderPortfolioPublic(){
+  const items=DATA.posts.filter(p=>p.type==='portfolio');
+  document.getElementById('portfolio-grid').innerHTML=items.map(p=>postCard(p,'portfolio-style')).join('');
+  document.getElementById('portfolio-empty').style.display=items.length?'none':'block';
+  document.getElementById('portfolio-count-label').textContent=items.length+' item'+(items.length!==1?'s':'');
 }
 
-function postCard(p, extraClass = '') {
+function postCard(p,extraClass=''){
   return `
     <div class="post-card ${extraClass}" onclick="openPost('${p.id}')">
-      ${p.imageUrl ? `<img class="post-image" src="${p.imageUrl}" alt="" onerror="this.style.display='none'">` : ''}
-      <div class="post-type-badge badge-${p.type}">${typeLabel(p.type)}</div>
+      ${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="" style="width:100%;max-height:180px;object-fit:cover;margin-bottom:12px" onerror="this.style.display='none'">` :''}
+      <span class="post-type-badge badge-${p.type}">${typeLabel(p.type)}</span>
       <div class="post-title">${esc(p.title)}</div>
-      <div class="post-excerpt">${esc(p.excerpt || p.content.slice(0,160))}</div>
+      <div class="post-excerpt">${esc(p.excerpt||p.content.slice(0,160))}</div>
+      ${buildCardLinks(p.links||[])}
       <div class="post-meta">
         <span class="post-meta-item">${formatDate(p.date)}</span>
-        ${p.pinned ? '<span class="post-meta-item" style="color:var(--yellow)">Pinned</span>' : ''}
+        ${p.pinned?'<span class="post-meta-item" style="color:var(--yellow)">Pinned</span>':''}
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// ── POST MODAL ──
-function openPost(id) {
-  const p = DATA.posts.find(x => x.id === id);
-  if (!p) return;
+function buildCardLinks(links){
+  if(!links||!links.length) return '';
+  const chips=links.slice(0,3).map(l=>`
+    <a href="${esc(l.url)}" target="_blank" rel="noopener" class="post-link-chip" onclick="event.stopPropagation()" title="${esc(l.label)}">
+      ${esc(l.label)} &#x2197;
+    </a>`).join('');
+  return `<div class="post-links-row" onclick="event.stopPropagation()">${chips}${links.length>3?`<span class="post-link-chip" style="color:var(--text3);cursor:default">+${links.length-3} more</span>`:''}</div>`;
+}
 
-  document.getElementById('modal-badge').innerHTML = `<div class="post-type-badge badge-${p.type}" style="margin-bottom:14px">${typeLabel(p.type)}</div>`;
-  document.getElementById('modal-title').textContent = p.title;
-
-  const img = document.getElementById('modal-image');
-  if (p.imageUrl) { img.src = p.imageUrl; img.style.display = 'block'; img.onerror = () => img.style.display = 'none'; }
-  else img.style.display = 'none';
-
-  document.getElementById('modal-body').textContent = p.content;
-  document.getElementById('modal-meta').innerHTML = `
+/* ══════════ POST MODAL ══════════ */
+function openPost(id){
+  const p=DATA.posts.find(x=>x.id===id); if(!p) return;
+  document.getElementById('modal-badge').innerHTML=`<span class="post-type-badge badge-${p.type}" style="margin-bottom:14px">${typeLabel(p.type)}</span>`;
+  document.getElementById('modal-title').textContent=p.title;
+  const img=document.getElementById('modal-image');
+  if(p.imageUrl){img.src=p.imageUrl;img.style.display='block';img.onerror=()=>img.style.display='none';}
+  else img.style.display='none';
+  document.getElementById('modal-body').textContent=p.content;
+  document.getElementById('modal-meta').innerHTML=`
     <span class="post-meta-item">${formatDate(p.date)}</span>
     <span class="post-meta-item">${typeLabel(p.type)}</span>
-    ${p.featured ? '<span class="post-meta-item" style="color:var(--text2)">Featured</span>' : ''}
-  `;
-
-  const linksDiv = document.getElementById('modal-links');
-  if (p.linkUrl && p.linkLabel) {
-    linksDiv.innerHTML = `<a href="${p.linkUrl}" target="_blank" rel="noopener" class="btn-primary" style="text-decoration:none">${esc(p.linkLabel)}</a>`;
-  } else linksDiv.innerHTML = '';
-
+    ${p.featured?'<span class="post-meta-item">Featured</span>':''}`;
+  const linksSection=document.getElementById('modal-links-section');
+  const linksGrid=document.getElementById('modal-links-grid');
+  const links=p.links||[];
+  if(links.length){
+    linksGrid.innerHTML=links.map((l,i)=>`
+      <a href="${esc(l.url)}" target="_blank" rel="noopener" class="modal-link-btn ${l.style==='primary'||i===0?'primary-link':''}">
+        ${esc(l.label)} &#x2197;
+      </a>`).join('');
+    linksSection.style.display='block';
+  } else linksSection.style.display='none';
   document.getElementById('post-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
 
-function closeModal() {
+function closeModal(){
   document.getElementById('post-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
+document.getElementById('post-modal').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
 
-document.getElementById('post-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-// ══════════════════════════════════════════════
-//  ADMIN LOGIN
-// ══════════════════════════════════════════════
-
-function openAdminLogin() {
+/* ══════════ ADMIN LOGIN ══════════ */
+function openAdminLogin(){
   document.getElementById('admin-login-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('login-password').focus(), 100);
+  setTimeout(()=>document.getElementById('login-password').focus(),100);
 }
-
-function closeAdminLogin() {
+function closeAdminLogin(){
   document.getElementById('admin-login-overlay').classList.remove('open');
-  document.getElementById('login-password').value = '';
-  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-password').value='';
+  document.getElementById('login-error').style.display='none';
+}
+function doLogin(){
+  if(document.getElementById('login-password').value===ADMIN_PASSWORD){ closeAdminLogin(); openAdminPanel(); }
+  else{ document.getElementById('login-error').style.display='block'; document.getElementById('login-password').value=''; }
 }
 
-function doLogin() {
-  const pw = document.getElementById('login-password').value;
-  if (pw === ADMIN_PASSWORD) {
-    closeAdminLogin();
-    openAdminPanel();
-  } else {
-    document.getElementById('login-error').style.display = 'block';
-    document.getElementById('login-password').value = '';
-  }
-}
-
-// ══════════════════════════════════════════════
-//  ADMIN PANEL
-// ══════════════════════════════════════════════
-
-function openAdminPanel() {
+/* ══════════ ADMIN PANEL ══════════ */
+function openAdminPanel(){
   document.getElementById('admin-panel').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  populateAdminForms();
-  renderAdminDashboard();
-  renderManagePosts('all');
-  updateGHStatus();
+  document.body.style.overflow='hidden';
+  populateAdminForms(); renderAdminDashboard(); renderManagePosts('all');
+  renderNavLinksEditor(); updateGHStatus();
 }
-
-function adminLogout() {
+function adminLogout(){
   document.getElementById('admin-panel').classList.remove('open');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
   renderPublic();
 }
-
-function switchTab(name) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
-
-  const tab = document.getElementById('tab-' + name);
-  if (tab) tab.classList.add('active');
-
-  const item = [...document.querySelectorAll('.admin-nav-item')].find(i => i.getAttribute('onclick') === `switchTab('${name}')`);
-  if (item) item.classList.add('active');
-
-  const titles = {
-    'dashboard':'Dashboard', 'create-post':'Create Post', 'manage-posts':'Manage Posts',
-    'pinned':'Pinned Post', 'homepage':'Homepage Settings', 'group-info':'Group Info',
-    'stats-settings':'Stats & Links', 'github-settings':'GitHub Sync', 'security':'Security'
-  };
-  document.getElementById('admin-page-title').textContent = titles[name] || name;
-
-  if (name === 'manage-posts') renderManagePosts(currentFilter);
-  if (name === 'pinned') populatePinnedSelect();
-  if (name === 'github-settings') loadGHFields();
+function openAdminDrawer(){
+  document.getElementById('admin-sidebar').classList.add('open');
+  document.getElementById('admin-drawer-overlay').classList.add('open');
+}
+function closeAdminDrawer(){
+  document.getElementById('admin-sidebar').classList.remove('open');
+  document.getElementById('admin-drawer-overlay').classList.remove('open');
+}
+function switchTab(name){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(i=>i.classList.remove('active'));
+  const tab=document.getElementById('tab-'+name); if(tab) tab.classList.add('active');
+  const item=[...document.querySelectorAll('.admin-nav-item')].find(i=>i.getAttribute('onclick')===`switchTab('${name}')`);
+  if(item) item.classList.add('active');
+  const titles={'dashboard':'Dashboard','create-post':'Create Post','manage-posts':'Manage Posts','pinned':'Pinned Post','homepage':'Homepage Settings','group-info':'Group Info','nav-links':'Nav Links','stats-settings':'Stats','github-settings':'GitHub Sync','security':'Security'};
+  document.getElementById('admin-page-title').textContent=titles[name]||name;
+  closeAdminDrawer();
+  if(name==='manage-posts') renderManagePosts(currentFilter);
+  if(name==='pinned') populatePinnedSelect();
+  if(name==='github-settings') loadGHFields();
+  if(name==='nav-links') renderNavLinksEditor();
 }
 
-// ── DASHBOARD ──
-function renderAdminDashboard() {
-  const posts = DATA.posts;
-  document.getElementById('dash-total').textContent = posts.length;
-  document.getElementById('dash-pinned').textContent = posts.filter(p => p.pinned).length;
-  document.getElementById('dash-games').textContent = posts.filter(p => p.type === 'game').length;
-  document.getElementById('dash-portfolio').textContent = posts.filter(p => p.type === 'portfolio').length;
-
-  const tbody = document.getElementById('dash-recent-body');
-  const recent = [...posts].sort((a,b) => b.date - a.date).slice(0,6);
-  tbody.innerHTML = recent.map(p => `
+function renderAdminDashboard(){
+  const posts=DATA.posts;
+  document.getElementById('dash-total').textContent=posts.length;
+  document.getElementById('dash-pinned').textContent=posts.filter(p=>p.pinned).length;
+  document.getElementById('dash-games').textContent=posts.filter(p=>p.type==='game').length;
+  document.getElementById('dash-portfolio').textContent=posts.filter(p=>p.type==='portfolio').length;
+  const recent=[...posts].sort((a,b)=>b.date-a.date).slice(0,8);
+  document.getElementById('dash-recent-body').innerHTML=recent.map(p=>`
     <tr>
       <td>${esc(p.title)}</td>
       <td><span class="post-type-badge badge-${p.type}">${typeLabel(p.type)}</span></td>
       <td>${formatDate(p.date)}</td>
-      <td>${p.pinned ? '<span class="status-dot pinned"></span>Pinned' : '<span class="status-dot active"></span>Active'}</td>
-    </tr>
-  `).join('');
-  if (!recent.length) tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text3);font-family:var(--mono);font-size:11px">No posts yet.</td></tr>';
+      <td>${p.pinned?'<span class="status-dot pinned"></span>Pinned':'<span class="status-dot active"></span>Active'}</td>
+    </tr>`).join('')||'<tr><td colspan="4" style="color:var(--text3);font-family:var(--mono);font-size:11px">No posts yet.</td></tr>';
 }
 
-// ── CREATE / EDIT POST ──
-function savePost() {
-  const title = document.getElementById('post-title').value.trim();
-  const type = document.getElementById('post-type').value;
-  const content = document.getElementById('post-content').value.trim();
-  const excerpt = document.getElementById('post-excerpt').value.trim();
-  const imageUrl = document.getElementById('post-image').value.trim();
-  const accentColor = document.getElementById('post-color').value;
-  const linkLabel = document.getElementById('post-link-label').value.trim();
-  const linkUrl = document.getElementById('post-link-url').value.trim();
-  const pinned = document.getElementById('post-pinned').checked;
-  const featured = document.getElementById('post-featured').checked;
-  const editId = document.getElementById('edit-post-id').value;
+/* ══════════ LINK EDITOR (posts) ══════════ */
+function addLinkRow(link){
+  const l=link||{label:'',url:'',style:'secondary'};
+  const row=document.createElement('div');
+  row.className='link-row';
+  row.innerHTML=`
+    <select class="link-type-sel" title="Style">
+      <option value="secondary" ${l.style==='secondary'?'selected':''}>Secondary</option>
+      <option value="primary"   ${l.style==='primary'  ?'selected':''}>Primary</option>
+    </select>
+    <input class="link-row-input" placeholder="Label (e.g. Play Game)" value="${esc(l.label)}">
+    <input class="link-row-input" placeholder="URL (https://...)"      value="${esc(l.url)}">
+    <button class="link-row-remove" onclick="this.closest('.link-row').remove()">&#x2715;</button>`;
+  document.getElementById('links-rows-container').appendChild(row);
+}
 
-  if (!title || !content) {
-    showAlert('create-alert', 'error', 'Title and content are required.');
-    return;
-  }
+function getLinksFromEditor(){
+  const links=[];
+  document.querySelectorAll('#links-rows-container .link-row').forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const sel=row.querySelector('select');
+    const label=inputs[0]?inputs[0].value.trim():'';
+    const url=inputs[1]?inputs[1].value.trim():'';
+    if(label&&url) links.push({label,url,style:sel?sel.value:'secondary'});
+  });
+  return links;
+}
 
-  if (editId) {
-    const idx = DATA.posts.findIndex(p => p.id === editId);
-    if (idx >= 0) {
-      DATA.posts[idx] = { ...DATA.posts[idx], title, type, content, excerpt, imageUrl, accentColor, linkLabel, linkUrl, pinned, featured, edited: Date.now() };
-      if (pinned) DATA.settings.pinnedPostId = editId;
-      else if (DATA.settings.pinnedPostId === editId) DATA.settings.pinnedPostId = null;
-    }
-    showAlert('create-alert', 'success', 'Post updated successfully.');
+function loadLinksToEditor(links){
+  document.getElementById('links-rows-container').innerHTML='';
+  (links||[]).forEach(l=>addLinkRow(l));
+}
+
+/* ══════════ NAV LINKS EDITOR ══════════ */
+function renderNavLinksEditor(){
+  const c=document.getElementById('nav-links-editor'); c.innerHTML='';
+  (DATA.settings.navLinks||[]).forEach(l=>{
+    const row=document.createElement('div');
+    row.className='nav-link-row';
+    row.innerHTML=`
+      <input class="link-row-input" placeholder="Label (e.g. Discord)" value="${esc(l.label)}">
+      <input class="link-row-input" placeholder="URL (https://...)" value="${esc(l.url)}">
+      <button class="link-row-remove" onclick="this.closest('.nav-link-row').remove()">&#x2715;</button>`;
+    c.appendChild(row);
+  });
+}
+
+function addNavLinkRow(){
+  const c=document.getElementById('nav-links-editor');
+  const row=document.createElement('div'); row.className='nav-link-row';
+  row.innerHTML=`
+    <input class="link-row-input" placeholder="Label (e.g. Discord)">
+    <input class="link-row-input" placeholder="URL (https://...)">
+    <button class="link-row-remove" onclick="this.closest('.nav-link-row').remove()">&#x2715;</button>`;
+  c.appendChild(row);
+}
+
+function saveNavLinks(){
+  const links=[];
+  document.querySelectorAll('.nav-link-row').forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const label=inputs[0]?inputs[0].value.trim():'';
+    const url=inputs[1]?inputs[1].value.trim():'';
+    if(label&&url) links.push({label,url});
+  });
+  DATA.settings.navLinks=links;
+  saveData(); renderPublic(); toast('Nav links saved.');
+}
+
+/* ══════════ CREATE / EDIT POST ══════════ */
+function savePost(){
+  const title=document.getElementById('post-title').value.trim();
+  const type=document.getElementById('post-type').value;
+  const content=document.getElementById('post-content').value.trim();
+  const excerpt=document.getElementById('post-excerpt').value.trim();
+  const imageUrl=document.getElementById('post-image').value.trim();
+  const accentColor=document.getElementById('post-color').value;
+  const pinned=document.getElementById('post-pinned').checked;
+  const featured=document.getElementById('post-featured').checked;
+  const editId=document.getElementById('edit-post-id').value;
+  const links=getLinksFromEditor();
+
+  if(!title||!content){ showAlert('create-alert','error','Title and content are required.'); return; }
+
+  if(editId){
+    const idx=DATA.posts.findIndex(p=>p.id===editId);
+    if(idx>=0){ DATA.posts[idx]={...DATA.posts[idx],title,type,content,excerpt,imageUrl,accentColor,pinned,featured,links,edited:Date.now()}; }
+    if(pinned){ DATA.posts.forEach(p=>p.pinned=p.id===editId); DATA.settings.pinnedPostId=editId; }
+    else if(DATA.settings.pinnedPostId===editId){ DATA.settings.pinnedPostId=null; }
+    showAlert('create-alert','success','Post updated.');
   } else {
-    const id = 'post_' + Date.now();
-    DATA.posts.unshift({ id, title, type, content, excerpt, imageUrl, accentColor, linkLabel, linkUrl, pinned, featured, date: Date.now() });
-    if (pinned) DATA.settings.pinnedPostId = id;
-    showAlert('create-alert', 'success', 'Post published successfully.');
+    const id='post_'+Date.now();
+    DATA.posts.unshift({id,title,type,content,excerpt,imageUrl,accentColor,pinned,featured,links,date:Date.now()});
+    if(pinned){ DATA.posts.forEach(p=>p.pinned=p.id===id); DATA.settings.pinnedPostId=id; }
+    showAlert('create-alert','success','Post published.');
   }
-
-  saveData();
-  renderAdminDashboard();
-  renderPublic();
-  toast('Post saved.');
+  saveData(); renderAdminDashboard(); renderPublic(); toast('Post saved.');
 }
 
-function resetCreateForm() {
-  ['post-title','post-excerpt','post-content','post-image','post-link-label','post-link-url'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('post-type').value = 'main';
-  document.getElementById('post-color').value = '';
-  document.getElementById('post-pinned').checked = false;
-  document.getElementById('post-featured').checked = false;
-  document.getElementById('edit-post-id').value = '';
-  document.getElementById('create-form-heading').textContent = 'Create New Post';
-  document.querySelector('[onclick="savePost()"]').textContent = 'Publish Post';
+function resetCreateForm(){
+  ['post-title','post-excerpt','post-content','post-image'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('post-type').value='main';
+  document.getElementById('post-color').value='';
+  document.getElementById('post-pinned').checked=false;
+  document.getElementById('post-featured').checked=false;
+  document.getElementById('edit-post-id').value='';
+  document.getElementById('links-rows-container').innerHTML='';
+  document.getElementById('create-form-heading').textContent='Create New Post';
+  document.querySelector('[onclick="savePost()"]').textContent='Publish Post';
 }
 
-function editPost(id) {
-  const p = DATA.posts.find(x => x.id === id);
-  if (!p) return;
+function editPost(id){
+  const p=DATA.posts.find(x=>x.id===id); if(!p) return;
   switchTab('create-post');
-  document.getElementById('edit-post-id').value = p.id;
-  document.getElementById('post-title').value = p.title;
-  document.getElementById('post-type').value = p.type;
-  document.getElementById('post-content').value = p.content;
-  document.getElementById('post-excerpt').value = p.excerpt || '';
-  document.getElementById('post-image').value = p.imageUrl || '';
-  document.getElementById('post-color').value = p.accentColor || '';
-  document.getElementById('post-link-label').value = p.linkLabel || '';
-  document.getElementById('post-link-url').value = p.linkUrl || '';
-  document.getElementById('post-pinned').checked = !!p.pinned;
-  document.getElementById('post-featured').checked = !!p.featured;
-  document.getElementById('create-form-heading').textContent = 'Edit Post';
-  document.querySelector('[onclick="savePost()"]').textContent = 'Update Post';
+  document.getElementById('edit-post-id').value=p.id;
+  document.getElementById('post-title').value=p.title;
+  document.getElementById('post-type').value=p.type;
+  document.getElementById('post-content').value=p.content;
+  document.getElementById('post-excerpt').value=p.excerpt||'';
+  document.getElementById('post-image').value=p.imageUrl||'';
+  document.getElementById('post-color').value=p.accentColor||'';
+  document.getElementById('post-pinned').checked=!!p.pinned;
+  document.getElementById('post-featured').checked=!!p.featured;
+  document.getElementById('create-form-heading').textContent='Edit Post';
+  document.querySelector('[onclick="savePost()"]').textContent='Update Post';
+  loadLinksToEditor(p.links||[]);
 }
 
-function deletePost(id) {
-  if (!confirm('Delete this post?')) return;
-  DATA.posts = DATA.posts.filter(p => p.id !== id);
-  if (DATA.settings.pinnedPostId === id) DATA.settings.pinnedPostId = null;
-  saveData();
-  renderManagePosts(currentFilter);
-  renderAdminDashboard();
-  renderPublic();
-  toast('Post deleted.');
+function deletePost(id){
+  if(!confirm('Delete this post?')) return;
+  DATA.posts=DATA.posts.filter(p=>p.id!==id);
+  if(DATA.settings.pinnedPostId===id) DATA.settings.pinnedPostId=null;
+  saveData(); renderManagePosts(currentFilter); renderAdminDashboard(); renderPublic(); toast('Deleted.');
 }
 
-function togglePin(id) {
-  const p = DATA.posts.find(x => x.id === id);
-  if (!p) return;
-  if (DATA.settings.pinnedPostId === id) {
-    DATA.settings.pinnedPostId = null;
-    p.pinned = false;
-  } else {
-    DATA.posts.forEach(x => x.pinned = false);
-    DATA.settings.pinnedPostId = id;
-    p.pinned = true;
-  }
-  saveData();
-  renderManagePosts(currentFilter);
-  renderPublic();
-  toast('Pinned post updated.');
+function togglePin(id){
+  const p=DATA.posts.find(x=>x.id===id); if(!p) return;
+  if(DATA.settings.pinnedPostId===id){ DATA.settings.pinnedPostId=null; p.pinned=false; }
+  else{ DATA.posts.forEach(x=>x.pinned=false); DATA.settings.pinnedPostId=id; p.pinned=true; }
+  saveData(); renderManagePosts(currentFilter); renderPublic(); toast('Pin updated.');
 }
 
-// ── MANAGE POSTS ──
-function filterPosts(filter) {
-  currentFilter = filter;
-  renderManagePosts(filter);
-}
+function filterPosts(f){ currentFilter=f; renderManagePosts(f); }
 
-function renderManagePosts(filter) {
-  const posts = filter === 'all' ? DATA.posts : DATA.posts.filter(p => p.type === filter);
-  const tbody = document.getElementById('manage-posts-body');
-  const empty = document.getElementById('manage-posts-empty');
-  tbody.innerHTML = posts.map(p => `
+function renderManagePosts(filter){
+  const posts=filter==='all'?DATA.posts:DATA.posts.filter(p=>p.type===filter);
+  const tbody=document.getElementById('manage-posts-body');
+  const empty=document.getElementById('manage-posts-empty');
+  tbody.innerHTML=posts.map(p=>`
     <tr>
       <td>${esc(p.title)}</td>
       <td><span class="post-type-badge badge-${p.type}">${typeLabel(p.type)}</span></td>
-      <td>${DATA.settings.pinnedPostId === p.id ? '<span class="status-dot pinned"></span>Yes' : '—'}</td>
+      <td>${(p.links||[]).length}</td>
+      <td>${DATA.settings.pinnedPostId===p.id?'<span class="status-dot pinned"></span>Yes':'—'}</td>
       <td>${formatDate(p.date)}</td>
       <td>
         <button class="table-action-btn" onclick="editPost('${p.id}')">Edit</button>
-        <button class="table-action-btn pin" onclick="togglePin('${p.id}')">${DATA.settings.pinnedPostId === p.id ? 'Unpin' : 'Pin'}</button>
+        <button class="table-action-btn pin" onclick="togglePin('${p.id}')">${DATA.settings.pinnedPostId===p.id?'Unpin':'Pin'}</button>
         <button class="table-action-btn danger" onclick="deletePost('${p.id}')">Delete</button>
       </td>
-    </tr>
-  `).join('');
-  empty.style.display = posts.length ? 'none' : 'block';
+    </tr>`).join('');
+  empty.style.display=posts.length?'none':'block';
 }
 
-// ── PINNED SELECT ──
-function populatePinnedSelect() {
-  const sel = document.getElementById('pinned-post-select');
-  sel.innerHTML = '<option value="">None (no pinned post)</option>' +
-    DATA.posts.map(p => `<option value="${p.id}" ${DATA.settings.pinnedPostId === p.id ? 'selected' : ''}>${esc(p.title)} [${typeLabel(p.type)}]</option>`).join('');
+function populatePinnedSelect(){
+  document.getElementById('pinned-post-select').innerHTML='<option value="">None</option>'+
+    DATA.posts.map(p=>`<option value="${p.id}" ${DATA.settings.pinnedPostId===p.id?'selected':''}>[${typeLabel(p.type)}] ${esc(p.title)}</option>`).join('');
 }
 
-function savePinnedPost() {
-  const id = document.getElementById('pinned-post-select').value;
-  DATA.posts.forEach(p => p.pinned = false);
-  if (id) {
-    DATA.settings.pinnedPostId = id;
-    const p = DATA.posts.find(x => x.id === id);
-    if (p) p.pinned = true;
-  } else {
-    DATA.settings.pinnedPostId = null;
-  }
-  saveData();
-  renderPublic();
-  toast('Pinned post updated.');
+function savePinnedPost(){
+  const id=document.getElementById('pinned-post-select').value;
+  DATA.posts.forEach(p=>p.pinned=false);
+  if(id){ DATA.settings.pinnedPostId=id; const p=DATA.posts.find(x=>x.id===id); if(p) p.pinned=true; }
+  else DATA.settings.pinnedPostId=null;
+  saveData(); renderPublic(); toast('Pinned post updated.');
 }
 
-// ── POPULATE FORMS ──
-function populateAdminForms() {
-  const s = DATA.settings;
-  document.getElementById('set-hero-title').value = s.heroTitle || '';
-  document.getElementById('set-hero-desc').value = s.heroDesc || '';
-  document.getElementById('set-hero-btn-label').value = s.heroBtnLabel || '';
-  document.getElementById('set-hero-btn-url').value = s.heroBtnUrl || '';
-  document.getElementById('set-footer-text').value = s.footerText || '';
-  document.getElementById('set-group-name').value = s.groupName || '';
-  document.getElementById('set-group-tag').value = s.groupTag || '';
-  document.getElementById('set-group-avatar').value = s.groupAvatar || '';
-  document.getElementById('set-group-link').value = s.groupLink || '';
-  document.getElementById('set-stat-members').value = s.statMembers || '';
-  document.getElementById('set-stat-games').value = s.statGames || '';
-  document.getElementById('set-stat-projects').value = s.statProjects || '';
+function populateAdminForms(){
+  const s=DATA.settings;
+  document.getElementById('set-hero-title').value=s.heroTitle||'';
+  document.getElementById('set-hero-desc').value=s.heroDesc||'';
+  document.getElementById('set-hero-btn-label').value=s.heroBtnLabel||'';
+  document.getElementById('set-hero-btn-url').value=s.heroBtnUrl||'';
+  document.getElementById('set-footer-text').value=s.footerText||'';
+  document.getElementById('set-group-name').value=s.groupName||'';
+  document.getElementById('set-group-tag').value=s.groupTag||'';
+  document.getElementById('set-group-avatar').value=s.groupAvatar||'';
+  document.getElementById('set-group-link').value=s.groupLink||'';
+  document.getElementById('set-stat-members').value=s.statMembers||'';
+  document.getElementById('set-stat-games').value=s.statGames||'';
+  document.getElementById('set-stat-projects').value=s.statProjects||'';
 }
 
-function saveHomepage() {
-  DATA.settings.heroTitle = document.getElementById('set-hero-title').value;
-  DATA.settings.heroDesc = document.getElementById('set-hero-desc').value;
-  DATA.settings.heroBtnLabel = document.getElementById('set-hero-btn-label').value;
-  DATA.settings.heroBtnUrl = document.getElementById('set-hero-btn-url').value;
-  saveData(); renderPublic(); toast('Hero settings saved.');
+function saveHomepage(){ DATA.settings.heroTitle=document.getElementById('set-hero-title').value; DATA.settings.heroDesc=document.getElementById('set-hero-desc').value; DATA.settings.heroBtnLabel=document.getElementById('set-hero-btn-label').value; DATA.settings.heroBtnUrl=document.getElementById('set-hero-btn-url').value; saveData(); renderPublic(); toast('Hero saved.'); }
+function saveFooter(){ DATA.settings.footerText=document.getElementById('set-footer-text').value; saveData(); renderPublic(); toast('Footer saved.'); }
+function saveGroupInfo(){ DATA.settings.groupName=document.getElementById('set-group-name').value; DATA.settings.groupTag=document.getElementById('set-group-tag').value; DATA.settings.groupAvatar=document.getElementById('set-group-avatar').value; DATA.settings.groupLink=document.getElementById('set-group-link').value; saveData(); renderPublic(); toast('Group info saved.'); }
+function saveStats(){ DATA.settings.statMembers=document.getElementById('set-stat-members').value; DATA.settings.statGames=document.getElementById('set-stat-games').value; DATA.settings.statProjects=document.getElementById('set-stat-projects').value; saveData(); renderPublic(); toast('Stats saved.'); }
+
+/* ══════════ GITHUB SYNC ══════════ */
+function loadGHFields(){
+  const g=DATA.github;
+  document.getElementById('gh-owner').value=g.owner||'';
+  document.getElementById('gh-repo').value=g.repo||'';
+  document.getElementById('gh-branch').value=g.branch||'main';
+  document.getElementById('gh-path').value=g.path||'data.json';
+  const tok=getGHToken();
+  document.getElementById('gh-token').value=tok?'\u25CF'.repeat(Math.min(tok.length,24)):'';
+  updateTokenStatus(!!tok);
 }
-
-function saveFooter() {
-  DATA.settings.footerText = document.getElementById('set-footer-text').value;
-  saveData(); renderPublic(); toast('Footer saved.');
+function updateTokenStatus(saved){
+  document.getElementById('token-status').innerHTML=saved
+    ?'<div class="token-saved-pill"><span class="token-saved-dot"></span>Token saved locally</div>'
+    :'<span style="font-family:var(--mono);font-size:11px;color:var(--text3)">No token saved</span>';
 }
-
-function saveGroupInfo() {
-  DATA.settings.groupName = document.getElementById('set-group-name').value;
-  DATA.settings.groupTag = document.getElementById('set-group-tag').value;
-  DATA.settings.groupAvatar = document.getElementById('set-group-avatar').value;
-  DATA.settings.groupLink = document.getElementById('set-group-link').value;
-  document.getElementById('hero-cta-btn').href = DATA.settings.groupLink || '#';
-  document.getElementById('group-join-link').href = DATA.settings.groupLink || '#';
-  saveData(); renderPublic(); toast('Group info saved.');
+function updateGHStatus(){
+  const tok=getGHToken(); const g=DATA.github;
+  document.getElementById('github-status-indicator').innerHTML=(tok&&g.owner&&g.repo)
+    ?'<div class="token-saved-pill"><span class="token-saved-dot"></span>GitHub Connected</div>':'';
 }
-
-function saveStats() {
-  DATA.settings.statMembers = document.getElementById('set-stat-members').value;
-  DATA.settings.statGames = document.getElementById('set-stat-games').value;
-  DATA.settings.statProjects = document.getElementById('set-stat-projects').value;
-  saveData(); renderPublic(); toast('Stats saved.');
-}
-
-// ══════════════════════════════════════════════
-//  GITHUB SYNC
-// ══════════════════════════════════════════════
-
-function loadGHFields() {
-  const g = DATA.github;
-  document.getElementById('gh-owner').value = g.owner || '';
-  document.getElementById('gh-repo').value = g.repo || '';
-  document.getElementById('gh-branch').value = g.branch || 'main';
-  document.getElementById('gh-path').value = g.path || 'data.json';
-  const token = getGHToken();
-  document.getElementById('gh-token').value = token ? '●'.repeat(Math.min(token.length, 20)) : '';
-  updateTokenStatus(!!token);
-}
-
-function updateTokenStatus(saved) {
-  const el = document.getElementById('token-status');
-  el.innerHTML = saved
-    ? '<div class="token-saved-pill"><span class="token-saved-dot"></span>Token saved locally</div>'
-    : '<span style="font-family:var(--mono);font-size:11px;color:var(--text3)">No token saved</span>';
-}
-
-function updateGHStatus() {
-  const token = getGHToken();
-  const g = DATA.github;
-  const el = document.getElementById('github-status-indicator');
-  if (token && g.owner && g.repo) {
-    el.innerHTML = '<div class="token-saved-pill"><span class="token-saved-dot"></span>GitHub Connected</div>';
-  } else {
-    el.innerHTML = '';
-  }
-}
-
-function saveGithubSettings() {
-  const tokenInput = document.getElementById('gh-token').value.trim();
-  DATA.github.owner = document.getElementById('gh-owner').value.trim();
-  DATA.github.repo = document.getElementById('gh-repo').value.trim();
-  DATA.github.branch = document.getElementById('gh-branch').value.trim() || 'main';
-  DATA.github.path = document.getElementById('gh-path').value.trim() || 'data.json';
-
-  if (tokenInput && !tokenInput.startsWith('●')) {
-    localStorage.setItem('eek_gh_token', tokenInput);
-  }
-
-  saveData();
-  updateGHStatus();
-  updateTokenStatus(!!getGHToken());
+function saveGithubSettings(){
+  const tok=document.getElementById('gh-token').value.trim();
+  DATA.github.owner=document.getElementById('gh-owner').value.trim();
+  DATA.github.repo=document.getElementById('gh-repo').value.trim();
+  DATA.github.branch=document.getElementById('gh-branch').value.trim()||'main';
+  DATA.github.path=document.getElementById('gh-path').value.trim()||'data.json';
+  if(tok&&!tok.startsWith('\u25CF')) localStorage.setItem('eek_gh_token',tok);
+  saveData(); updateGHStatus(); updateTokenStatus(!!getGHToken());
   testGithubConnection();
 }
-
-async function testGithubConnection() {
-  const token = getGHToken();
-  const { owner, repo } = DATA.github;
-  if (!token || !owner || !repo) {
-    showAlert('gh-alert', 'error', 'Fill in token, owner, and repo name first.');
-    return;
-  }
-  try {
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
-    });
-    if (res.ok) {
-      showAlert('gh-alert', 'success', 'Connection successful. Repository found.');
-      updateGHStatus();
-    } else {
-      showAlert('gh-alert', 'error', `Connection failed: ${res.status} ${res.statusText}`);
-    }
-  } catch(e) {
-    showAlert('gh-alert', 'error', 'Network error. Check token and repo name.');
-  }
+async function testGithubConnection(){
+  const tok=getGHToken(); const{owner,repo}=DATA.github;
+  if(!tok||!owner||!repo){ showAlert('gh-alert','error','Fill in token, owner and repo first.'); return; }
+  try{
+    const r=await fetch(`https://api.github.com/repos/${owner}/${repo}`,{headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(r.ok){ showAlert('gh-alert','success','Connection successful.'); updateGHStatus(); }
+    else showAlert('gh-alert','error',`Failed: ${r.status} ${r.statusText}`);
+  }catch(e){ showAlert('gh-alert','error','Network error. Check your token.'); }
+}
+async function pushToGithub(){
+  const tok=getGHToken(); const{owner,repo,branch,path}=DATA.github;
+  if(!tok||!owner||!repo){ showAlert('gh-alert','error','Configure GitHub settings first.'); return; }
+  showAlert('gh-alert','success','Pushing...');
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(DATA,null,2))));
+  try{
+    let sha=null;
+    const gr=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,{headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(gr.ok){ const d=await gr.json(); sha=d.sha; }
+    const body={message:'Update site data via EEK Admin',content,branch};
+    if(sha) body.sha=sha;
+    const pr=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{method:'PUT',headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(pr.ok){ showAlert('gh-alert','success','Pushed to GitHub.'); toast('Pushed.'); }
+    else{ const e=await pr.json(); showAlert('gh-alert','error','Push failed: '+(e.message||pr.status)); }
+  }catch(e){ showAlert('gh-alert','error','Error: '+e.message); }
+}
+async function pullFromGithub(){
+  const tok=getGHToken(); const{owner,repo,branch,path}=DATA.github;
+  if(!tok||!owner||!repo){ showAlert('gh-alert','error','Configure GitHub settings first.'); return; }
+  try{
+    const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,{headers:{Authorization:`token ${tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(!r.ok){ showAlert('gh-alert','error','File not found on GitHub.'); return; }
+    const d=await r.json();
+    const pulled=JSON.parse(decodeURIComponent(escape(atob(d.content))));
+    const ghCfg=DATA.github; DATA=pulled; DATA.github=ghCfg;
+    if(!DATA.settings.navLinks) DATA.settings.navLinks=[];
+    DATA.posts.forEach(p=>{ if(!p.links) p.links=[]; });
+    saveData(); populateAdminForms(); renderAdminDashboard(); renderManagePosts(currentFilter); renderPublic();
+    showAlert('gh-alert','success','Pulled from GitHub.'); toast('Pulled.');
+  }catch(e){ showAlert('gh-alert','error','Pull failed: '+e.message); }
 }
 
-async function pushToGithub() {
-  const token = getGHToken();
-  const { owner, repo, branch, path } = DATA.github;
-  if (!token || !owner || !repo) {
-    showAlert('gh-alert', 'error', 'Configure GitHub settings first.');
-    return;
-  }
-  showAlert('gh-alert', 'success', 'Pushing to GitHub...');
-
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(DATA, null, 2))));
-
-  try {
-    // Check if file exists (get SHA)
-    let sha = null;
-    const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`, {
-      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
-    });
-    if (getRes.ok) { const d = await getRes.json(); sha = d.sha; }
-
-    const body = { message: 'Update site data via EEK Admin Panel', content, branch };
-    if (sha) body.sha = sha;
-
-    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    if (putRes.ok) {
-      showAlert('gh-alert', 'success', 'Data pushed to GitHub successfully.');
-      toast('Pushed to GitHub.');
-    } else {
-      const err = await putRes.json();
-      showAlert('gh-alert', 'error', 'Push failed: ' + (err.message || putRes.status));
-    }
-  } catch(e) {
-    showAlert('gh-alert', 'error', 'Error: ' + e.message);
-  }
+/* ══════════ SECURITY ══════════ */
+function changePassword(){
+  const cur=document.getElementById('sec-current-pw').value;
+  const nw=document.getElementById('sec-new-pw').value;
+  const conf=document.getElementById('sec-confirm-pw').value;
+  if(cur!==ADMIN_PASSWORD){ showAlert('sec-alert','error','Current password incorrect.'); return; }
+  if(nw.length<4){ showAlert('sec-alert','error','Password must be 4+ chars.'); return; }
+  if(nw!==conf){ showAlert('sec-alert','error','Passwords do not match.'); return; }
+  ADMIN_PASSWORD=nw; localStorage.setItem('eek_admin_pw',nw);
+  ['sec-current-pw','sec-new-pw','sec-confirm-pw'].forEach(id=>document.getElementById(id).value='');
+  showAlert('sec-alert','success','Password updated.'); toast('Password changed.');
 }
 
-async function pullFromGithub() {
-  const token = getGHToken();
-  const { owner, repo, branch, path } = DATA.github;
-  if (!token || !owner || !repo) {
-    showAlert('gh-alert', 'error', 'Configure GitHub settings first.');
-    return;
-  }
-  try {
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`, {
-      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
-    });
-    if (!res.ok) { showAlert('gh-alert', 'error', 'File not found on GitHub.'); return; }
-    const d = await res.json();
-    const text = decodeURIComponent(escape(atob(d.content)));
-    const pulled = JSON.parse(text);
-    const ghCfg = DATA.github;
-    DATA = pulled;
-    DATA.github = ghCfg;
-    saveData();
-    populateAdminForms();
-    renderAdminDashboard();
-    renderManagePosts(currentFilter);
-    renderPublic();
-    showAlert('gh-alert', 'success', 'Data pulled from GitHub successfully.');
-    toast('Pulled from GitHub.');
-  } catch(e) {
-    showAlert('gh-alert', 'error', 'Pull failed: ' + e.message);
-  }
-}
+/* ══════════ RICH TEXT ══════════ */
+function wrapText(b,a){ const ta=document.getElementById('post-content'); const s=ta.selectionStart,e=ta.selectionEnd; const sel=ta.value.substring(s,e); ta.value=ta.value.substring(0,s)+b+sel+a+ta.value.substring(e); ta.selectionStart=s+b.length; ta.selectionEnd=e+b.length; ta.focus(); }
+function insertLine(t){ const ta=document.getElementById('post-content'); const p=ta.selectionEnd; ta.value=ta.value.substring(0,p)+t+ta.value.substring(p); ta.selectionEnd=p+t.length; ta.focus(); }
 
-// ── SECURITY ──
-function changePassword() {
-  const cur = document.getElementById('sec-current-pw').value;
-  const nw = document.getElementById('sec-new-pw').value;
-  const conf = document.getElementById('sec-confirm-pw').value;
-
-  if (cur !== ADMIN_PASSWORD) {
-    showAlert('sec-alert', 'error', 'Current password is incorrect.');
-    return;
-  }
-  if (nw.length < 4) {
-    showAlert('sec-alert', 'error', 'New password must be at least 4 characters.');
-    return;
-  }
-  if (nw !== conf) {
-    showAlert('sec-alert', 'error', 'Passwords do not match.');
-    return;
-  }
-  ADMIN_PASSWORD = nw;
-  localStorage.setItem('eek_admin_pw', nw);
-  ['sec-current-pw','sec-new-pw','sec-confirm-pw'].forEach(id => document.getElementById(id).value = '');
-  showAlert('sec-alert', 'success', 'Password updated successfully.');
-  toast('Password changed.');
-}
-
-// ══════════════════════════════════════════════
-//  RICH TEXT HELPERS
-// ══════════════════════════════════════════════
-
-function wrapText(before, after) {
-  const ta = document.getElementById('post-content');
-  const start = ta.selectionStart, end = ta.selectionEnd;
-  const sel = ta.value.substring(start, end);
-  ta.value = ta.value.substring(0, start) + before + sel + after + ta.value.substring(end);
-  ta.selectionStart = start + before.length;
-  ta.selectionEnd = end + before.length;
-  ta.focus();
-}
-
-function insertLine(text) {
-  const ta = document.getElementById('post-content');
-  const pos = ta.selectionEnd;
-  ta.value = ta.value.substring(0, pos) + text + ta.value.substring(pos);
-  ta.selectionEnd = pos + text.length;
-  ta.focus();
-}
-
-// ══════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════
-
-function esc(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function typeLabel(t) {
-  return { main:'Main', game:'Game', portfolio:'Portfolio', group:'Group', update:'Update', announcement:'Announcement', side:'Side' }[t] || t;
-}
-
-function formatDate(ts) {
-  if (!ts) return '';
-  return new Date(ts).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
-}
-
-function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
-
-function showAlert(id, type, msg) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'alert ' + type + ' show';
-  el.textContent = msg;
-  setTimeout(() => el.classList.remove('show'), 4000);
-}
-
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
+/* ══════════ HELPERS ══════════ */
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function typeLabel(t){ return{main:'Main',game:'Game',portfolio:'Portfolio',group:'Group',update:'Update',announcement:'Announcement',side:'Side'}[t]||t; }
+function formatDate(ts){ if(!ts) return ''; return new Date(ts).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}); }
+function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+function scrollToSection(id){ const el=document.getElementById(id); if(el){ const top=el.getBoundingClientRect().top+window.scrollY-70; window.scrollTo({top,behavior:'smooth'}); } }
+function showAlert(id,type,msg){ const el=document.getElementById(id); if(!el) return; el.className='alert '+type+' show'; el.textContent=msg; clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),4500); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2800); }
 </script>
 </body>
 </html>
