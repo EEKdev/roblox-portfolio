@@ -2,1525 +2,847 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>EEK Developers</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════
+   THEME VARIABLES — all editable by admin
+═══════════════════════════════════════════ */
 :root {
-  --bg: #080808;
-  --bg2: #0f0f0f;
-  --bg3: #161616;
-  --bg4: #1e1e1e;
-  --border: #2a2a2a;
-  --border2: #333;
-  --text: #f0f0f0;
-  --text2: #a0a0a0;
-  --text3: #606060;
-  --accent: #ffffff;
-  --accent2: #cccccc;
-  --red: #ff3b3b;
-  --green: #3bff7a;
-  --blue: #3b8fff;
-  --yellow: #ffd23b;
-  --mono: 'Space Mono', monospace;
-  --sans: 'Syne', sans-serif;
+  --c-bg:        #0a0a0a;
+  --c-bg2:       #111111;
+  --c-bg3:       #181818;
+  --c-bg4:       #222222;
+  --c-border:    #252525;
+  --c-border2:   #333333;
+  --c-text:      #f2f2f2;
+  --c-text2:     #999999;
+  --c-text3:     #555555;
+  --c-accent:    #ffffff;
+  --c-accent2:   #dddddd;
+  --c-red:       #ff4040;
+  --c-green:     #40ff90;
+  --c-blue:      #4090ff;
+  --c-yellow:    #ffcc40;
+  --c-pin:       #ffcc40;
+  --font-display:'Bebas Neue', sans-serif;
+  --font-body:   'DM Sans', sans-serif;
+  --font-mono:   'DM Mono', monospace;
+  --radius:      0px;
+  --hero-size:   clamp(64px,11vw,130px);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--c-bg);color:var(--c-text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--c-bg)}
+::-webkit-scrollbar-thumb{background:var(--c-border2)}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font-body)}
 
-html { scroll-behavior: smooth; }
+/* ─── TOPBAR ─── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  height:56px;display:flex;align-items:center;
+  justify-content:space-between;
+  padding:0 clamp(16px,4vw,52px);
+  background:rgba(10,10,10,0.94);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--c-border);
+}
+.tb-logo{font-family:var(--font-display);font-size:22px;letter-spacing:0.06em;color:var(--c-text);cursor:pointer}
+.tb-links{display:flex;align-items:center;gap:clamp(14px,2.5vw,32px)}
+.tb-link{font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;color:var(--c-text3);text-transform:uppercase;transition:color .2s;cursor:pointer}
+.tb-link:hover{color:var(--c-text2)}
+.tb-admin{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-text3);background:none;border:1px solid var(--c-border2);padding:6px 14px;cursor:pointer;transition:all .2s}
+.tb-admin:hover{color:var(--c-text2);border-color:var(--c-text3)}
+.tb-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.tb-hamburger span{display:block;width:20px;height:1px;background:var(--c-text3);transition:all .3s}
+#mobile-nav{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,10,10,.97);border-bottom:1px solid var(--c-border);padding:16px clamp(16px,4vw,52px);z-index:799;flex-direction:column;gap:0}
+#mobile-nav.open{display:flex}
+.mn-link{font-family:var(--font-mono);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-text2);padding:12px 0;border-bottom:1px solid var(--c-border);cursor:pointer}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ─── SCROLLBAR ─── */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-/* ─── NAV ─── */
-#nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(16px, 4vw, 48px);
-  height: 60px;
-  background: rgba(8,8,8,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-.nav-logo {
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--text);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.nav-logo span { color: var(--text3); }
-.nav-links {
-  display: flex; align-items: center; gap: clamp(16px, 2.5vw, 32px);
-  list-style: none;
-}
-.nav-links a {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--text2);
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--text); }
-.nav-admin-btn {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  background: none;
-  border: 1px solid var(--border);
-  padding: 6px 14px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s;
-}
-.nav-admin-btn:hover { color: var(--text); border-color: var(--border2); }
-.nav-hamburger {
-  display: none;
-  flex-direction: column; gap: 5px;
-  background: none; border: none; cursor: pointer; padding: 4px;
-}
-.nav-hamburger span { display: block; width: 22px; height: 1px; background: var(--text2); transition: all 0.3s; }
-
-/* ─── MOBILE NAV ─── */
-#mobile-menu {
-  display: none;
-  position: fixed; top: 60px; left: 0; right: 0;
-  background: rgba(8,8,8,0.98);
-  border-bottom: 1px solid var(--border);
-  padding: 20px clamp(16px,4vw,48px);
-  z-index: 899;
-  flex-direction: column; gap: 16px;
-}
-#mobile-menu a {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  color: var(--text2);
-  text-decoration: none;
-  text-transform: uppercase;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-}
-#mobile-menu.open { display: flex; }
+/* ─── SECTIONS ─── */
+.page-section{padding:clamp(64px,9vw,120px) clamp(16px,4vw,52px);border-top:1px solid var(--c-border)}
+.sec-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;color:var(--c-text3);text-transform:uppercase;margin-bottom:12px}
+.sec-title{font-family:var(--font-display);font-size:clamp(32px,5vw,56px);letter-spacing:0.04em;color:var(--c-text);margin-bottom:clamp(28px,4vw,48px)}
+.sec-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:clamp(28px,4vw,48px)}
+.sec-header-left .sec-title{margin-bottom:0}
 
 /* ─── HERO ─── */
-#hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 80px clamp(16px,4vw,48px) 60px;
-  position: relative;
-  overflow: hidden;
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:80px clamp(16px,4vw,52px) clamp(40px,6vw,80px);
+  position:relative;overflow:hidden;
 }
-.hero-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 60px 60px;
-  opacity: 0.25;
-  pointer-events: none;
+.hero-bg-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--c-border) 1px,transparent 1px),linear-gradient(90deg,var(--c-border) 1px,transparent 1px);
+  background-size:80px 80px;opacity:.18;
 }
-.hero-glow {
-  position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-inner { position: relative; max-width: 900px; }
-.hero-tag {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 24px;
-}
-.hero-title {
-  font-family: var(--sans);
-  font-size: clamp(42px, 8vw, 96px);
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin-bottom: 28px;
-}
-.hero-title em { font-style: normal; color: var(--text3); }
-.hero-desc {
-  font-family: var(--sans);
-  font-size: clamp(14px, 1.8vw, 18px);
-  color: var(--text2);
-  line-height: 1.7;
-  max-width: 560px;
-  margin-bottom: 40px;
-}
-.hero-cta {
-  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-}
-.btn-primary {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--bg);
-  background: var(--text);
-  border: 1px solid var(--text);
-  padding: 12px 28px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.2s;
-}
-.btn-primary:hover { background: var(--text2); border-color: var(--text2); }
-.btn-secondary {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text2);
-  background: none;
-  border: 1px solid var(--border2);
-  padding: 12px 28px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.2s;
-}
-.btn-secondary:hover { color: var(--text); border-color: var(--text2); }
-.hero-stats {
-  display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 48px);
-  margin-top: 60px;
-  padding-top: 40px;
-  border-top: 1px solid var(--border);
-}
-.stat-item { display: flex; flex-direction: column; gap: 4px; }
-.stat-num {
-  font-family: var(--mono);
-  font-size: clamp(22px, 3vw, 32px);
-  font-weight: 700;
-  color: var(--text);
-}
-.stat-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  text-transform: uppercase;
-}
+.hero-bg-glow{position:absolute;top:-300px;right:-200px;width:800px;height:800px;background:radial-gradient(circle,rgba(255,255,255,.025) 0%,transparent 65%);pointer-events:none}
+.hero-content{position:relative;max-width:1100px}
+.hero-pre{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;color:var(--c-text3);text-transform:uppercase;margin-bottom:20px}
+.hero-h1{font-family:var(--font-display);font-size:var(--hero-size);line-height:.95;letter-spacing:.03em;color:var(--c-text);margin-bottom:28px}
+.hero-h1 .dim{color:var(--c-text3)}
+.hero-body{font-size:clamp(14px,1.6vw,17px);color:var(--c-text2);line-height:1.75;max-width:540px;margin-bottom:36px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(40px,6vw,80px)}
+.btn-fill{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-bg);background:var(--c-text);border:1px solid var(--c-text);padding:13px 30px;cursor:pointer;transition:all .2s;display:inline-block}
+.btn-fill:hover{background:var(--c-text2);border-color:var(--c-text2)}
+.btn-outline{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-text2);background:none;border:1px solid var(--c-border2);padding:13px 30px;cursor:pointer;transition:all .2s;display:inline-block}
+.btn-outline:hover{color:var(--c-text);border-color:var(--c-text3)}
+.hero-stats{display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,56px);padding-top:32px;border-top:1px solid var(--c-border)}
+.hstat-num{font-family:var(--font-display);font-size:clamp(28px,4vw,48px);color:var(--c-text)}
+.hstat-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--c-text3);text-transform:uppercase;margin-top:2px}
 
-/* ─── SECTION BASE ─── */
-.section {
-  padding: clamp(60px,8vw,120px) clamp(16px,4vw,48px);
-  border-top: 1px solid var(--border);
-}
-.section-header {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  flex-wrap: wrap; gap: 16px;
-  margin-bottom: clamp(32px,5vw,56px);
-}
-.section-title {
-  font-family: var(--sans);
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-.section-sub {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.section-link {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-decoration: none;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition: color 0.2s;
-}
-.section-link:hover { color: var(--text); }
-
-/* ─── PINNED POST ─── */
-#pinned-section { background: var(--bg2); }
-.pinned-post {
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  padding: clamp(20px,3vw,36px);
-  position: relative;
-  transition: border-color 0.2s;
-}
-.pinned-post:hover { border-color: var(--text3); }
-.pinned-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 14px;
-  display: flex; align-items: center; gap: 8px;
-}
-.pinned-label::before {
-  content: '';
-  display: block; width: 6px; height: 6px;
-  background: var(--yellow); border-radius: 50%;
-}
-.pinned-post h2 {
-  font-family: var(--sans);
-  font-size: clamp(20px, 3vw, 32px);
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 12px;
-  letter-spacing: -0.01em;
-}
-.pinned-post p {
-  font-size: clamp(13px,1.5vw,15px);
-  color: var(--text2);
-  line-height: 1.75;
-  max-width: 720px;
-}
-.post-meta {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
-  margin-top: 20px;
-}
-.post-date {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-.post-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-  border: 1px solid var(--border2);
-  padding: 3px 8px;
-  text-transform: uppercase;
-}
-.post-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.post-link {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--text2);
-  text-decoration: none;
-  border: 1px solid var(--border);
-  padding: 7px 14px;
-  transition: all 0.2s;
-  display: inline-flex; align-items: center; gap: 6px;
-}
-.post-link:hover { color: var(--text); border-color: var(--border2); }
-.post-link svg { width:12px; height:12px; flex-shrink:0; }
+/* ─── PINNED ─── */
+#sec-pinned{background:var(--c-bg2)}
+.pinned-card{border:1px solid var(--c-border2);background:var(--c-bg3);padding:clamp(20px,3vw,40px);position:relative}
+.pin-badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-pin);margin-bottom:16px}
+.pin-dot{width:6px;height:6px;border-radius:50%;background:var(--c-pin)}
+.pinned-card h2{font-family:var(--font-display);font-size:clamp(22px,3.5vw,40px);letter-spacing:.04em;color:var(--c-text);margin-bottom:14px}
+.pinned-card .body-text{font-size:clamp(13px,1.5vw,15px);color:var(--c-text2);line-height:1.8;max-width:700px}
+.post-meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
+.meta-date{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--c-text3);text-transform:uppercase}
+.meta-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;color:var(--c-text3);border:1px solid var(--c-border2);padding:3px 8px;text-transform:uppercase}
+.post-links-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.plink{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:11px;letter-spacing:.07em;color:var(--c-text2);border:1px solid var(--c-border);padding:7px 14px;transition:all .2s;cursor:pointer}
+.plink:hover{color:var(--c-text);border-color:var(--c-border2)}
+.plink svg{width:10px;height:10px;flex-shrink:0}
 
 /* ─── POST GRID ─── */
-.post-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-  gap: clamp(12px, 2vw, 20px);
-}
-.post-card {
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: clamp(16px,2.5vw,28px);
-  transition: all 0.2s;
-  display: flex; flex-direction: column; gap: 12px;
-}
-.post-card:hover { border-color: var(--border2); background: var(--bg3); }
-.post-card-type {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  text-transform: uppercase;
-  display: flex; align-items: center; gap: 6px;
-}
-.type-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  flex-shrink: 0;
-}
-.dot-game { background: var(--green); }
-.dot-group { background: var(--blue); }
-.dot-portfolio { background: var(--yellow); }
-.dot-main { background: var(--text); }
-.dot-side { background: var(--text3); }
-.post-card h3 {
-  font-family: var(--sans);
-  font-size: clamp(16px,2vw,20px);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-.post-card p {
-  font-size: clamp(12px,1.4vw,14px);
-  color: var(--text2);
-  line-height: 1.7;
-  flex: 1;
-}
-.post-card-footer {
-  display: flex; flex-wrap: wrap; align-items: center;
-  justify-content: space-between; gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-.card-links { display: flex; flex-wrap: wrap; gap: 8px; }
-.card-link {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.07em;
-  color: var(--text3);
-  text-decoration: none;
-  border: 1px solid var(--border);
-  padding: 5px 10px;
-  transition: all 0.2s;
-  display: inline-flex; align-items: center; gap: 5px;
-}
-.card-link:hover { color: var(--text2); border-color: var(--border2); }
-.card-link svg { width:10px; height:10px; flex-shrink:0; }
+.post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:clamp(10px,2vw,18px)}
+.post-card{border:1px solid var(--c-border);background:var(--c-bg2);padding:clamp(16px,2vw,26px);display:flex;flex-direction:column;gap:10px;transition:all .2s}
+.post-card:hover{border-color:var(--c-border2);background:var(--c-bg3)}
+.pc-type-row{display:flex;align-items:center;gap:7px}
+.type-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.td-main{background:#fff}
+.td-side{background:var(--c-text3)}
+.td-game{background:var(--c-green)}
+.td-group{background:var(--c-blue)}
+.td-portfolio{background:var(--c-yellow)}
+.td-pinned{background:var(--c-pin)}
+.pc-type-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-text3)}
+.post-card h3{font-family:var(--font-display);font-size:clamp(17px,2vw,22px);letter-spacing:.03em;color:var(--c-text);line-height:1.2}
+.post-card .body-text{font-size:clamp(12px,1.3vw,14px);color:var(--c-text2);line-height:1.75;flex:1}
+.pc-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--c-border)}
+.pc-links{display:flex;flex-wrap:wrap;gap:6px}
+.pc-link{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--c-text3);border:1px solid var(--c-border);padding:5px 10px;transition:all .2s}
+.pc-link:hover{color:var(--c-text2);border-color:var(--c-border2)}
+.pc-link svg{width:9px;height:9px}
 
-/* ─── SIDEBAR LAYOUT ─── */
-.content-with-sidebar {
-  display: grid;
-  grid-template-columns: 1fr clamp(240px,28vw,320px);
-  gap: clamp(20px,3vw,40px);
-  align-items: start;
-}
-@media(max-width: 900px) {
-  .content-with-sidebar { grid-template-columns: 1fr; }
-}
-.sidebar {
-  display: flex; flex-direction: column; gap: 20px;
-  position: sticky; top: 80px;
-}
-.sidebar-card {
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: 20px;
-}
-.sidebar-card-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-list { display: flex; flex-direction: column; gap: 10px; }
-.sidebar-item {
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.5;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: 4px;
-}
-.sidebar-item:last-child { border: none; padding: 0; }
-.sidebar-item-title { font-weight: 600; color: var(--text); font-size: 13px; }
-.sidebar-item-meta { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing:0.05em; }
-.sidebar-item-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.sidebar-item-link {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
-  color: var(--text3); text-decoration: none;
-  border: 1px solid var(--border); padding: 3px 8px;
-  transition: all 0.2s;
-}
-.sidebar-item-link:hover { color: var(--text2); border-color: var(--border2); }
+/* ─── MAIN + SIDEBAR LAYOUT ─── */
+.with-sidebar{display:grid;grid-template-columns:1fr clamp(220px,26vw,300px);gap:clamp(16px,3vw,36px);align-items:start}
+@media(max-width:860px){.with-sidebar{grid-template-columns:1fr}}
+.sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:72px}
+.sb-card{border:1px solid var(--c-border);background:var(--c-bg2)}
+.sb-head{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--c-text3);padding:12px 16px;border-bottom:1px solid var(--c-border)}
+.sb-body{padding:0}
+.sb-item{padding:14px 16px;border-bottom:1px solid var(--c-border);display:flex;flex-direction:column;gap:5px}
+.sb-item:last-child{border-bottom:none}
+.sb-item-title{font-size:13px;font-weight:600;color:var(--c-text)}
+.sb-item-meta{font-family:var(--font-mono);font-size:10px;color:var(--c-text3);letter-spacing:.05em}
+.sb-item-body{font-size:12px;color:var(--c-text2);line-height:1.65}
+.sb-item-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.sb-item-link{font-family:var(--font-mono);font-size:10px;color:var(--c-text3);border:1px solid var(--c-border);padding:3px 8px;transition:all .2s}
+.sb-item-link:hover{color:var(--c-text2);border-color:var(--c-border2)}
 
-/* ─── ABOUT / GROUP INFO ─── */
-#about { background: var(--bg); }
-.about-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%,260px),1fr));
-  gap: clamp(12px,2vw,20px);
-}
-.about-card {
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: clamp(16px,2.5vw,28px);
-}
-.about-card h3 {
-  font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 10px;
-}
-.about-card p {
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.75;
-}
+/* ─── ABOUT CARDS ─── */
+.about-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:clamp(10px,2vw,16px)}
+.about-card{border:1px solid var(--c-border);background:var(--c-bg2);padding:clamp(16px,2vw,24px)}
+.about-card h3{font-family:var(--font-display);font-size:20px;letter-spacing:.04em;color:var(--c-text);margin-bottom:10px}
+.about-card p{font-size:13px;color:var(--c-text2);line-height:1.75}
 
 /* ─── FOOTER ─── */
-footer {
-  border-top: 1px solid var(--border);
-  padding: clamp(32px,4vw,56px) clamp(16px,4vw,48px);
-  display: flex; flex-wrap: wrap;
-  align-items: center; justify-content: space-between; gap: 20px;
-}
-.footer-logo {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--text2);
-}
-.footer-links {
-  display: flex; flex-wrap: wrap; gap: clamp(12px,2vw,24px);
-  list-style: none;
-}
-.footer-links a {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-.footer-links a:hover { color: var(--text2); }
-.footer-copy {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 0.06em;
-  width: 100%;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-}
+footer{border-top:1px solid var(--c-border);padding:clamp(28px,4vw,52px) clamp(16px,4vw,52px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+.ft-logo{font-family:var(--font-display);font-size:20px;letter-spacing:.06em;color:var(--c-text2)}
+.ft-links{display:flex;flex-wrap:wrap;gap:clamp(12px,2vw,24px)}
+.ft-link{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--c-text3);text-transform:uppercase;transition:color .2s}
+.ft-link:hover{color:var(--c-text2)}
+.ft-copy{width:100%;font-family:var(--font-mono);font-size:10px;color:var(--c-text3);letter-spacing:.05em;padding-top:20px;border-top:1px solid var(--c-border)}
 
-/* ─── MODAL OVERLAY ─── */
-.modal-overlay {
-  display: none;
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(4px);
-  align-items: center; justify-content: center;
-  padding: 20px;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  width: 100%; max-width: 440px;
-  padding: 36px;
-  position: relative;
-}
-.modal-title {
-  font-family: var(--sans);
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-.modal-sub {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 28px;
-}
-.modal-close {
-  position: absolute; top: 16px; right: 16px;
-  background: none; border: none; cursor: pointer;
-  color: var(--text3); font-size: 18px; line-height: 1;
-  transition: color 0.2s;
-}
-.modal-close:hover { color: var(--text); }
+/* ─── EMPTY STATE ─── */
+.empty-state{border:1px dashed var(--c-border);padding:40px 20px;text-align:center}
+.empty-state p{font-family:var(--font-mono);font-size:11px;color:var(--c-text3);letter-spacing:.08em}
 
-/* ─── FORM ELEMENTS ─── */
-.form-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
-.form-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-.form-input, .form-textarea, .form-select {
-  width: 100%;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 13px;
-  padding: 10px 12px;
-  outline: none;
-  transition: border-color 0.2s;
-  -webkit-appearance: none;
-}
-.form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--text3); }
-.form-textarea { resize: vertical; min-height: 90px; }
-.form-select { cursor: pointer; }
-.form-select option { background: var(--bg3); }
-.form-error {
-  font-family: var(--mono); font-size: 11px;
-  color: var(--red); letter-spacing:0.05em;
-  min-height: 16px;
-}
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media(max-width:480px){ .form-row { grid-template-columns: 1fr; } }
+/* ═══════════════════════════════════════════
+   ADMIN SYSTEM
+═══════════════════════════════════════════ */
 
-/* ─── ADMIN PANEL ─── */
-#admin-panel {
-  display: none;
-  position: fixed; inset: 0; z-index: 800;
-  background: var(--bg);
-  overflow-y: auto;
-}
-#admin-panel.open { display: block; }
+/* Login modal */
+.overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal-box{background:var(--c-bg2);border:1px solid var(--c-border2);width:100%;max-width:420px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-hd{padding:28px 28px 0;border-bottom:1px solid var(--c-border);padding-bottom:20px;margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--font-display);font-size:28px;letter-spacing:.04em;color:var(--c-text)}
+.modal-sub{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--c-text3);text-transform:uppercase;margin-top:4px}
+.modal-close{background:none;border:none;color:var(--c-text3);cursor:pointer;font-size:18px;line-height:1;padding:4px;transition:color .2s;flex-shrink:0}
+.modal-close:hover{color:var(--c-text)}
+.modal-body{padding:0 28px 28px}
 
-.admin-nav {
-  position: sticky; top: 0; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px;
-  padding: 0 clamp(12px,3vw,32px);
-  height: auto; min-height: 56px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-}
-.admin-nav-left {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 0;
-}
-.admin-logo {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--text);
-}
-.admin-badge {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  border: 1px solid var(--border2);
-  padding: 2px 7px;
-  text-transform: uppercase;
-}
-.admin-nav-right {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 0;
-  flex-wrap: wrap;
-}
-.admin-tab-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  background: none;
-  border: 1px solid transparent;
-  padding: 7px 14px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.admin-tab-btn:hover { color: var(--text2); border-color: var(--border); }
-.admin-tab-btn.active { color: var(--text); border-color: var(--border2); background: var(--bg3); }
-.admin-exit-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--red);
-  background: none;
-  border: 1px solid rgba(255,59,59,0.3);
-  padding: 7px 14px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.admin-exit-btn:hover { background: rgba(255,59,59,0.08); }
+/* Form primitives */
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.fg:last-of-type{margin-bottom:0}
+.flabel{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--c-text3);text-transform:uppercase}
+.finput,.fselect,.ftarea{width:100%;background:var(--c-bg3);border:1px solid var(--c-border2);color:var(--c-text);font-family:var(--font-mono);font-size:12px;padding:9px 11px;outline:none;transition:border-color .2s;-webkit-appearance:none;border-radius:0}
+.finput:focus,.fselect:focus,.ftarea:focus{border-color:var(--c-text3)}
+.ftarea{resize:vertical;min-height:80px;font-size:12px;line-height:1.6}
+.fselect{cursor:pointer}
+.fselect option{background:var(--c-bg3);color:var(--c-text)}
+.ferr{font-family:var(--font-mono);font-size:11px;color:var(--c-red);min-height:16px;letter-spacing:.04em}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.frow{grid-template-columns:1fr}}
+.fhint{font-family:var(--font-mono);font-size:10px;color:var(--c-text3);margin-top:3px;letter-spacing:.04em}
 
-.admin-body {
-  padding: clamp(16px,3vw,36px);
-  max-width: 1200px;
-  margin: 0 auto;
-}
+/* Admin shell */
+#admin{display:none;position:fixed;inset:0;z-index:900;background:var(--c-bg);overflow:hidden;flex-direction:column}
+#admin.open{display:flex}
+.admin-top{height:52px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--c-bg2);border-bottom:1px solid var(--c-border);padding:0 clamp(12px,2vw,24px);flex-shrink:0;gap:8px}
+.admin-top-left{display:flex;align-items:center;gap:10px}
+.admin-brand{font-family:var(--font-display);font-size:18px;letter-spacing:.06em;color:var(--c-text)}
+.admin-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-text3);border:1px solid var(--c-border2);padding:2px 7px}
+.admin-tabs{display:flex;align-items:center;gap:4px;overflow-x:auto;padding:8px 0}
+.atab{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--c-text3);background:none;border:1px solid transparent;padding:6px 13px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.atab:hover{color:var(--c-text2);border-color:var(--c-border)}
+.atab.on{color:var(--c-text);border-color:var(--c-border2);background:var(--c-bg3)}
+.admin-exit{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--c-red);background:none;border:1px solid rgba(255,64,64,.3);padding:6px 13px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.admin-exit:hover{background:rgba(255,64,64,.08)}
+.admin-scroll{flex:1;overflow-y:auto;padding:clamp(16px,2.5vw,32px)}
+.admin-content{max-width:1100px;margin:0 auto}
 
-/* Admin tabs */
-.admin-tab { display: none; }
-.admin-tab.active { display: block; }
+/* Tab panels */
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+.ap-title{font-family:var(--font-display);font-size:clamp(22px,3vw,32px);letter-spacing:.04em;color:var(--c-text);margin-bottom:4px}
+.ap-desc{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--c-text3);text-transform:uppercase;margin-bottom:24px}
 
-.admin-section-title {
-  font-family: var(--sans);
-  font-size: clamp(18px,2.5vw,26px);
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
-}
-.admin-section-desc {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text3);
-  letter-spacing: 0.08em;
-  margin-bottom: 28px;
-}
+/* Cards in admin */
+.acard{border:1px solid var(--c-border);background:var(--c-bg2);padding:clamp(14px,2vw,24px);margin-bottom:16px}
+.acard-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-text3);padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--c-border)}
+.acard-title span{color:var(--c-text2);margin-left:8px;font-size:9px}
+
+/* Stat row */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:20px}
+.stat-box{border:1px solid var(--c-border);background:var(--c-bg2);padding:14px}
+.stat-box-num{font-family:var(--font-display);font-size:30px;color:var(--c-text)}
+.stat-box-lbl{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--c-text3);text-transform:uppercase;margin-top:3px}
 
 /* Post list */
-.post-list-admin {
-  display: flex; flex-direction: column; gap: 8px;
-  margin-top: 24px;
-}
-.post-list-item {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 10px;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: 14px 16px;
-  transition: border-color 0.2s;
-}
-.post-list-item:hover { border-color: var(--border2); }
-.post-list-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-.post-list-type-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink:0; }
-.post-list-info { min-width: 0; }
-.post-list-name {
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.post-list-meta {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 0.06em;
-  margin-top: 2px;
-}
-.post-list-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.btn-sm {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  cursor: pointer;
-  border: 1px solid var(--border2);
-  background: none;
-  color: var(--text2);
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.btn-sm:hover { color: var(--text); border-color: var(--text3); }
-.btn-sm.danger { color: var(--red); border-color: rgba(255,59,59,0.3); }
-.btn-sm.danger:hover { background: rgba(255,59,59,0.08); }
-.btn-sm.success { color: var(--green); border-color: rgba(59,255,122,0.3); }
-.btn-sm.success:hover { background: rgba(59,255,122,0.06); }
-.btn-sm.info { color: var(--blue); border-color: rgba(59,143,255,0.3); }
+.plist{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.plist-item{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border:1px solid var(--c-border);background:var(--c-bg2);padding:12px 14px;transition:border-color .2s}
+.plist-item:hover{border-color:var(--c-border2)}
+.plist-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.plist-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.plist-info{min-width:0}
+.plist-name{font-weight:600;font-size:13px;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plist-meta{font-family:var(--font-mono);font-size:10px;color:var(--c-text3);margin-top:2px;letter-spacing:.04em}
+.plist-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
 
-/* Admin create form area */
-.admin-form-card {
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: clamp(16px,2.5vw,28px);
-  margin-bottom: 24px;
-}
-.admin-form-card-title {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-/* Links array input */
-.links-array { display: flex; flex-direction: column; gap: 8px; }
-.link-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
-@media(max-width:540px){ .link-row { grid-template-columns: 1fr; } }
-.btn-icon {
-  background: none; border: 1px solid var(--border2); color: var(--text3);
-  width: 34px; height: 34px; cursor: pointer; font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; flex-shrink: 0;
-}
-.btn-icon:hover { color: var(--text); border-color: var(--text3); }
-.btn-icon.add { color: var(--green); border-color: rgba(59,255,122,0.3); }
-.btn-icon.add:hover { background: rgba(59,255,122,0.08); }
-.btn-icon.remove { color: var(--red); border-color: rgba(255,59,59,0.3); }
-.btn-icon.remove:hover { background: rgba(255,59,59,0.08); }
-
-/* Site settings */
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
-  gap: 20px;
-}
-.settings-card {
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: 20px;
-}
-.settings-card-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.toggle-row {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 12px; gap: 10px;
-}
-.toggle-label { font-size: 13px; color: var(--text2); }
-.toggle-switch {
-  width: 36px; height: 20px;
-  background: var(--border2); border-radius: 10px;
-  position: relative; cursor: pointer;
-  border: none; flex-shrink: 0;
-  transition: background 0.2s;
-}
-.toggle-switch.on { background: var(--green); }
-.toggle-switch::after {
-  content: '';
-  position: absolute; top: 3px; left: 3px;
-  width: 14px; height: 14px;
-  background: var(--bg); border-radius: 50%;
-  transition: transform 0.2s;
-}
-.toggle-switch.on::after { transform: translateX(16px); }
-
-/* Toast */
-#toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-  font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
-  padding: 12px 20px;
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  color: var(--text);
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s;
-  max-width: min(320px, calc(100vw - 48px));
-}
-#toast.show { opacity: 1; }
-#toast.ok { border-color: rgba(59,255,122,0.5); color: var(--green); }
-#toast.err { border-color: rgba(255,59,59,0.5); color: var(--red); }
-
-/* Stats dashboard */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%,150px),1fr));
-  gap: 12px;
-  margin-bottom: 28px;
-}
-.stat-card {
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  padding: 16px;
-}
-.stat-card-num {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text);
-}
-.stat-card-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-top: 4px;
-}
+/* Buttons */
+.btn{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:7px 13px;cursor:pointer;border:1px solid var(--c-border2);background:none;color:var(--c-text2);transition:all .2s;white-space:nowrap;border-radius:0}
+.btn:hover{color:var(--c-text);border-color:var(--c-text3)}
+.btn.prim{background:var(--c-text);color:var(--c-bg);border-color:var(--c-text)}
+.btn.prim:hover{background:var(--c-text2);border-color:var(--c-text2)}
+.btn.sec{color:var(--c-text2);border-color:var(--c-border2)}
+.btn.red{color:var(--c-red);border-color:rgba(255,64,64,.3)}
+.btn.red:hover{background:rgba(255,64,64,.08)}
+.btn.grn{color:var(--c-green);border-color:rgba(64,255,144,.3)}
+.btn.grn:hover{background:rgba(64,255,144,.06)}
+.btn.blu{color:var(--c-blue);border-color:rgba(64,144,255,.3)}
+.btn.blu:hover{background:rgba(64,144,255,.06)}
+.btn.yel{color:var(--c-yellow);border-color:rgba(255,204,64,.3)}
+.btn.yel:hover{background:rgba(255,204,64,.06)}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 
 /* Filter bar */
-.filter-bar {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  margin-bottom: 16px;
-}
-.filter-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text3);
-  background: none;
-  border: 1px solid var(--border);
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.filter-btn.active, .filter-btn:hover { color: var(--text); border-color: var(--border2); }
+.fbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fbtn{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--c-text3);background:none;border:1px solid transparent;padding:5px 11px;cursor:pointer;transition:all .2s}
+.fbtn.on,.fbtn:hover{color:var(--c-text);border-color:var(--c-border2)}
+.fsearch{width:100%;max-width:280px;background:var(--c-bg3);border:1px solid var(--c-border2);color:var(--c-text);font-family:var(--font-mono);font-size:11px;padding:7px 11px;outline:none;margin-bottom:10px;transition:border-color .2s;border-radius:0}
+.fsearch:focus{border-color:var(--c-text3)}
 
-/* Search input */
-.search-input {
-  width: 100%; max-width: 320px;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 8px 12px;
-  outline: none;
-  transition: border-color 0.2s;
-  margin-bottom: 12px;
-}
-.search-input:focus { border-color: var(--text3); }
+/* Links array */
+.links-arr{display:flex;flex-direction:column;gap:7px}
+.link-row{display:grid;grid-template-columns:1fr 1.3fr auto;gap:7px;align-items:center}
+@media(max-width:540px){.link-row{grid-template-columns:1fr;gap:5px}}
+.icon-btn{width:32px;height:32px;border:1px solid var(--c-border2);background:none;color:var(--c-text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;flex-shrink:0;border-radius:0}
+.icon-btn.rm{color:var(--c-red);border-color:rgba(255,64,64,.3)}
+.icon-btn.rm:hover{background:rgba(255,64,64,.1)}
 
-/* Empty state */
-.empty-state {
-  border: 1px dashed var(--border);
-  padding: 40px 24px;
-  text-align: center;
-}
-.empty-state p {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text3);
-  letter-spacing: 0.08em;
-}
+/* Settings grids */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px}
+.scard{border:1px solid var(--c-border);background:var(--c-bg2);padding:20px}
+.scard-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--c-text3);padding-bottom:10px;margin-bottom:16px;border-bottom:1px solid var(--c-border)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.toggle-lbl{font-size:13px;color:var(--c-text2)}
+.toggle{width:36px;height:20px;background:var(--c-border2);border-radius:10px;position:relative;cursor:pointer;border:none;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--c-green)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--c-bg);border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(16px)}
 
-/* Responsive adjustments */
+/* Theme editor */
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.color-item{display:flex;flex-direction:column;gap:5px}
+.color-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--c-text3);text-transform:uppercase}
+.color-row{display:flex;gap:6px;align-items:center}
+.color-swatch{width:28px;height:28px;border:1px solid var(--c-border2);cursor:pointer;flex-shrink:0}
+.color-hex{width:100%;background:var(--c-bg3);border:1px solid var(--c-border2);color:var(--c-text);font-family:var(--font-mono);font-size:11px;padding:5px 8px;outline:none;transition:border-color .2s;border-radius:0}
+.color-hex:focus{border-color:var(--c-text3)}
+input[type=color]{opacity:0;width:0;height:0;position:absolute}
+
+/* Toast */
+#toast{position:fixed;bottom:20px;right:20px;z-index:9999;font-family:var(--font-mono);font-size:11px;letter-spacing:.07em;padding:11px 18px;border:1px solid var(--c-border2);background:var(--c-bg3);color:var(--c-text);opacity:0;pointer-events:none;transition:opacity .25s;max-width:min(300px,calc(100vw - 40px))}
+#toast.show{opacity:1}
+#toast.ok{border-color:rgba(64,255,144,.5);color:var(--c-green)}
+#toast.err{border-color:rgba(255,64,64,.5);color:var(--c-red)}
+#toast.warn{border-color:rgba(255,204,64,.5);color:var(--c-yellow)}
+
+/* Draft tag */
+.draft-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-yellow);border:1px solid rgba(255,204,64,.3);padding:2px 6px;margin-left:6px}
+
+/* Sync status */
+#sync-status{font-family:var(--font-mono);font-size:11px;color:var(--c-text3);letter-spacing:.05em;margin-top:10px;line-height:1.6}
+
+/* Responsive */
 @media(max-width:640px){
-  .admin-nav { flex-direction: column; align-items: flex-start; height: auto; }
-  .admin-nav-right { overflow-x: auto; padding-bottom: 4px; width: 100%; }
-  .nav-links { display: none; }
-  .nav-hamburger { display: flex; }
-  footer { flex-direction: column; }
+  .tb-links{display:none}
+  .tb-hamburger{display:flex}
+  footer{flex-direction:column}
+  .admin-tabs{gap:2px}
+  .atab{padding:5px 9px;font-size:9px}
 }
-
-/* Color coding for nav active state */
-.nav-links .active { color: var(--text) !important; }
-
-/* Pinned badge in cards */
-.pinned-flag {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
-  color: var(--yellow); border: 1px solid rgba(255,210,59,0.3);
-  padding: 2px 6px; text-transform: uppercase;
+@media(max-width:400px){
+  .frow{grid-template-columns:1fr}
+  .plist-actions{justify-content:flex-end;width:100%}
 }
-
-/* Token display */
-.token-display {
-  font-family: var(--mono); font-size: 12px; color: var(--text2);
-  background: var(--bg3); border: 1px solid var(--border2);
-  padding: 10px 12px;
-  word-break: break-all;
-  margin-top: 8px;
-}
-.token-masked { letter-spacing: 0.15em; color: var(--text3); }
 </style>
 </head>
 <body>
 
-<!-- ─── NAV ─── -->
-<nav id="nav">
-  <a href="#" class="nav-logo" onclick="scrollToTop()">EEK<span>_</span>DEVELOPERS</a>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#posts-section">Posts</a></li>
-    <li><a href="#games-section">Games</a></li>
-    <li><a href="#group-section">Group</a></li>
-    <li><a href="#portfolio-section">Portfolio</a></li>
-  </ul>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <button class="nav-admin-btn" onclick="openAdminLogin()">Admin</button>
-    <button class="nav-hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+<!-- ─── TOPBAR ─── -->
+<header id="topbar">
+  <div class="tb-logo" onclick="scrollTo(0,0)">EEK DEVELOPERS</div>
+  <nav class="tb-links" id="tb-links">
+    <span class="tb-link" onclick="scrollToId('sec-pinned')">Pinned</span>
+    <span class="tb-link" onclick="scrollToId('sec-posts')">Posts</span>
+    <span class="tb-link" onclick="scrollToId('sec-games')">Games</span>
+    <span class="tb-link" onclick="scrollToId('sec-group')">Group</span>
+    <span class="tb-link" onclick="scrollToId('sec-portfolio')">Portfolio</span>
+    <span class="tb-link" onclick="scrollToId('sec-about')">About</span>
+  </nav>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="tb-admin" onclick="openLogin()">Admin</button>
+    <button class="tb-hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
+</header>
+
+<!-- ─── MOBILE NAV ─── -->
+<nav id="mobile-nav">
+  <span class="mn-link" onclick="scrollToId('sec-pinned');closeMobileNav()">Pinned</span>
+  <span class="mn-link" onclick="scrollToId('sec-posts');closeMobileNav()">Posts</span>
+  <span class="mn-link" onclick="scrollToId('sec-games');closeMobileNav()">Games</span>
+  <span class="mn-link" onclick="scrollToId('sec-group');closeMobileNav()">Group</span>
+  <span class="mn-link" onclick="scrollToId('sec-portfolio');closeMobileNav()">Portfolio</span>
+  <span class="mn-link" onclick="scrollToId('sec-about');closeMobileNav()">About</span>
 </nav>
 
-<!-- Mobile menu -->
-<nav id="mobile-menu">
-  <a href="#about" onclick="closeMobile()">About</a>
-  <a href="#posts-section" onclick="closeMobile()">Posts</a>
-  <a href="#games-section" onclick="closeMobile()">Games</a>
-  <a href="#group-section" onclick="closeMobile()">Group</a>
-  <a href="#portfolio-section" onclick="closeMobile()">Portfolio</a>
-</nav>
+<!-- ═══════════════════════════════════════════
+     PUBLIC SITE
+═══════════════════════════════════════════ -->
+<main id="public-site">
 
-<!-- ─── PUBLIC SITE ─── -->
-<div id="public-site">
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-bg-glow"></div>
+  <div class="hero-content">
+    <p class="hero-pre" id="h-pre">Roblox Development Group</p>
+    <h1 class="hero-h1" id="h-title">EEK<br><span class="dim">DEVELOPERS</span></h1>
+    <p class="hero-body" id="h-body">A dedicated Roblox development group building high-quality games, systems, and experiences. We build with intention and craft.</p>
+    <div class="hero-btns">
+      <a id="h-btn1" class="btn-fill" href="#">Join the Group</a>
+      <a id="h-btn2" class="btn-outline" href="#sec-posts">View Posts</a>
+    </div>
+    <div class="hero-stats" id="h-stats">
+      <div><div class="hstat-num" id="hs1n">—</div><div class="hstat-lbl" id="hs1l">Group Members</div></div>
+      <div><div class="hstat-num" id="hs2n">—</div><div class="hstat-lbl" id="hs2l">Games Released</div></div>
+      <div><div class="hstat-num" id="hs3n">—</div><div class="hstat-lbl" id="hs3l">Developers</div></div>
+    </div>
+  </div>
+</section>
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-inner">
-      <p class="hero-tag" id="hero-tag">Roblox Development Group</p>
-      <h1 class="hero-title" id="hero-title">EEK<br><em>Developers</em></h1>
-      <p class="hero-desc" id="hero-desc">A dedicated Roblox development group focused on building high-quality games, systems, and experiences. We build with intention.</p>
-      <div class="hero-cta" id="hero-cta">
-        <a href="#" id="hero-btn-1" class="btn-primary">Join the Group</a>
-        <a href="#posts-section" id="hero-btn-2" class="btn-secondary">View Posts</a>
-      </div>
-      <div class="hero-stats" id="hero-stats-container">
-        <div class="stat-item">
-          <span class="stat-num" id="stat-1-num">—</span>
-          <span class="stat-label" id="stat-1-label">Group Members</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num" id="stat-2-num">—</span>
-          <span class="stat-label" id="stat-2-label">Games Released</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num" id="stat-3-num">—</span>
-          <span class="stat-label" id="stat-3-label">Developers</span>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- PINNED -->
+<section id="sec-pinned" class="page-section" style="background:var(--c-bg2)">
+  <div class="sec-eyebrow">Pinned</div>
+  <div class="sec-title" id="pinned-sec-title" style="margin-bottom:24px">Featured Post</div>
+  <div id="pinned-render"><div class="empty-state"><p>No pinned post.</p></div></div>
+</section>
 
-  <!-- PINNED POST -->
-  <section class="section" id="pinned-section">
-    <div class="section-header">
-      <div>
-        <p class="section-sub">Pinned</p>
-        <h2 class="section-title">Featured Post</h2>
+<!-- MAIN POSTS + SIDEBAR -->
+<section id="sec-posts" class="page-section">
+  <div class="sec-header">
+    <div class="sec-header-left">
+      <div class="sec-eyebrow">Announcements</div>
+      <div class="sec-title" id="main-sec-title">Latest Posts</div>
+    </div>
+  </div>
+  <div class="with-sidebar">
+    <div>
+      <div class="post-grid" id="main-render"><div class="empty-state"><p>No main posts yet.</p></div></div>
+    </div>
+    <aside class="sidebar">
+      <div class="sb-card">
+        <div class="sb-head">Side Posts</div>
+        <div class="sb-body" id="side-render"><div style="padding:14px 16px"><p style="font-family:var(--font-mono);font-size:11px;color:var(--c-text3)">Nothing here yet.</p></div></div>
       </div>
-    </div>
-    <div id="pinned-container">
-      <div class="empty-state"><p>No pinned post yet.</p></div>
-    </div>
-  </section>
+    </aside>
+  </div>
+</section>
 
-  <!-- MAIN POSTS + SIDEBAR -->
-  <section class="section" id="posts-section">
-    <div class="section-header">
-      <div>
-        <p class="section-sub">Announcements</p>
-        <h2 class="section-title">Latest Posts</h2>
-      </div>
-      <a href="#posts-section" class="section-link">All posts</a>
-    </div>
-    <div class="content-with-sidebar">
-      <div>
-        <div class="post-grid" id="main-posts-grid">
-          <div class="empty-state"><p>No posts yet.</p></div>
-        </div>
-      </div>
-      <aside class="sidebar" id="sidebar-container">
-        <div class="sidebar-card">
-          <p class="sidebar-card-title">Side Posts</p>
-          <div class="sidebar-list" id="side-posts-list">
-            <p style="font-family:var(--mono);font-size:11px;color:var(--text3);">Nothing here yet.</p>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </section>
+<!-- GAMES -->
+<section id="sec-games" class="page-section" style="background:var(--c-bg2)">
+  <div class="sec-eyebrow">Projects</div>
+  <div class="sec-title" id="games-sec-title">Games</div>
+  <div class="post-grid" id="games-render"><div class="empty-state"><p>No game posts yet.</p></div></div>
+</section>
 
-  <!-- GAME POSTS -->
-  <section class="section" id="games-section" style="background:var(--bg2);">
-    <div class="section-header">
-      <div>
-        <p class="section-sub">Projects</p>
-        <h2 class="section-title">Games</h2>
-      </div>
-    </div>
-    <div class="post-grid" id="game-posts-grid">
-      <div class="empty-state"><p>No game posts yet.</p></div>
-    </div>
-  </section>
+<!-- GROUP -->
+<section id="sec-group" class="page-section">
+  <div class="sec-eyebrow">Community</div>
+  <div class="sec-title" id="group-sec-title">Group Updates</div>
+  <div class="post-grid" id="group-render"><div class="empty-state"><p>No group posts yet.</p></div></div>
+</section>
 
-  <!-- GROUP POSTS -->
-  <section class="section" id="group-section">
-    <div class="section-header">
-      <div>
-        <p class="section-sub">Community</p>
-        <h2 class="section-title">Group Updates</h2>
-      </div>
-    </div>
-    <div class="post-grid" id="group-posts-grid">
-      <div class="empty-state"><p>No group posts yet.</p></div>
-    </div>
-  </section>
+<!-- PORTFOLIO -->
+<section id="sec-portfolio" class="page-section" style="background:var(--c-bg2)">
+  <div class="sec-eyebrow">Our Work</div>
+  <div class="sec-title" id="portfolio-sec-title">Portfolio</div>
+  <div class="post-grid" id="portfolio-render"><div class="empty-state"><p>No portfolio posts yet.</p></div></div>
+</section>
 
-  <!-- PORTFOLIO -->
-  <section class="section" id="portfolio-section" style="background:var(--bg2);">
-    <div class="section-header">
-      <div>
-        <p class="section-sub">Our Work</p>
-        <h2 class="section-title">Portfolio</h2>
-      </div>
-    </div>
-    <div class="post-grid" id="portfolio-posts-grid">
-      <div class="empty-state"><p>No portfolio posts yet.</p></div>
-    </div>
-  </section>
+<!-- ABOUT -->
+<section id="sec-about" class="page-section">
+  <div class="sec-eyebrow">Group</div>
+  <div class="sec-title" id="about-sec-title">About EEK Developers</div>
+  <p id="about-body" style="font-size:clamp(14px,1.8vw,17px);color:var(--c-text2);line-height:1.8;max-width:660px;margin-bottom:36px">EEK Developers is a Roblox development group building games and experiences with quality and craft at the forefront.</p>
+  <div class="about-grid" id="about-cards-render">
+    <div class="about-card"><h3>Development</h3><p>We build scripted, designed, and polished Roblox games from the ground up.</p></div>
+    <div class="about-card"><h3>Community</h3><p>Our group is open to players and developers alike.</p></div>
+    <div class="about-card"><h3>Quality</h3><p>Every release is tested to ensure a great experience for players.</p></div>
+  </div>
+</section>
 
-  <!-- ABOUT -->
-  <section class="section" id="about">
-    <div class="section-header">
-      <div>
-        <p class="section-sub">Group</p>
-        <h2 class="section-title" id="about-title">About EEK Developers</h2>
-      </div>
-    </div>
-    <p style="font-size:clamp(14px,1.8vw,17px);color:var(--text2);line-height:1.8;max-width:680px;margin-bottom:40px;" id="about-desc">EEK Developers is a Roblox development group building games and experiences with quality and craft at the forefront. We operate as a team of skilled developers dedicated to the platform.</p>
-    <div class="about-grid" id="about-cards-container">
-      <div class="about-card">
-        <h3>Development</h3>
-        <p>We build scripted, designed, and polished Roblox games from the ground up.</p>
-      </div>
-      <div class="about-card">
-        <h3>Community</h3>
-        <p>Our group is open to players and developers alike. Join us on Roblox.</p>
-      </div>
-      <div class="about-card">
-        <h3>Quality</h3>
-        <p>Every release goes through testing to ensure a good experience for players.</p>
-      </div>
-    </div>
-  </section>
+<!-- FOOTER -->
+<footer id="site-footer">
+  <span class="ft-logo" id="ft-logo">EEK DEVELOPERS</span>
+  <nav class="ft-links" id="ft-links">
+    <a class="ft-link" id="ft-roblox" href="#">Roblox</a>
+    <a class="ft-link" id="ft-discord" href="#">Discord</a>
+    <a class="ft-link" id="ft-twitter" href="#">Twitter</a>
+    <a class="ft-link" id="ft-youtube" href="#" style="display:none">YouTube</a>
+    <a class="ft-link" id="ft-tiktok" href="#" style="display:none">TikTok</a>
+  </nav>
+  <p class="ft-copy" id="ft-copy">2024 EEK Developers. All rights reserved.</p>
+</footer>
 
-  <!-- FOOTER -->
-  <footer>
-    <span class="footer-logo" id="footer-logo">EEK_DEVELOPERS</span>
-    <ul class="footer-links" id="footer-links-container">
-      <li><a href="#" id="footer-link-roblox">Roblox Group</a></li>
-      <li><a href="#" id="footer-link-discord">Discord</a></li>
-      <li><a href="#" id="footer-link-twitter">Twitter</a></li>
-    </ul>
-    <p class="footer-copy" id="footer-copy">2024 EEK Developers. All rights reserved.</p>
-  </footer>
+</main><!-- /public-site -->
 
-</div><!-- /public-site -->
 
-<!-- ─── ADMIN LOGIN MODAL ─── -->
-<div class="modal-overlay" id="login-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeAdminLogin()">&#x2715;</button>
-    <h2 class="modal-title">Admin Access</h2>
-    <p class="modal-sub">EEK Developers Control Panel</p>
-    <div class="form-group">
-      <label class="form-label">Admin Password</label>
-      <input type="password" class="form-input" id="admin-password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doAdminLogin()">
-      <span class="form-error" id="login-error"></span>
+<!-- ═══════════════════════════════════════════
+     ADMIN LOGIN MODAL
+═══════════════════════════════════════════ -->
+<div class="overlay" id="login-overlay">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div><div class="modal-title">Admin</div><div class="modal-sub">EEK Developers Panel</div></div>
+      <button class="modal-close" onclick="closeLogin()">&#x2715;</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">GitHub Token <span style="color:var(--text3);font-size:9px;">(saved in browser)</span></label>
-      <input type="password" class="form-input" id="github-token-input" placeholder="ghp_xxxxxxxxxxxx">
-      <div id="saved-token-display" style="display:none;">
-        <div class="token-display"><span class="token-masked" id="token-masked-text"></span></div>
-        <button class="btn-sm" style="margin-top:8px;" onclick="clearSavedToken()">Clear saved token</button>
+    <div class="modal-body">
+      <div class="fg">
+        <label class="flabel">Password</label>
+        <input class="finput" type="password" id="li-pass" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()">
+        <span class="ferr" id="li-err"></span>
+      </div>
+      <div class="fg">
+        <label class="flabel">GitHub Token <span style="color:var(--c-text3);font-size:9px;margin-left:4px;letter-spacing:.04em">— saved in browser</span></label>
+        <input class="finput" type="password" id="li-token" placeholder="ghp_xxxxxxxx">
+        <span class="fhint" id="li-token-hint"></span>
+      </div>
+      <div class="fg">
+        <label class="flabel">GitHub Repo <span style="color:var(--c-text3);font-size:9px;margin-left:4px">user/repo</span></label>
+        <input class="finput" type="text" id="li-repo" placeholder="username/repo">
+      </div>
+      <div class="fg">
+        <label class="flabel">JSON File Path</label>
+        <input class="finput" type="text" id="li-file" placeholder="data/posts.json">
+        <span class="fhint">Path inside your GitHub repo where data is stored</span>
+      </div>
+      <div style="margin-top:20px">
+        <button class="btn prim" style="width:100%;padding:12px" onclick="doLogin()">Enter Admin Panel</button>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">GitHub Repo (user/repo)</label>
-      <input type="text" class="form-input" id="github-repo-input" placeholder="username/repo-name">
-    </div>
-    <div class="form-group">
-      <label class="form-label">JSON File Path in Repo</label>
-      <input type="text" class="form-input" id="github-file-input" placeholder="data/posts.json">
-    </div>
-    <button class="btn-primary" style="width:100%;margin-top:4px;" onclick="doAdminLogin()">Enter Admin Panel</button>
   </div>
 </div>
 
-<!-- ─── ADMIN PANEL ─── -->
-<div id="admin-panel">
-  <nav class="admin-nav">
-    <div class="admin-nav-left">
-      <span class="admin-logo">EEK Admin</span>
+
+<!-- ═══════════════════════════════════════════
+     ADMIN PANEL
+═══════════════════════════════════════════ -->
+<div id="admin">
+  <!-- Top bar -->
+  <div class="admin-top">
+    <div class="admin-top-left">
+      <span class="admin-brand">EEK Admin</span>
       <span class="admin-badge">Control Panel</span>
     </div>
-    <div class="admin-nav-right">
-      <button class="admin-tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
-      <button class="admin-tab-btn" onclick="switchTab('create',this)">Create Post</button>
-      <button class="admin-tab-btn" onclick="switchTab('manage',this)">Manage Posts</button>
-      <button class="admin-tab-btn" onclick="switchTab('settings',this)">Site Settings</button>
-      <button class="admin-exit-btn" onclick="exitAdmin()">Exit Panel</button>
+    <div class="admin-tabs">
+      <button class="atab on" onclick="showTab('dash',this)">Dashboard</button>
+      <button class="atab" onclick="showTab('create',this)">Create Post</button>
+      <button class="atab" onclick="showTab('manage',this)">Manage Posts</button>
+      <button class="atab" onclick="showTab('sections',this)">Sections</button>
+      <button class="atab" onclick="showTab('settings',this)">Site Settings</button>
+      <button class="atab" onclick="showTab('theme',this)">Theme</button>
+      <button class="admin-exit" onclick="exitAdmin()">Exit</button>
     </div>
-  </nav>
+  </div>
 
-  <div class="admin-body">
+  <div class="admin-scroll">
+  <div class="admin-content">
 
-    <!-- DASHBOARD TAB -->
-    <div class="admin-tab active" id="tab-dashboard">
-      <h2 class="admin-section-title">Dashboard</h2>
-      <p class="admin-section-desc">Overview of all content on the site.</p>
-      <div class="stats-row" id="admin-stats-row"></div>
-      <div class="admin-form-card">
-        <p class="admin-form-card-title">GitHub Sync</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-          <button class="btn-sm success" onclick="saveToGitHub()">Push to GitHub</button>
-          <button class="btn-sm info" onclick="loadFromGitHub()">Pull from GitHub</button>
-          <button class="btn-sm" onclick="exportJSON()">Export JSON</button>
-          <button class="btn-sm" onclick="importJSON()">Import JSON</button>
-          <input type="file" id="import-file" style="display:none;" accept=".json" onchange="handleImport(event)">
-        </div>
-        <p style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:12px;" id="sync-status">No sync performed yet.</p>
+  <!-- ── DASHBOARD ── -->
+  <div class="tab-panel on" id="tp-dash">
+    <div class="ap-title">Dashboard</div>
+    <div class="ap-desc">Overview &amp; GitHub sync</div>
+    <div class="stat-row" id="dash-stats"></div>
+    <div class="acard">
+      <div class="acard-title">GitHub Sync</div>
+      <div class="btn-row">
+        <button class="btn grn" onclick="ghPush()">Push to GitHub</button>
+        <button class="btn blu" onclick="ghPull()">Pull from GitHub</button>
+        <button class="btn" onclick="exportJSON()">Export JSON</button>
+        <button class="btn" onclick="document.getElementById('import-input').click()">Import JSON</button>
+        <input type="file" id="import-input" style="display:none" accept=".json" onchange="importJSON(event)">
       </div>
-      <div class="admin-form-card">
-        <p class="admin-form-card-title">Recent Posts</p>
-        <div id="dashboard-recent"></div>
-      </div>
+      <div id="sync-status">No sync yet.</div>
     </div>
-
-    <!-- CREATE POST TAB -->
-    <div class="admin-tab" id="tab-create">
-      <h2 class="admin-section-title">Create Post</h2>
-      <p class="admin-section-desc">Add a new post to the site. All changes are stored locally until you push to GitHub.</p>
-      <div class="admin-form-card">
-        <p class="admin-form-card-title">Post Details</p>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Post Type</label>
-            <select class="form-select" id="cp-type" onchange="updateCreateForm()">
-              <option value="main">Main Post</option>
-              <option value="side">Side Post</option>
-              <option value="game">Game Post</option>
-              <option value="group">Group Post</option>
-              <option value="portfolio">Portfolio Post</option>
-              <option value="pinned">Pinned Post</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Status</label>
-            <select class="form-select" id="cp-status">
-              <option value="published">Published</option>
-              <option value="draft">Draft</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input type="text" class="form-input" id="cp-title" placeholder="Post title">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description / Body</label>
-          <textarea class="form-textarea" id="cp-desc" placeholder="Write the post content..." style="min-height:130px;"></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Tag / Category</label>
-            <input type="text" class="form-input" id="cp-tag" placeholder="e.g. Update, Release">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Date <span style="color:var(--text3);font-size:9px;">(leave blank = today)</span></label>
-            <input type="date" class="form-input" id="cp-date">
-          </div>
-        </div>
-        <!-- Game fields -->
-        <div id="cp-game-fields" style="display:none;">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Game Name</label>
-              <input type="text" class="form-input" id="cp-game-name" placeholder="My Roblox Game">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Game Status</label>
-              <select class="form-select" id="cp-game-status">
-                <option value="In Development">In Development</option>
-                <option value="Released">Released</option>
-                <option value="Beta">Beta</option>
-                <option value="On Hold">On Hold</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <!-- Portfolio fields -->
-        <div id="cp-portfolio-fields" style="display:none;">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Role / Skill</label>
-              <input type="text" class="form-input" id="cp-role" placeholder="e.g. Scripter, Builder">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Duration / Year</label>
-              <input type="text" class="form-input" id="cp-duration" placeholder="e.g. 2024 | 3 months">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-form-card">
-        <p class="admin-form-card-title">Links <span style="color:var(--text3);font-size:9px;margin-left:8px;">Add any amount of links</span></p>
-        <div class="links-array" id="cp-links-array"></div>
-        <button class="btn-sm" style="margin-top:10px;" onclick="addLinkRow('cp-links-array')">+ Add Link</button>
-      </div>
-
-      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
-        <button class="btn-primary" onclick="createPost()">Create Post</button>
-        <button class="btn-secondary" onclick="clearCreateForm()">Clear Form</button>
-      </div>
-      <span class="form-error" id="cp-error" style="margin-top:8px;display:block;"></span>
+    <div class="acard">
+      <div class="acard-title">Recent Posts</div>
+      <div id="dash-recent"></div>
     </div>
+  </div>
 
-    <!-- MANAGE POSTS TAB -->
-    <div class="admin-tab" id="tab-manage">
-      <h2 class="admin-section-title">Manage Posts</h2>
-      <p class="admin-section-desc">Edit, delete, pin, or reorder all posts.</p>
-      <div class="filter-bar" id="manage-filter-bar">
-        <button class="filter-btn active" onclick="filterManage('all',this)">All</button>
-        <button class="filter-btn" onclick="filterManage('main',this)">Main</button>
-        <button class="filter-btn" onclick="filterManage('side',this)">Side</button>
-        <button class="filter-btn" onclick="filterManage('game',this)">Game</button>
-        <button class="filter-btn" onclick="filterManage('group',this)">Group</button>
-        <button class="filter-btn" onclick="filterManage('portfolio',this)">Portfolio</button>
-        <button class="filter-btn" onclick="filterManage('pinned',this)">Pinned</button>
-        <button class="filter-btn" onclick="filterManage('draft',this)">Drafts</button>
-      </div>
-      <input type="text" class="search-input" placeholder="Search posts..." oninput="searchManage(this.value)">
-      <div class="post-list-admin" id="manage-list"></div>
-    </div>
-
-    <!-- SETTINGS TAB -->
-    <div class="admin-tab" id="tab-settings">
-      <h2 class="admin-section-title">Site Settings</h2>
-      <p class="admin-section-desc">Control every aspect of the public site globally.</p>
-      <div class="settings-grid">
-
-        <div class="settings-card">
-          <p class="settings-card-title">Hero Section</p>
-          <div class="form-group">
-            <label class="form-label">Group Name</label>
-            <input type="text" class="form-input" id="s-group-name" placeholder="EEK Developers">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tagline</label>
-            <input type="text" class="form-input" id="s-tagline" placeholder="Roblox Development Group">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Hero Description</label>
-            <textarea class="form-textarea" id="s-hero-desc" style="min-height:70px;"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">CTA Button 1 Label</label>
-            <input type="text" class="form-input" id="s-btn1-label" placeholder="Join the Group">
-          </div>
-          <div class="form-group">
-            <label class="form-label">CTA Button 1 URL</label>
-            <input type="text" class="form-input" id="s-btn1-url" placeholder="https://roblox.com/groups/...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">CTA Button 2 Label</label>
-            <input type="text" class="form-input" id="s-btn2-label" placeholder="View Posts">
-          </div>
-          <button class="btn-sm success" onclick="applyHeroSettings()">Apply Hero</button>
+  <!-- ── CREATE POST ── -->
+  <div class="tab-panel" id="tp-create">
+    <div class="ap-title">Create Post</div>
+    <div class="ap-desc">Add a new post — changes save locally until you push to GitHub</div>
+    <div class="acard">
+      <div class="acard-title">Post Info</div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Post Type</label>
+          <select class="fselect" id="cp-type" onchange="cpTypeChange()">
+            <option value="main">Main Post</option>
+            <option value="side">Side Post</option>
+            <option value="game">Game Post</option>
+            <option value="group">Group Post</option>
+            <option value="portfolio">Portfolio Post</option>
+            <option value="pinned">Pinned Post</option>
+          </select>
         </div>
-
-        <div class="settings-card">
-          <p class="settings-card-title">Stats Bar</p>
-          <div class="form-group">
-            <label class="form-label">Stat 1 Number</label>
-            <input type="text" class="form-input" id="s-stat1-num" placeholder="500+">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stat 1 Label</label>
-            <input type="text" class="form-input" id="s-stat1-label" placeholder="Group Members">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stat 2 Number</label>
-            <input type="text" class="form-input" id="s-stat2-num" placeholder="10+">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stat 2 Label</label>
-            <input type="text" class="form-input" id="s-stat2-label" placeholder="Games Released">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stat 3 Number</label>
-            <input type="text" class="form-input" id="s-stat3-num" placeholder="20+">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stat 3 Label</label>
-            <input type="text" class="form-input" id="s-stat3-label" placeholder="Developers">
-          </div>
-          <button class="btn-sm success" onclick="applyStatsSettings()">Apply Stats</button>
-        </div>
-
-        <div class="settings-card">
-          <p class="settings-card-title">About Section</p>
-          <div class="form-group">
-            <label class="form-label">About Title</label>
-            <input type="text" class="form-input" id="s-about-title">
-          </div>
-          <div class="form-group">
-            <label class="form-label">About Description</label>
-            <textarea class="form-textarea" id="s-about-desc" style="min-height:80px;"></textarea>
-          </div>
-          <button class="btn-sm success" onclick="applyAboutSettings()">Apply About</button>
-        </div>
-
-        <div class="settings-card">
-          <p class="settings-card-title">Footer Links</p>
-          <div class="form-group">
-            <label class="form-label">Roblox Group URL</label>
-            <input type="text" class="form-input" id="s-roblox-url" placeholder="https://roblox.com/groups/...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Discord URL</label>
-            <input type="text" class="form-input" id="s-discord-url" placeholder="https://discord.gg/...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Twitter / X URL</label>
-            <input type="text" class="form-input" id="s-twitter-url" placeholder="https://twitter.com/...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Footer Copyright Text</label>
-            <input type="text" class="form-input" id="s-footer-copy">
-          </div>
-          <button class="btn-sm success" onclick="applyFooterSettings()">Apply Footer</button>
-        </div>
-
-        <div class="settings-card">
-          <p class="settings-card-title">Section Visibility</p>
-          <div class="toggle-row">
-            <span class="toggle-label">Show Pinned Section</span>
-            <button class="toggle-switch on" id="toggle-pinned" onclick="toggleSection('pinned-section','toggle-pinned')"></button>
-          </div>
-          <div class="toggle-row">
-            <span class="toggle-label">Show Posts Section</span>
-            <button class="toggle-switch on" id="toggle-posts" onclick="toggleSection('posts-section','toggle-posts')"></button>
-          </div>
-          <div class="toggle-row">
-            <span class="toggle-label">Show Games Section</span>
-            <button class="toggle-switch on" id="toggle-games" onclick="toggleSection('games-section','toggle-games')"></button>
-          </div>
-          <div class="toggle-row">
-            <span class="toggle-label">Show Group Section</span>
-            <button class="toggle-switch on" id="toggle-group" onclick="toggleSection('group-section','toggle-group')"></button>
-          </div>
-          <div class="toggle-row">
-            <span class="toggle-label">Show Portfolio Section</span>
-            <button class="toggle-switch on" id="toggle-portfolio" onclick="toggleSection('portfolio-section','toggle-portfolio')"></button>
-          </div>
-          <div class="toggle-row">
-            <span class="toggle-label">Show Stats Bar</span>
-            <button class="toggle-switch on" id="toggle-stats" onclick="toggleStats('toggle-stats')"></button>
-          </div>
-        </div>
-
-        <div class="settings-card">
-          <p class="settings-card-title">Admin Security</p>
-          <div class="form-group">
-            <label class="form-label">Current Password</label>
-            <input type="password" class="form-input" id="s-old-pass" placeholder="Current password">
-          </div>
-          <div class="form-group">
-            <label class="form-label">New Password</label>
-            <input type="password" class="form-input" id="s-new-pass" placeholder="New password">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Confirm New Password</label>
-            <input type="password" class="form-input" id="s-confirm-pass" placeholder="Confirm">
-          </div>
-          <button class="btn-sm danger" onclick="changePassword()">Change Password</button>
-        </div>
-
-      </div>
-    </div>
-
-  </div><!-- /admin-body -->
-</div><!-- /admin-panel -->
-
-<!-- EDIT POST MODAL -->
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto;">
-    <button class="modal-close" onclick="closeEditModal()">&#x2715;</button>
-    <h2 class="modal-title">Edit Post</h2>
-    <p class="modal-sub" id="edit-post-id-display"></p>
-    <input type="hidden" id="edit-id">
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Post Type</label>
-        <select class="form-select" id="edit-type" onchange="updateEditForm()">
-          <option value="main">Main Post</option>
-          <option value="side">Side Post</option>
-          <option value="game">Game Post</option>
-          <option value="group">Group Post</option>
-          <option value="portfolio">Portfolio Post</option>
-          <option value="pinned">Pinned Post</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Status</label>
-        <select class="form-select" id="edit-status">
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Title</label>
-      <input type="text" class="form-input" id="edit-title">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Description</label>
-      <textarea class="form-textarea" id="edit-desc" style="min-height:110px;"></textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Tag</label>
-        <input type="text" class="form-input" id="edit-tag">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Date</label>
-        <input type="date" class="form-input" id="edit-date">
-      </div>
-    </div>
-    <div id="edit-game-fields" style="display:none;">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Game Name</label>
-          <input type="text" class="form-input" id="edit-game-name">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Game Status</label>
-          <select class="form-select" id="edit-game-status">
-            <option value="In Development">In Development</option>
-            <option value="Released">Released</option>
-            <option value="Beta">Beta</option>
-            <option value="On Hold">On Hold</option>
+        <div class="fg">
+          <label class="flabel">Status</label>
+          <select class="fselect" id="cp-status">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
           </select>
         </div>
       </div>
-    </div>
-    <div id="edit-portfolio-fields" style="display:none;">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Role</label>
-          <input type="text" class="form-input" id="edit-role">
+      <div class="fg">
+        <label class="flabel">Title <span style="color:var(--c-red)">*</span></label>
+        <input class="finput" type="text" id="cp-title" placeholder="Post title">
+      </div>
+      <div class="fg">
+        <label class="flabel">Body / Description</label>
+        <textarea class="ftarea" id="cp-body" placeholder="Post content..." style="min-height:110px"></textarea>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Tag / Category</label>
+          <input class="finput" type="text" id="cp-tag" placeholder="e.g. Update, Release">
         </div>
-        <div class="form-group">
-          <label class="form-label">Duration</label>
-          <input type="text" class="form-input" id="edit-duration">
+        <div class="fg">
+          <label class="flabel">Date</label>
+          <input class="finput" type="date" id="cp-date">
+          <span class="fhint">Leave blank to use today</span>
+        </div>
+      </div>
+      <!-- Game fields -->
+      <div id="cpf-game" style="display:none">
+        <div class="frow">
+          <div class="fg">
+            <label class="flabel">Game Name</label>
+            <input class="finput" type="text" id="cp-game-name" placeholder="My Roblox Game">
+          </div>
+          <div class="fg">
+            <label class="flabel">Game Status</label>
+            <select class="fselect" id="cp-game-status">
+              <option>In Development</option><option>Released</option><option>Beta</option><option>On Hold</option><option>Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="flabel">Game ID / Place URL</label>
+          <input class="finput" type="text" id="cp-game-id" placeholder="https://roblox.com/games/...">
+        </div>
+      </div>
+      <!-- Portfolio fields -->
+      <div id="cpf-portfolio" style="display:none">
+        <div class="frow">
+          <div class="fg">
+            <label class="flabel">Role / Skill</label>
+            <input class="finput" type="text" id="cp-role" placeholder="e.g. Scripter, Builder">
+          </div>
+          <div class="fg">
+            <label class="flabel">Duration / Year</label>
+            <input class="finput" type="text" id="cp-duration" placeholder="e.g. 2024 | 3 months">
+          </div>
         </div>
       </div>
     </div>
-    <div class="admin-form-card" style="margin-top:16px;">
-      <p class="admin-form-card-title">Links</p>
-      <div class="links-array" id="edit-links-array"></div>
-      <button class="btn-sm" style="margin-top:10px;" onclick="addLinkRow('edit-links-array')">+ Add Link</button>
+    <div class="acard">
+      <div class="acard-title">Links <span>Add unlimited links to this post</span></div>
+      <div class="links-arr" id="cp-links"></div>
+      <button class="btn" style="margin-top:10px" onclick="addLink('cp-links')">+ Add Link</button>
     </div>
-    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
-      <button class="btn-primary" onclick="saveEditPost()">Save Changes</button>
-      <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn prim" onclick="createPost()">Create Post</button>
+      <button class="btn sec" onclick="clearCP()">Clear</button>
+    </div>
+    <span class="ferr" id="cp-err" style="display:block;margin-top:8px"></span>
+  </div>
+
+  <!-- ── MANAGE POSTS ── -->
+  <div class="tab-panel" id="tp-manage">
+    <div class="ap-title">Manage Posts</div>
+    <div class="ap-desc">Edit, delete, publish, pin, reorder</div>
+    <div class="fbar" id="manage-fbar">
+      <button class="fbtn on" onclick="mFilter('all',this)">All</button>
+      <button class="fbtn" onclick="mFilter('main',this)">Main</button>
+      <button class="fbtn" onclick="mFilter('side',this)">Side</button>
+      <button class="fbtn" onclick="mFilter('game',this)">Game</button>
+      <button class="fbtn" onclick="mFilter('group',this)">Group</button>
+      <button class="fbtn" onclick="mFilter('portfolio',this)">Portfolio</button>
+      <button class="fbtn" onclick="mFilter('pinned',this)">Pinned</button>
+      <button class="fbtn" onclick="mFilter('draft',this)">Drafts</button>
+    </div>
+    <input class="fsearch" type="text" placeholder="Search..." oninput="mSearch(this.value)">
+    <div class="plist" id="manage-list"></div>
+  </div>
+
+  <!-- ── SECTIONS ── -->
+  <div class="tab-panel" id="tp-sections">
+    <div class="ap-title">Section Control</div>
+    <div class="ap-desc">Control section titles, visibility, descriptions, and order</div>
+    <div class="sgrid">
+      <div class="scard">
+        <div class="scard-title">Section Visibility</div>
+        <div class="toggle-row"><span class="toggle-lbl">Pinned Section</span><button class="toggle on" id="tog-pinned" onclick="togSec('pinned','tog-pinned')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">Main Posts Section</span><button class="toggle on" id="tog-posts" onclick="togSec('posts','tog-posts')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">Games Section</span><button class="toggle on" id="tog-games" onclick="togSec('games','tog-games')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">Group Section</span><button class="toggle on" id="tog-group" onclick="togSec('group','tog-group')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">Portfolio Section</span><button class="toggle on" id="tog-portfolio" onclick="togSec('portfolio','tog-portfolio')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">About Section</span><button class="toggle on" id="tog-about" onclick="togSec('about','tog-about')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">Stats Bar</span><button class="toggle on" id="tog-stats" onclick="togStats('tog-stats')"></button></div>
+        <div class="toggle-row"><span class="toggle-lbl">Sidebar (Side Posts)</span><button class="toggle on" id="tog-sidebar" onclick="togSidebar('tog-sidebar')"></button></div>
+      </div>
+      <div class="scard">
+        <div class="scard-title">Section Titles</div>
+        <div class="fg"><label class="flabel">Pinned Section Title</label><input class="finput" id="st-pinned" placeholder="Featured Post"></div>
+        <div class="fg"><label class="flabel">Main Posts Title</label><input class="finput" id="st-main" placeholder="Latest Posts"></div>
+        <div class="fg"><label class="flabel">Games Title</label><input class="finput" id="st-games" placeholder="Games"></div>
+        <div class="fg"><label class="flabel">Group Title</label><input class="finput" id="st-group" placeholder="Group Updates"></div>
+        <div class="fg"><label class="flabel">Portfolio Title</label><input class="finput" id="st-portfolio" placeholder="Portfolio"></div>
+        <div class="fg"><label class="flabel">About Title</label><input class="finput" id="st-about" placeholder="About EEK Developers"></div>
+        <button class="btn grn" onclick="applySecTitles()">Apply Titles</button>
+      </div>
+      <div class="scard">
+        <div class="scard-title">About Section Content</div>
+        <div class="fg"><label class="flabel">About Body Text</label><textarea class="ftarea" id="s-about-body" style="min-height:80px"></textarea></div>
+        <div class="fg"><label class="flabel">About Card 1 Title</label><input class="finput" id="s-ac1t" placeholder="Development"></div>
+        <div class="fg"><label class="flabel">About Card 1 Text</label><input class="finput" id="s-ac1b"></div>
+        <div class="fg"><label class="flabel">About Card 2 Title</label><input class="finput" id="s-ac2t" placeholder="Community"></div>
+        <div class="fg"><label class="flabel">About Card 2 Text</label><input class="finput" id="s-ac2b"></div>
+        <div class="fg"><label class="flabel">About Card 3 Title</label><input class="finput" id="s-ac3t" placeholder="Quality"></div>
+        <div class="fg"><label class="flabel">About Card 3 Text</label><input class="finput" id="s-ac3b"></div>
+        <button class="btn grn" onclick="applyAbout()">Apply About</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SITE SETTINGS ── -->
+  <div class="tab-panel" id="tp-settings">
+    <div class="ap-title">Site Settings</div>
+    <div class="ap-desc">Control every text, link, and element on the site</div>
+    <div class="sgrid">
+      <div class="scard">
+        <div class="scard-title">Hero Section</div>
+        <div class="fg"><label class="flabel">Group Name</label><input class="finput" id="s-name" placeholder="EEK Developers"></div>
+        <div class="fg"><label class="flabel">Eyebrow / Pre-title</label><input class="finput" id="s-pre" placeholder="Roblox Development Group"></div>
+        <div class="fg"><label class="flabel">Hero Description</label><textarea class="ftarea" id="s-desc" style="min-height:70px"></textarea></div>
+        <div class="fg"><label class="flabel">CTA Button 1 Label</label><input class="finput" id="s-b1l" placeholder="Join the Group"></div>
+        <div class="fg"><label class="flabel">CTA Button 1 URL</label><input class="finput" id="s-b1u" placeholder="https://roblox.com/groups/..."></div>
+        <div class="fg"><label class="flabel">CTA Button 2 Label</label><input class="finput" id="s-b2l" placeholder="View Posts"></div>
+        <div class="fg"><label class="flabel">CTA Button 2 URL</label><input class="finput" id="s-b2u" placeholder="#sec-posts"></div>
+        <button class="btn grn" onclick="applyHero()">Apply Hero</button>
+      </div>
+      <div class="scard">
+        <div class="scard-title">Stats Bar</div>
+        <div class="frow">
+          <div class="fg"><label class="flabel">Stat 1 Number</label><input class="finput" id="s-s1n" placeholder="500+"></div>
+          <div class="fg"><label class="flabel">Stat 1 Label</label><input class="finput" id="s-s1l" placeholder="Members"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label class="flabel">Stat 2 Number</label><input class="finput" id="s-s2n" placeholder="10+"></div>
+          <div class="fg"><label class="flabel">Stat 2 Label</label><input class="finput" id="s-s2l" placeholder="Games"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label class="flabel">Stat 3 Number</label><input class="finput" id="s-s3n" placeholder="20+"></div>
+          <div class="fg"><label class="flabel">Stat 3 Label</label><input class="finput" id="s-s3l" placeholder="Developers"></div>
+        </div>
+        <button class="btn grn" onclick="applyStats()">Apply Stats</button>
+      </div>
+      <div class="scard">
+        <div class="scard-title">Footer Links</div>
+        <div class="fg"><label class="flabel">Roblox Group URL</label><input class="finput" id="s-roblox" placeholder="https://roblox.com/groups/..."></div>
+        <div class="fg"><label class="flabel">Discord URL</label><input class="finput" id="s-discord" placeholder="https://discord.gg/..."></div>
+        <div class="fg"><label class="flabel">Twitter URL</label><input class="finput" id="s-twitter" placeholder="https://twitter.com/..."></div>
+        <div class="fg"><label class="flabel">YouTube URL <span style="color:var(--c-text3);font-size:9px">leave blank to hide</span></label><input class="finput" id="s-youtube" placeholder="https://youtube.com/@..."></div>
+        <div class="fg"><label class="flabel">TikTok URL <span style="color:var(--c-text3);font-size:9px">leave blank to hide</span></label><input class="finput" id="s-tiktok" placeholder="https://tiktok.com/@..."></div>
+        <div class="fg"><label class="flabel">Footer Copyright</label><input class="finput" id="s-copy" placeholder="2024 EEK Developers"></div>
+        <button class="btn grn" onclick="applyFooter()">Apply Footer</button>
+      </div>
+      <div class="scard">
+        <div class="scard-title">Page Meta</div>
+        <div class="fg"><label class="flabel">Browser Tab Title</label><input class="finput" id="s-tab-title" placeholder="EEK Developers"></div>
+        <button class="btn grn" onclick="applyMeta()">Apply Meta</button>
+        <div style="margin-top:20px;border-top:1px solid var(--c-border);padding-top:16px">
+          <div class="scard-title" style="padding:0;margin:0 0 12px;border:none">Admin Security</div>
+          <div class="fg"><label class="flabel">Current Password</label><input class="finput" type="password" id="s-op"></div>
+          <div class="fg"><label class="flabel">New Password</label><input class="finput" type="password" id="s-np"></div>
+          <div class="fg"><label class="flabel">Confirm</label><input class="finput" type="password" id="s-cp"></div>
+          <button class="btn red" onclick="changePwd()">Change Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THEME ── -->
+  <div class="tab-panel" id="tp-theme">
+    <div class="ap-title">Theme Editor</div>
+    <div class="ap-desc">Customise every color, font, and dimension of the site live</div>
+    <div class="acard">
+      <div class="acard-title">Color Palette</div>
+      <div class="theme-grid" id="color-grid"></div>
+      <div class="btn-row">
+        <button class="btn grn" onclick="applyTheme()">Apply Theme</button>
+        <button class="btn" onclick="resetTheme()">Reset to Default</button>
+        <button class="btn" onclick="themePreset('dark')">Dark Preset</button>
+        <button class="btn" onclick="themePreset('light')">Light Preset</button>
+        <button class="btn" onclick="themePreset('red')">Red Accent</button>
+        <button class="btn" onclick="themePreset('blue')">Blue Accent</button>
+      </div>
+    </div>
+    <div class="acard">
+      <div class="acard-title">Typography &amp; Layout</div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Display Font (Google Font name)</label>
+          <input class="finput" id="t-font-display" placeholder="Bebas Neue">
+        </div>
+        <div class="fg">
+          <label class="flabel">Body Font (Google Font name)</label>
+          <input class="finput" id="t-font-body" placeholder="DM Sans">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Mono Font</label>
+          <input class="finput" id="t-font-mono" placeholder="DM Mono">
+        </div>
+        <div class="fg">
+          <label class="flabel">Hero Title Size (CSS value)</label>
+          <input class="finput" id="t-hero-size" placeholder="clamp(64px,11vw,130px)">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Border Radius (0px = sharp)</label>
+          <input class="finput" id="t-radius" placeholder="0px">
+        </div>
+      </div>
+      <button class="btn grn" onclick="applyTypo()">Apply Typography</button>
+    </div>
+  </div>
+
+  </div><!-- /admin-content -->
+  </div><!-- /admin-scroll -->
+</div><!-- /admin -->
+
+
+<!-- EDIT POST MODAL -->
+<div class="overlay" id="edit-overlay">
+  <div class="modal-box" style="max-width:580px">
+    <div class="modal-hd">
+      <div><div class="modal-title">Edit Post</div><div class="modal-sub" id="edit-id-show"></div></div>
+      <button class="modal-close" onclick="closeEdit()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="frow">
+        <div class="fg"><label class="flabel">Type</label>
+          <select class="fselect" id="edit-type" onchange="editTypeChange()">
+            <option value="main">Main</option><option value="side">Side</option>
+            <option value="game">Game</option><option value="group">Group</option>
+            <option value="portfolio">Portfolio</option><option value="pinned">Pinned</option>
+          </select>
+        </div>
+        <div class="fg"><label class="flabel">Status</label>
+          <select class="fselect" id="edit-status"><option value="published">Published</option><option value="draft">Draft</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="flabel">Title</label><input class="finput" type="text" id="edit-title"></div>
+      <div class="fg"><label class="flabel">Body</label><textarea class="ftarea" id="edit-body" style="min-height:100px"></textarea></div>
+      <div class="frow">
+        <div class="fg"><label class="flabel">Tag</label><input class="finput" type="text" id="edit-tag"></div>
+        <div class="fg"><label class="flabel">Date</label><input class="finput" type="date" id="edit-date"></div>
+      </div>
+      <div id="ef-game" style="display:none">
+        <div class="frow">
+          <div class="fg"><label class="flabel">Game Name</label><input class="finput" type="text" id="edit-game-name"></div>
+          <div class="fg"><label class="flabel">Game Status</label>
+            <select class="fselect" id="edit-game-status"><option>In Development</option><option>Released</option><option>Beta</option><option>On Hold</option><option>Cancelled</option></select>
+          </div>
+        </div>
+        <div class="fg"><label class="flabel">Game URL</label><input class="finput" type="text" id="edit-game-id"></div>
+      </div>
+      <div id="ef-portfolio" style="display:none">
+        <div class="frow">
+          <div class="fg"><label class="flabel">Role</label><input class="finput" type="text" id="edit-role"></div>
+          <div class="fg"><label class="flabel">Duration</label><input class="finput" type="text" id="edit-duration"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="acard-title" style="font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-text3);margin-bottom:10px">Links</div>
+        <div class="links-arr" id="edit-links"></div>
+        <button class="btn" style="margin-top:8px" onclick="addLink('edit-links')">+ Add Link</button>
+      </div>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn prim" onclick="saveEdit()">Save Changes</button>
+        <button class="btn sec" onclick="closeEdit()">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1529,653 +851,667 @@ footer {
 <div id="toast"></div>
 
 <script>
-// ─── STATE ────────────────────────────────────────────────────────────────
-const DEFAULT_ADMIN_PASS = 'eekadmin2024';
-let ADMIN_PASS = localStorage.getItem('eek_admin_pass') || DEFAULT_ADMIN_PASS;
-let githubToken = localStorage.getItem('eek_github_token') || '';
-let githubRepo = localStorage.getItem('eek_github_repo') || '';
-let githubFile = localStorage.getItem('eek_github_file') || 'data/posts.json';
-let isAdmin = false;
-let manageFilter = 'all';
-let manageSearch = '';
-
-// Main data store
-let siteData = {
+// ══════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════
+const STORAGE_KEY = 'eek_v3';
+let DB = {
   posts: [],
   settings: {
-    groupName: 'EEK Developers',
-    tagline: 'Roblox Development Group',
-    heroDesc: 'A dedicated Roblox development group focused on building high-quality games, systems, and experiences. We build with intention.',
-    btn1Label: 'Join the Group',
-    btn1Url: '#',
-    btn2Label: 'View Posts',
-    stat1Num: '—', stat1Label: 'Group Members',
-    stat2Num: '—', stat2Label: 'Games Released',
-    stat3Num: '—', stat3Label: 'Developers',
-    aboutTitle: 'About EEK Developers',
-    aboutDesc: 'EEK Developers is a Roblox development group building games and experiences with quality and craft at the forefront.',
-    robloxUrl: '#', discordUrl: '#', twitterUrl: '#',
-    footerCopy: '2024 EEK Developers. All rights reserved.',
-    showPinned: true, showPosts: true, showGames: true,
-    showGroup: true, showPortfolio: true, showStats: true
+    name:'EEK Developers', pre:'Roblox Development Group',
+    desc:'A dedicated Roblox development group building high-quality games, systems, and experiences.',
+    b1l:'Join the Group', b1u:'#', b2l:'View Posts', b2u:'#sec-posts',
+    s1n:'—', s1l:'Group Members', s2n:'—', s2l:'Games Released', s3n:'—', s3l:'Developers',
+    aboutBody:'EEK Developers is a Roblox development group building games and experiences with quality and craft at the forefront.',
+    ac1t:'Development', ac1b:'We build scripted, designed, and polished Roblox games from the ground up.',
+    ac2t:'Community', ac2b:'Our group is open to players and developers alike.',
+    ac3t:'Quality', ac3b:'Every release is tested to ensure a great experience for players.',
+    roblox:'#', discord:'#', twitter:'#', youtube:'', tiktok:'',
+    copy:'2024 EEK Developers. All rights reserved.',
+    tabTitle:'EEK Developers',
+    secTitles:{ pinned:'Featured Post', main:'Latest Posts', games:'Games', group:'Group Updates', portfolio:'Portfolio', about:'About EEK Developers' },
+    visibility:{ pinned:true, posts:true, games:true, group:true, portfolio:true, about:true, stats:true, sidebar:true },
+  },
+  theme:{
+    'c-bg':'#0a0a0a','c-bg2':'#111111','c-bg3':'#181818','c-bg4':'#222222',
+    'c-border':'#252525','c-border2':'#333333',
+    'c-text':'#f2f2f2','c-text2':'#999999','c-text3':'#555555',
+    'c-accent':'#ffffff','c-accent2':'#dddddd',
+    'c-red':'#ff4040','c-green':'#40ff90','c-blue':'#4090ff','c-yellow':'#ffcc40','c-pin':'#ffcc40',
+    'font-display':'Bebas Neue', 'font-body':'DM Sans', 'font-mono':'DM Mono',
+    'hero-size':'clamp(64px,11vw,130px)', 'radius':'0px'
   }
 };
 
-// Load from localStorage
-function loadLocal() {
-  const saved = localStorage.getItem('eek_site_data');
-  if (saved) { try { siteData = JSON.parse(saved); } catch(e){} }
-}
-function saveLocal() {
-  localStorage.setItem('eek_site_data', JSON.stringify(siteData));
-}
-loadLocal();
+let adminPass = localStorage.getItem('eek_pass') || 'eekadmin2024';
+let ghToken = localStorage.getItem('eek_token') || '';
+let ghRepo = localStorage.getItem('eek_repo') || '';
+let ghFile = localStorage.getItem('eek_file') || 'data/posts.json';
+let mFilterVal = 'all', mSearchVal = '';
 
-// ─── UTILS ────────────────────────────────────────────────────────────────
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function fmtDate(d) {
-  if (!d) return '';
-  const dt = new Date(d + 'T00:00:00');
-  return dt.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
-}
-function todayStr() { return new Date().toISOString().slice(0,10); }
-function toast(msg, type='ok') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show ' + type;
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>{ t.className=''; }, 3000);
-}
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-const typeDotClass = { main:'dot-main', side:'dot-side', game:'dot-game', group:'dot-group', portfolio:'dot-portfolio', pinned:'dot-main' };
-const linkSvg = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M7 3l3 3-3 3"/></svg>`;
-const externalSvg = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2v8h8V7M7 2h3v3M5.5 6.5l4-4"/></svg>`;
+function loadDB(){ const s=localStorage.getItem(STORAGE_KEY); if(s){ try{ DB=JSON.parse(s); }catch(e){} } }
+function saveDB(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(DB)); }
+loadDB();
 
-// ─── MOBILE NAV ──────────────────────────────────────────────────────────
-function toggleMobile() {
-  const m = document.getElementById('mobile-menu');
-  m.classList.toggle('open');
-}
-function closeMobile() {
-  document.getElementById('mobile-menu').classList.remove('open');
-}
-function scrollToTop() { window.scrollTo({top:0,behavior:'smooth'}); }
+// ══════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(d){ if(!d)return ''; try{ const dt=new Date(d+'T12:00:00'); return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return d; } }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function gv(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
+function sv(id,v){ const e=document.getElementById(id); if(e) e.value=v||''; }
+function toast(msg,type='ok'){ const t=document.getElementById('toast'); t.textContent=msg; t.className='show '+type; clearTimeout(t._t); t._t=setTimeout(()=>t.className='',3000); }
+function scrollToId(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); }
 
-// ─── RENDER PUBLIC SITE ──────────────────────────────────────────────────
-function renderSite() {
-  applySettings(siteData.settings);
+const DOT = { main:'td-main', side:'', game:'td-game', group:'td-group', portfolio:'td-portfolio', pinned:'td-pinned' };
+const EXT_ICON = `<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 8.5l7-7M5 1.5h3v3"/></svg>`;
+const ARR_ICON = `<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h8M5.5 2l3 3-3 3"/></svg>`;
+
+// ══════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════
+function toggleMobileNav(){ document.getElementById('mobile-nav').classList.toggle('open'); }
+function closeMobileNav(){ document.getElementById('mobile-nav').classList.remove('open'); }
+
+// ══════════════════════════════════════════════════
+//  RENDER PUBLIC SITE
+// ══════════════════════════════════════════════════
+function renderAll(){
+  applySettingsToDOM();
+  applyThemeToDOM();
   renderPinned();
-  renderMainPosts();
-  renderSidePosts();
-  renderTypePosts('game','game-posts-grid');
-  renderTypePosts('group','group-posts-grid');
-  renderTypePosts('portfolio','portfolio-posts-grid');
+  renderSection('main','main-render');
+  renderSide();
+  renderSection('game','games-render');
+  renderSection('group','group-render');
+  renderSection('portfolio','portfolio-render');
 }
 
-function applySettings(s) {
-  const set = txt => { try { document.getElementById(txt[0]).textContent = txt[1]; } catch(e){} };
-  const setHref = (id, url) => { try { document.getElementById(id).href = url||'#'; } catch(e){} };
-  document.getElementById('hero-tag').textContent = s.tagline||'';
-  document.getElementById('hero-title').innerHTML = (s.groupName||'EEK Developers').replace(' ','<br><em>') + '</em>';
-  if (!(s.groupName||'').includes(' ')) document.getElementById('hero-title').textContent = s.groupName||'EEK Developers';
-  document.getElementById('hero-desc').textContent = s.heroDesc||'';
-  document.getElementById('hero-btn-1').textContent = s.btn1Label||'Join the Group';
-  document.getElementById('hero-btn-1').href = s.btn1Url||'#';
-  document.getElementById('hero-btn-2').textContent = s.btn2Label||'View Posts';
-  document.getElementById('stat-1-num').textContent = s.stat1Num||'—';
-  document.getElementById('stat-1-label').textContent = s.stat1Label||'';
-  document.getElementById('stat-2-num').textContent = s.stat2Num||'—';
-  document.getElementById('stat-2-label').textContent = s.stat2Label||'';
-  document.getElementById('stat-3-num').textContent = s.stat3Num||'—';
-  document.getElementById('stat-3-label').textContent = s.stat3Label||'';
-  document.getElementById('about-title').textContent = s.aboutTitle||'';
-  document.getElementById('about-desc').textContent = s.aboutDesc||'';
-  document.getElementById('footer-link-roblox').href = s.robloxUrl||'#';
-  document.getElementById('footer-link-discord').href = s.discordUrl||'#';
-  document.getElementById('footer-link-twitter').href = s.twitterUrl||'#';
-  document.getElementById('footer-copy').textContent = s.footerCopy||'';
+function applySettingsToDOM(){
+  const s = DB.settings;
+  const V = s.visibility || {};
+  // hero
+  document.getElementById('h-pre').textContent = s.pre||'';
+  const ht = document.getElementById('h-title');
+  const parts = (s.name||'EEK Developers').split(' ');
+  ht.innerHTML = parts.length>1 ? parts[0]+'<br><span class="dim">'+parts.slice(1).join(' ')+'</span>' : (s.name||'EEK Developers');
+  document.getElementById('h-body').textContent = s.desc||'';
+  const b1 = document.getElementById('h-btn1');
+  b1.textContent = s.b1l||'Join the Group'; b1.href = s.b1u||'#';
+  const b2 = document.getElementById('h-btn2');
+  b2.textContent = s.b2l||'View Posts'; b2.href = s.b2u||'#sec-posts';
+  // stats
+  document.getElementById('hs1n').textContent = s.s1n||'—';
+  document.getElementById('hs1l').textContent = s.s1l||'';
+  document.getElementById('hs2n').textContent = s.s2n||'—';
+  document.getElementById('hs2l').textContent = s.s2l||'';
+  document.getElementById('hs3n').textContent = s.s3n||'—';
+  document.getElementById('hs3l').textContent = s.s3l||'';
+  document.getElementById('h-stats').style.display = V.stats===false?'none':'';
+  // section titles
+  const ST = s.secTitles||{};
+  document.getElementById('pinned-sec-title').textContent = ST.pinned||'Featured Post';
+  document.getElementById('main-sec-title').textContent = ST.main||'Latest Posts';
+  document.getElementById('games-sec-title').textContent = ST.games||'Games';
+  document.getElementById('group-sec-title').textContent = ST.group||'Group Updates';
+  document.getElementById('portfolio-sec-title').textContent = ST.portfolio||'Portfolio';
+  document.getElementById('about-sec-title').textContent = ST.about||'About EEK Developers';
+  // about
+  document.getElementById('about-body').textContent = s.aboutBody||'';
+  const buildAboutCard=(t,b)=>`<div class="about-card"><h3>${esc(t)}</h3><p>${esc(b)}</p></div>`;
+  document.getElementById('about-cards-render').innerHTML =
+    buildAboutCard(s.ac1t||'Development',s.ac1b||'')+
+    buildAboutCard(s.ac2t||'Community',s.ac2b||'')+
+    buildAboutCard(s.ac3t||'Quality',s.ac3b||'');
+  // footer
+  setLink('ft-roblox',s.roblox); setLink('ft-discord',s.discord); setLink('ft-twitter',s.twitter);
+  setLinkVis('ft-youtube',s.youtube); setLinkVis('ft-tiktok',s.tiktok);
+  document.getElementById('ft-copy').textContent = s.copy||'';
+  document.getElementById('ft-logo').textContent = (s.name||'EEK DEVELOPERS').toUpperCase();
+  // tab title
+  document.title = s.tabTitle||s.name||'EEK Developers';
   // section visibility
-  const vis = (id, show) => { const el=document.getElementById(id); if(el) el.style.display = show===false?'none':''; };
-  vis('pinned-section', s.showPinned!==false);
-  vis('posts-section', s.showPosts!==false);
-  vis('games-section', s.showGames!==false);
-  vis('group-section', s.showGroup!==false);
-  vis('portfolio-section', s.showPortfolio!==false);
-  document.getElementById('hero-stats-container').style.display = s.showStats===false?'none':'';
-  // footer logo
-  document.getElementById('footer-logo').textContent = (s.groupName||'EEK Developers').toUpperCase().replace(/ /g,'_');
-  // page title
-  document.title = (s.groupName||'EEK Developers');
+  const secs = {pinned:'sec-pinned',posts:'sec-posts',games:'sec-games',group:'sec-group',portfolio:'sec-portfolio',about:'sec-about'};
+  Object.entries(secs).forEach(([k,id])=>{ const el=document.getElementById(id); if(el) el.style.display=V[k]===false?'none':''; });
+  // sidebar
+  const sbEl = document.querySelector('.sidebar');
+  if(sbEl) sbEl.style.display = V.sidebar===false?'none':'';
 }
 
-function buildLinksHtml(links, cls='post-link') {
-  if (!links||!links.length) return '';
-  return links.map(l => {
-    if (!l.url && !l.label) return '';
-    const svg = l.url && (l.url.startsWith('http')||l.url.startsWith('//')) ? externalSvg : linkSvg;
-    return `<a href="${escHtml(l.url||'#')}" class="${cls}" target="_blank" rel="noopener">${svg}${escHtml(l.label||l.url)}</a>`;
+function setLink(id,url){ const e=document.getElementById(id); if(e){ e.href=url||'#'; e.style.display=''; } }
+function setLinkVis(id,url){ const e=document.getElementById(id); if(e) e.style.display=url?'':'none'; if(e&&url) e.href=url; }
+
+function applyThemeToDOM(){
+  const t = DB.theme||{};
+  const root = document.documentElement;
+  const colorKeys=['c-bg','c-bg2','c-bg3','c-bg4','c-border','c-border2','c-text','c-text2','c-text3','c-accent','c-accent2','c-red','c-green','c-blue','c-yellow','c-pin'];
+  colorKeys.forEach(k=>{ if(t[k]) root.style.setProperty('--'+k, t[k]); });
+  if(t['radius']) root.style.setProperty('--radius',t['radius']);
+  if(t['hero-size']) root.style.setProperty('--hero-size',t['hero-size']);
+  // fonts — reload google font if changed
+  const fd = t['font-display']||'Bebas Neue';
+  const fb = t['font-body']||'DM Sans';
+  const fm = t['font-mono']||'DM Mono';
+  root.style.setProperty('--font-display',`'${fd}', sans-serif`);
+  root.style.setProperty('--font-body',`'${fb}', sans-serif`);
+  root.style.setProperty('--font-mono',`'${fm}', monospace`);
+}
+
+function buildLinksHTML(links, cls='plink'){
+  if(!links||!links.length) return '';
+  return (links||[]).filter(l=>l.url||l.label).map(l=>{
+    const isExt = l.url&&(l.url.startsWith('http')||l.url.startsWith('//'));
+    return `<a href="${esc(l.url||'#')}" class="${cls}" target="_blank" rel="noopener">${isExt?EXT_ICON:ARR_ICON}${esc(l.label||l.url)}</a>`;
   }).join('');
 }
 
-function renderPinned() {
-  const c = document.getElementById('pinned-container');
-  const pinned = siteData.posts.filter(p => p.type==='pinned' && p.status==='published');
-  if (!pinned.length) { c.innerHTML = '<div class="empty-state"><p>No pinned post yet.</p></div>'; return; }
-  const p = pinned[0];
-  const linksHtml = buildLinksHtml(p.links,'post-link');
-  c.innerHTML = `<div class="pinned-post">
-    <p class="pinned-label">Pinned Post</p>
-    <h2>${escHtml(p.title)}</h2>
-    <p>${escHtml(p.body)}</p>
-    <div class="post-meta">
-      <span class="post-date">${fmtDate(p.date)}</span>
-      ${p.tag?`<span class="post-tag">${escHtml(p.tag)}</span>`:''}
+function renderPinned(){
+  const c = document.getElementById('pinned-render');
+  const posts = DB.posts.filter(p=>p.type==='pinned'&&p.status==='published');
+  if(!posts.length){ c.innerHTML='<div class="empty-state"><p>No pinned post.</p></div>'; return; }
+  const p = posts[posts.length-1];
+  const links = buildLinksHTML(p.links,'plink');
+  c.innerHTML=`<div class="pinned-card">
+    <div class="pin-badge"><span class="pin-dot"></span>Pinned Post</div>
+    <h2>${esc(p.title)}</h2>
+    <div class="body-text">${esc(p.body)}</div>
+    <div class="post-meta-row">
+      <span class="meta-date">${fmtDate(p.date)}</span>
+      ${p.tag?`<span class="meta-tag">${esc(p.tag)}</span>`:''}
     </div>
-    ${linksHtml?`<div class="post-links">${linksHtml}</div>`:''}
+    ${links?`<div class="post-links-row">${links}</div>`:''}
   </div>`;
 }
 
-function buildCardHtml(p) {
-  const linksHtml = buildLinksHtml(p.links,'card-link');
-  const dotCls = typeDotClass[p.type]||'dot-main';
-  let extraMeta = '';
-  if (p.type==='game' && p.gameName) extraMeta += `<span class="post-tag">${escHtml(p.gameName)}</span>`;
-  if (p.type==='game' && p.gameStatus) extraMeta += `<span class="post-tag">${escHtml(p.gameStatus)}</span>`;
-  if (p.type==='portfolio' && p.role) extraMeta += `<span class="post-tag">${escHtml(p.role)}</span>`;
-  if (p.type==='portfolio' && p.duration) extraMeta += `<span class="post-tag">${escHtml(p.duration)}</span>`;
+function buildCard(p){
+  const dotCls = DOT[p.type]||'td-main';
+  const links = buildLinksHTML(p.links,'pc-link');
+  let extra='';
+  if(p.type==='game'){
+    if(p.gameName) extra+=`<span class="meta-tag">${esc(p.gameName)}</span>`;
+    if(p.gameStatus) extra+=`<span class="meta-tag">${esc(p.gameStatus)}</span>`;
+  }
+  if(p.type==='portfolio'){
+    if(p.role) extra+=`<span class="meta-tag">${esc(p.role)}</span>`;
+    if(p.duration) extra+=`<span class="meta-tag">${esc(p.duration)}</span>`;
+  }
   return `<div class="post-card">
-    <div class="post-card-type"><span class="type-dot ${dotCls}"></span>${escHtml(p.type)}</div>
-    <h3>${escHtml(p.title)}</h3>
-    <p>${escHtml(p.body)}</p>
-    <div class="post-meta">${p.tag?`<span class="post-tag">${escHtml(p.tag)}</span>`:''}${extraMeta}</div>
-    <div class="post-card-footer">
-      <span class="post-date">${fmtDate(p.date)}</span>
-      ${linksHtml?`<div class="card-links">${linksHtml}</div>`:''}
+    <div class="pc-type-row"><span class="type-dot ${dotCls}"></span><span class="pc-type-lbl">${esc(p.type)}</span></div>
+    <h3>${esc(p.title)}</h3>
+    <div class="body-text">${esc(p.body)}</div>
+    ${extra?`<div class="post-meta-row">${extra}</div>`:''}
+    <div class="pc-footer">
+      <span class="meta-date">${fmtDate(p.date)}${p.tag?' · '+esc(p.tag):''}</span>
+      ${links?`<div class="pc-links">${links}</div>`:''}
     </div>
   </div>`;
 }
 
-function renderMainPosts() {
-  const g = document.getElementById('main-posts-grid');
-  const posts = siteData.posts.filter(p => p.type==='main' && p.status==='published');
-  if (!posts.length) { g.innerHTML='<div class="empty-state"><p>No main posts yet.</p></div>'; return; }
-  g.innerHTML = posts.slice().reverse().map(buildCardHtml).join('');
+function renderSection(type, renderId){
+  const el = document.getElementById(renderId);
+  if(!el) return;
+  const posts = DB.posts.filter(p=>p.type===type&&p.status==='published').reverse();
+  el.innerHTML = posts.length ? posts.map(buildCard).join('') : `<div class="empty-state"><p>No ${type} posts yet.</p></div>`;
 }
 
-function renderSidePosts() {
-  const c = document.getElementById('side-posts-list');
-  const posts = siteData.posts.filter(p => p.type==='side' && p.status==='published');
-  if (!posts.length) { c.innerHTML='<p style="font-family:var(--mono);font-size:11px;color:var(--text3);">Nothing here yet.</p>'; return; }
-  c.innerHTML = posts.slice().reverse().map(p => {
-    const linksHtml = (p.links||[]).filter(l=>l.url||l.label).map(l=>`<a href="${escHtml(l.url||'#')}" class="sidebar-item-link" target="_blank" rel="noopener">${escHtml(l.label||l.url)}</a>`).join('');
-    return `<div class="sidebar-item">
-      <span class="sidebar-item-title">${escHtml(p.title)}</span>
-      <span class="sidebar-item-meta">${fmtDate(p.date)}${p.tag?' - '+escHtml(p.tag):''}</span>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">${escHtml(p.body)}</p>
-      ${linksHtml?`<div class="sidebar-item-links">${linksHtml}</div>`:''}
+function renderSide(){
+  const el = document.getElementById('side-render');
+  if(!el) return;
+  const posts = DB.posts.filter(p=>p.type==='side'&&p.status==='published').reverse();
+  if(!posts.length){ el.innerHTML='<div style="padding:14px 16px"><p style="font-family:var(--font-mono);font-size:11px;color:var(--c-text3)">Nothing here yet.</p></div>'; return; }
+  el.innerHTML = posts.map(p=>{
+    const lnks = (p.links||[]).filter(l=>l.url||l.label).map(l=>`<a href="${esc(l.url||'#')}" class="sb-item-link" target="_blank" rel="noopener">${esc(l.label||l.url)}</a>`).join('');
+    return `<div class="sb-item">
+      <div class="sb-item-title">${esc(p.title)}</div>
+      <div class="sb-item-meta">${fmtDate(p.date)}${p.tag?' · '+esc(p.tag):''}</div>
+      <div class="sb-item-body">${esc(p.body)}</div>
+      ${lnks?`<div class="sb-item-links">${lnks}</div>`:''}
     </div>`;
   }).join('');
 }
 
-function renderTypePosts(type, gridId) {
-  const g = document.getElementById(gridId);
-  const posts = siteData.posts.filter(p => p.type===type && p.status==='published');
-  const label = type.charAt(0).toUpperCase()+type.slice(1);
-  if (!posts.length) { g.innerHTML=`<div class="empty-state"><p>No ${label} posts yet.</p></div>`; return; }
-  g.innerHTML = posts.slice().reverse().map(buildCardHtml).join('');
+// ══════════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════════
+function openLogin(){
+  document.getElementById('li-pass').value='';
+  document.getElementById('li-err').textContent='';
+  sv('li-repo',ghRepo); sv('li-file',ghFile);
+  const hint = document.getElementById('li-token-hint');
+  if(ghToken){ document.getElementById('li-token').value=''; hint.textContent='Token saved: '+ghToken.slice(0,8)+'••••'+ghToken.slice(-3); }
+  else{ hint.textContent=''; }
+  document.getElementById('login-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('li-pass').focus(),80);
+}
+function closeLogin(){ document.getElementById('login-overlay').classList.remove('open'); }
+function doLogin(){
+  const pass = document.getElementById('li-pass').value;
+  if(pass!==adminPass){ document.getElementById('li-err').textContent='Incorrect password.'; return; }
+  const tokenIn = document.getElementById('li-token').value.trim();
+  const repoIn = gv('li-repo');
+  const fileIn = gv('li-file');
+  if(tokenIn){ ghToken=tokenIn; localStorage.setItem('eek_token',ghToken); }
+  if(repoIn){ ghRepo=repoIn; localStorage.setItem('eek_repo',ghRepo); }
+  if(fileIn){ ghFile=fileIn; localStorage.setItem('eek_file',ghFile); }
+  closeLogin();
+  openAdmin();
 }
 
-// ─── ADMIN LOGIN ─────────────────────────────────────────────────────────
-function openAdminLogin() {
-  document.getElementById('login-modal').classList.add('open');
-  document.getElementById('login-error').textContent = '';
-  // Load saved github settings
-  document.getElementById('github-repo-input').value = githubRepo;
-  document.getElementById('github-file-input').value = githubFile;
-  if (githubToken) {
-    document.getElementById('github-token-input').style.display = 'none';
-    document.getElementById('saved-token-display').style.display = 'block';
-    document.getElementById('token-masked-text').textContent = githubToken.slice(0,8) + '••••••••••••••••' + githubToken.slice(-4);
-  } else {
-    document.getElementById('github-token-input').style.display = 'block';
-    document.getElementById('saved-token-display').style.display = 'none';
-  }
+// ══════════════════════════════════════════════════
+//  ADMIN
+// ══════════════════════════════════════════════════
+function openAdmin(){
+  document.getElementById('admin').classList.add('open');
+  document.body.style.overflow='hidden';
+  refreshDash();
+  refreshManage();
+  loadAllSettingsForms();
 }
-function closeAdminLogin() {
-  document.getElementById('login-modal').classList.remove('open');
+function exitAdmin(){
+  document.getElementById('admin').classList.remove('open');
+  document.body.style.overflow='';
+  renderAll();
 }
-function clearSavedToken() {
-  githubToken = '';
-  localStorage.removeItem('eek_github_token');
-  document.getElementById('github-token-input').style.display = 'block';
-  document.getElementById('saved-token-display').style.display = 'none';
-  document.getElementById('github-token-input').value = '';
-}
-function doAdminLogin() {
-  const pass = document.getElementById('admin-password').value;
-  const tokenInput = document.getElementById('github-token-input').value.trim();
-  const repo = document.getElementById('github-repo-input').value.trim();
-  const file = document.getElementById('github-file-input').value.trim();
-  if (pass !== ADMIN_PASS) {
-    document.getElementById('login-error').textContent = 'Incorrect password.';
-    return;
-  }
-  if (tokenInput) {
-    githubToken = tokenInput;
-    localStorage.setItem('eek_github_token', githubToken);
-  }
-  if (repo) { githubRepo = repo; localStorage.setItem('eek_github_repo', repo); }
-  if (file) { githubFile = file; localStorage.setItem('eek_github_file', file); }
-  isAdmin = true;
-  closeAdminLogin();
-  openAdminPanel();
+function showTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tp-'+name).classList.add('on');
+  if(btn) btn.classList.add('on');
+  if(name==='manage') refreshManage();
+  if(name==='dash') refreshDash();
+  if(name==='theme') loadThemeForm();
+  if(name==='settings'||name==='sections') loadAllSettingsForms();
 }
 
-// ─── ADMIN PANEL ─────────────────────────────────────────────────────────
-function openAdminPanel() {
-  document.getElementById('admin-panel').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  refreshAdminDashboard();
-  refreshManageList();
-  loadSettingsForm();
-}
-function exitAdmin() {
-  document.getElementById('admin-panel').classList.remove('open');
-  document.body.style.overflow = '';
-  isAdmin = false;
-  renderSite();
-}
-function switchTab(tab, btn) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (tab==='manage') refreshManageList();
-  if (tab==='settings') loadSettingsForm();
-  if (tab==='dashboard') refreshAdminDashboard();
-}
-
-function refreshAdminDashboard() {
-  const counts = { total:0, main:0, side:0, game:0, group:0, portfolio:0, pinned:0, draft:0 };
-  siteData.posts.forEach(p => {
-    counts.total++;
-    if (counts[p.type]!==undefined) counts[p.type]++;
-    if (p.status==='draft') counts.draft++;
-  });
-  document.getElementById('admin-stats-row').innerHTML = Object.entries(counts).map(([k,v])=>`
-    <div class="stat-card">
-      <div class="stat-card-num">${v}</div>
-      <div class="stat-card-label">${k}</div>
-    </div>`).join('');
-  const recent = siteData.posts.slice().reverse().slice(0,5);
-  document.getElementById('dashboard-recent').innerHTML = recent.length
-    ? recent.map(p=>`<div class="post-list-item">
-        <div class="post-list-left">
-          <div class="post-list-type-dot type-dot ${typeDotClass[p.type]||'dot-main'}"></div>
-          <div class="post-list-info">
-            <div class="post-list-name">${escHtml(p.title)}</div>
-            <div class="post-list-meta">${escHtml(p.type)} &bull; ${fmtDate(p.date)} &bull; ${escHtml(p.status)}</div>
-          </div>
-        </div>
-      </div>`).join('')
+// ── DASHBOARD ──
+function refreshDash(){
+  const counts={total:0,main:0,side:0,game:0,group:0,portfolio:0,pinned:0,draft:0,published:0};
+  DB.posts.forEach(p=>{ counts.total++; if(counts[p.type]!==undefined)counts[p.type]++; if(p.status==='draft')counts.draft++; else counts.published++; });
+  const row=document.getElementById('dash-stats');
+  row.innerHTML = Object.entries(counts).map(([k,v])=>`<div class="stat-box"><div class="stat-box-num">${v}</div><div class="stat-box-lbl">${k}</div></div>`).join('');
+  const recent=DB.posts.slice().reverse().slice(0,6);
+  document.getElementById('dash-recent').innerHTML = recent.length
+    ? recent.map(p=>`<div class="plist-item">
+        <div class="plist-left"><div class="plist-dot ${DOT[p.type]||'td-main'}"></div>
+        <div class="plist-info"><div class="plist-name">${esc(p.title)}</div><div class="plist-meta">${esc(p.type)} · ${fmtDate(p.date)} · ${esc(p.status)}</div></div></div></div>`).join('')
     : '<div class="empty-state"><p>No posts yet.</p></div>';
 }
 
-// ─── MANAGE LIST ─────────────────────────────────────────────────────────
-function filterManage(f, btn) {
-  manageFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  refreshManageList();
+// ── CREATE POST ──
+function cpTypeChange(){
+  const t=gv('cp-type');
+  document.getElementById('cpf-game').style.display=t==='game'?'block':'none';
+  document.getElementById('cpf-portfolio').style.display=t==='portfolio'?'block':'none';
 }
-function searchManage(val) { manageSearch = val.toLowerCase(); refreshManageList(); }
-
-function refreshManageList() {
-  let posts = siteData.posts.slice().reverse();
-  if (manageFilter !== 'all') {
-    if (manageFilter === 'draft') posts = posts.filter(p => p.status==='draft');
-    else posts = posts.filter(p => p.type===manageFilter);
-  }
-  if (manageSearch) posts = posts.filter(p => (p.title||'').toLowerCase().includes(manageSearch) || (p.body||'').toLowerCase().includes(manageSearch));
-  const el = document.getElementById('manage-list');
-  if (!posts.length) { el.innerHTML='<div class="empty-state"><p>No posts found.</p></div>'; return; }
-  el.innerHTML = posts.map(p => `
-    <div class="post-list-item" id="manage-item-${p.id}">
-      <div class="post-list-left">
-        <div class="post-list-type-dot ${typeDotClass[p.type]||'dot-main'}"></div>
-        <div class="post-list-info">
-          <div class="post-list-name">${escHtml(p.title)} ${p.status==='draft'?'<span class="post-tag" style="color:var(--yellow);border-color:rgba(255,210,59,0.3);">Draft</span>':''}</div>
-          <div class="post-list-meta">${escHtml(p.type)} &bull; ${fmtDate(p.date)} ${p.tag?'&bull; '+escHtml(p.tag):''}</div>
-        </div>
-      </div>
-      <div class="post-list-actions">
-        <button class="btn-sm" onclick="editPost('${p.id}')">Edit</button>
-        <button class="btn-sm" onclick="togglePublish('${p.id}')">${p.status==='published'?'Unpublish':'Publish'}</button>
-        ${p.type!=='pinned'?`<button class="btn-sm info" onclick="pinPost('${p.id}')">Pin</button>`:''}
-        <button class="btn-sm danger" onclick="deletePost('${p.id}')">Delete</button>
-      </div>
-    </div>`).join('');
-}
-
-function togglePublish(id) {
-  const p = siteData.posts.find(x=>x.id===id);
-  if (!p) return;
-  p.status = p.status==='published' ? 'draft' : 'published';
-  saveLocal(); refreshManageList(); refreshAdminDashboard();
-  toast(`Post ${p.status==='published'?'published':'unpublished'}.`);
-}
-function pinPost(id) {
-  const p = siteData.posts.find(x=>x.id===id);
-  if (!p) return;
-  const dupe = {...p, id: uid(), type:'pinned', status:'published', title:'[Pinned] '+p.title};
-  siteData.posts.push(dupe);
-  saveLocal(); refreshManageList(); refreshAdminDashboard();
-  toast('Post duplicated as pinned.');
-}
-function deletePost(id) {
-  if (!confirm('Delete this post?')) return;
-  siteData.posts = siteData.posts.filter(p=>p.id!==id);
-  saveLocal(); refreshManageList(); refreshAdminDashboard();
-  toast('Post deleted.', 'err');
-}
-
-// ─── CREATE POST ─────────────────────────────────────────────────────────
-function updateCreateForm() {
-  const type = document.getElementById('cp-type').value;
-  document.getElementById('cp-game-fields').style.display = type==='game' ? 'block' : 'none';
-  document.getElementById('cp-portfolio-fields').style.display = type==='portfolio' ? 'block' : 'none';
-}
-function clearCreateForm() {
-  ['cp-title','cp-desc','cp-tag','cp-date','cp-game-name','cp-role','cp-duration'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
-  });
+function clearCP(){
+  ['cp-title','cp-body','cp-tag','cp-date','cp-game-name','cp-game-id','cp-role','cp-duration'].forEach(id=>sv(id,''));
   document.getElementById('cp-type').value='main';
   document.getElementById('cp-status').value='published';
   document.getElementById('cp-game-status').value='In Development';
-  document.getElementById('cp-links-array').innerHTML='';
-  document.getElementById('cp-error').textContent='';
-  updateCreateForm();
+  document.getElementById('cp-links').innerHTML='';
+  document.getElementById('cp-err').textContent='';
+  cpTypeChange();
 }
-function createPost() {
-  const title = document.getElementById('cp-title').value.trim();
-  if (!title) { document.getElementById('cp-error').textContent='Title is required.'; return; }
-  const type = document.getElementById('cp-type').value;
-  const links = collectLinks('cp-links-array');
-  const post = {
-    id: uid(),
-    type,
-    status: document.getElementById('cp-status').value,
-    title,
-    body: document.getElementById('cp-desc').value.trim(),
-    tag: document.getElementById('cp-tag').value.trim(),
-    date: document.getElementById('cp-date').value || todayStr(),
-    links,
-    gameName: document.getElementById('cp-game-name').value.trim(),
-    gameStatus: document.getElementById('cp-game-status').value,
-    role: document.getElementById('cp-role').value.trim(),
-    duration: document.getElementById('cp-duration').value.trim(),
+function createPost(){
+  const title=gv('cp-title');
+  if(!title){ document.getElementById('cp-err').textContent='Title is required.'; return; }
+  const post={
+    id:uid(), type:gv('cp-type')||'main', status:gv('cp-status')||'published',
+    title, body:gv('cp-body'), tag:gv('cp-tag'),
+    date:gv('cp-date')||today(),
+    links:collectLinks('cp-links'),
+    gameName:gv('cp-game-name'), gameStatus:gv('cp-game-status')||'In Development', gameId:gv('cp-game-id'),
+    role:gv('cp-role'), duration:gv('cp-duration'),
+    createdAt:Date.now()
   };
-  siteData.posts.push(post);
-  saveLocal();
-  clearCreateForm();
-  document.getElementById('cp-error').textContent='';
-  refreshAdminDashboard();
-  toast('Post created successfully.');
+  DB.posts.push(post);
+  saveDB();
+  clearCP();
+  document.getElementById('cp-err').textContent='';
+  refreshDash();
+  toast('Post created: '+post.title);
 }
 
-// ─── EDIT POST ───────────────────────────────────────────────────────────
-function editPost(id) {
-  const p = siteData.posts.find(x=>x.id===id);
-  if (!p) return;
-  document.getElementById('edit-id').value = id;
-  document.getElementById('edit-post-id-display').textContent = 'ID: ' + id;
-  document.getElementById('edit-type').value = p.type||'main';
-  document.getElementById('edit-status').value = p.status||'published';
-  document.getElementById('edit-title').value = p.title||'';
-  document.getElementById('edit-desc').value = p.body||'';
-  document.getElementById('edit-tag').value = p.tag||'';
-  document.getElementById('edit-date').value = p.date||'';
-  document.getElementById('edit-game-name').value = p.gameName||'';
-  document.getElementById('edit-game-status').value = p.gameStatus||'In Development';
-  document.getElementById('edit-role').value = p.role||'';
-  document.getElementById('edit-duration').value = p.duration||'';
-  // links
-  const arr = document.getElementById('edit-links-array');
-  arr.innerHTML = '';
-  (p.links||[]).forEach(l => addLinkRow('edit-links-array', l.label, l.url));
-  updateEditForm();
-  document.getElementById('edit-modal').classList.add('open');
+// ── MANAGE ──
+function mFilter(f,btn){
+  mFilterVal=f;
+  document.querySelectorAll('#manage-fbar .fbtn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  refreshManage();
 }
-function updateEditForm() {
-  const type = document.getElementById('edit-type').value;
-  document.getElementById('edit-game-fields').style.display = type==='game'?'block':'none';
-  document.getElementById('edit-portfolio-fields').style.display = type==='portfolio'?'block':'none';
-}
-function saveEditPost() {
-  const id = document.getElementById('edit-id').value;
-  const p = siteData.posts.find(x=>x.id===id);
-  if (!p) return;
-  p.type = document.getElementById('edit-type').value;
-  p.status = document.getElementById('edit-status').value;
-  p.title = document.getElementById('edit-title').value.trim();
-  p.body = document.getElementById('edit-desc').value.trim();
-  p.tag = document.getElementById('edit-tag').value.trim();
-  p.date = document.getElementById('edit-date').value || todayStr();
-  p.links = collectLinks('edit-links-array');
-  p.gameName = document.getElementById('edit-game-name').value.trim();
-  p.gameStatus = document.getElementById('edit-game-status').value;
-  p.role = document.getElementById('edit-role').value.trim();
-  p.duration = document.getElementById('edit-duration').value.trim();
-  saveLocal(); closeEditModal(); refreshManageList(); refreshAdminDashboard();
-  toast('Post updated.');
-}
-function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
-
-// ─── LINKS ARRAY ─────────────────────────────────────────────────────────
-function addLinkRow(arrayId, label='', url='') {
-  const row = document.createElement('div');
-  row.className = 'link-row';
-  row.innerHTML = `
-    <input type="text" class="form-input link-label" placeholder="Label (e.g. Play)" value="${escHtml(label)}" style="font-size:12px;">
-    <input type="text" class="form-input link-url" placeholder="URL" value="${escHtml(url)}" style="font-size:12px;">
-    <button class="btn-icon remove" onclick="this.parentElement.remove()" title="Remove">&#x2715;</button>`;
-  document.getElementById(arrayId).appendChild(row);
-}
-function collectLinks(arrayId) {
-  const rows = document.getElementById(arrayId).querySelectorAll('.link-row');
-  return Array.from(rows).map(r=>({
-    label: r.querySelector('.link-label').value.trim(),
-    url: r.querySelector('.link-url').value.trim()
-  })).filter(l=>l.label||l.url);
-}
-
-// ─── SETTINGS ────────────────────────────────────────────────────────────
-function loadSettingsForm() {
-  const s = siteData.settings;
-  const setVal = (id, val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
-  setVal('s-group-name', s.groupName);
-  setVal('s-tagline', s.tagline);
-  setVal('s-hero-desc', s.heroDesc);
-  setVal('s-btn1-label', s.btn1Label);
-  setVal('s-btn1-url', s.btn1Url);
-  setVal('s-btn2-label', s.btn2Label);
-  setVal('s-stat1-num', s.stat1Num); setVal('s-stat1-label', s.stat1Label);
-  setVal('s-stat2-num', s.stat2Num); setVal('s-stat2-label', s.stat2Label);
-  setVal('s-stat3-num', s.stat3Num); setVal('s-stat3-label', s.stat3Label);
-  setVal('s-about-title', s.aboutTitle);
-  setVal('s-about-desc', s.aboutDesc);
-  setVal('s-roblox-url', s.robloxUrl);
-  setVal('s-discord-url', s.discordUrl);
-  setVal('s-twitter-url', s.twitterUrl);
-  setVal('s-footer-copy', s.footerCopy);
-  // toggles
-  const setToggle = (id, val) => {
-    const el=document.getElementById(id);
-    if (!el) return;
-    el.className = 'toggle-switch' + (val!==false?' on':'');
-  };
-  setToggle('toggle-pinned', s.showPinned);
-  setToggle('toggle-posts', s.showPosts);
-  setToggle('toggle-games', s.showGames);
-  setToggle('toggle-group', s.showGroup);
-  setToggle('toggle-portfolio', s.showPortfolio);
-  setToggle('toggle-stats', s.showStats);
-}
-function gv(id) { const el=document.getElementById(id); return el?el.value.trim():''; }
-function applyHeroSettings() {
-  const s = siteData.settings;
-  s.groupName = gv('s-group-name') || s.groupName;
-  s.tagline = gv('s-tagline');
-  s.heroDesc = gv('s-hero-desc');
-  s.btn1Label = gv('s-btn1-label');
-  s.btn1Url = gv('s-btn1-url') || '#';
-  s.btn2Label = gv('s-btn2-label');
-  saveLocal(); toast('Hero settings applied.');
-}
-function applyStatsSettings() {
-  const s = siteData.settings;
-  s.stat1Num=gv('s-stat1-num')||'—'; s.stat1Label=gv('s-stat1-label');
-  s.stat2Num=gv('s-stat2-num')||'—'; s.stat2Label=gv('s-stat2-label');
-  s.stat3Num=gv('s-stat3-num')||'—'; s.stat3Label=gv('s-stat3-label');
-  saveLocal(); toast('Stats applied.');
-}
-function applyAboutSettings() {
-  siteData.settings.aboutTitle = gv('s-about-title');
-  siteData.settings.aboutDesc = gv('s-about-desc');
-  saveLocal(); toast('About section applied.');
-}
-function applyFooterSettings() {
-  siteData.settings.robloxUrl = gv('s-roblox-url')||'#';
-  siteData.settings.discordUrl = gv('s-discord-url')||'#';
-  siteData.settings.twitterUrl = gv('s-twitter-url')||'#';
-  siteData.settings.footerCopy = gv('s-footer-copy');
-  saveLocal(); toast('Footer settings applied.');
-}
-function toggleSection(sectionId, toggleId) {
-  const el = document.getElementById(sectionId);
-  const toggle = document.getElementById(toggleId);
-  const isOn = toggle.classList.contains('on');
-  if (isOn) {
-    toggle.classList.remove('on');
-    if (el) el.style.display = 'none';
-  } else {
-    toggle.classList.add('on');
-    if (el) el.style.display = '';
+function mSearch(v){ mSearchVal=v.toLowerCase(); refreshManage(); }
+function refreshManage(){
+  let posts=[...DB.posts].reverse();
+  if(mFilterVal!=='all'){
+    if(mFilterVal==='draft') posts=posts.filter(p=>p.status==='draft');
+    else posts=posts.filter(p=>p.type===mFilterVal);
   }
-  // Save to settings
-  const map = { 'toggle-pinned':'showPinned','toggle-posts':'showPosts','toggle-games':'showGames','toggle-group':'showGroup','toggle-portfolio':'showPortfolio' };
-  if (map[toggleId]) siteData.settings[map[toggleId]] = !isOn;
-  saveLocal();
+  if(mSearchVal) posts=posts.filter(p=>(p.title||'').toLowerCase().includes(mSearchVal)||(p.body||'').toLowerCase().includes(mSearchVal));
+  const el=document.getElementById('manage-list');
+  if(!posts.length){ el.innerHTML='<div class="empty-state"><p>No posts found.</p></div>'; return; }
+  el.innerHTML=posts.map(p=>`
+    <div class="plist-item">
+      <div class="plist-left">
+        <div class="plist-dot ${DOT[p.type]||'td-main'}"></div>
+        <div class="plist-info">
+          <div class="plist-name">${esc(p.title)}${p.status==='draft'?'<span class="draft-tag">Draft</span>':''}</div>
+          <div class="plist-meta">${esc(p.type)} · ${fmtDate(p.date)}${p.tag?' · '+esc(p.tag):''}</div>
+        </div>
+      </div>
+      <div class="plist-actions">
+        <button class="btn" onclick="openEdit('${p.id}')">Edit</button>
+        <button class="btn ${p.status==='published'?'yel':'grn'}" onclick="togglePub('${p.id}')">${p.status==='published'?'Unpublish':'Publish'}</button>
+        <button class="btn blu" onclick="duplicatePost('${p.id}')">Dupe</button>
+        <button class="btn red" onclick="deletePost('${p.id}')">Delete</button>
+      </div>
+    </div>`).join('');
 }
-function toggleStats(toggleId) {
-  const toggle = document.getElementById(toggleId);
-  const isOn = toggle.classList.contains('on');
-  if (isOn) toggle.classList.remove('on'); else toggle.classList.add('on');
-  siteData.settings.showStats = !isOn;
-  document.getElementById('hero-stats-container').style.display = isOn?'none':'';
-  saveLocal();
+function togglePub(id){
+  const p=DB.posts.find(x=>x.id===id); if(!p) return;
+  p.status=p.status==='published'?'draft':'published';
+  saveDB(); refreshManage(); refreshDash();
+  toast('Post '+(p.status==='published'?'published':'unpublished')+'.');
 }
-function changePassword() {
-  const old = document.getElementById('s-old-pass').value;
-  const n = document.getElementById('s-new-pass').value;
-  const c = document.getElementById('s-confirm-pass').value;
-  if (old !== ADMIN_PASS) { toast('Current password incorrect.','err'); return; }
-  if (!n || n.length < 6) { toast('New password too short.','err'); return; }
-  if (n !== c) { toast('Passwords do not match.','err'); return; }
-  ADMIN_PASS = n;
-  localStorage.setItem('eek_admin_pass', n);
-  document.getElementById('s-old-pass').value='';
-  document.getElementById('s-new-pass').value='';
-  document.getElementById('s-confirm-pass').value='';
+function duplicatePost(id){
+  const p=DB.posts.find(x=>x.id===id); if(!p) return;
+  const d={...p, id:uid(), title:'Copy of '+p.title, status:'draft', createdAt:Date.now()};
+  DB.posts.push(d); saveDB(); refreshManage(); refreshDash();
+  toast('Post duplicated as draft.');
+}
+function deletePost(id){
+  if(!confirm('Delete this post?')) return;
+  DB.posts=DB.posts.filter(p=>p.id!==id);
+  saveDB(); refreshManage(); refreshDash();
+  toast('Post deleted.','err');
+}
+
+// ── EDIT POST ──
+function openEdit(id){
+  const p=DB.posts.find(x=>x.id===id); if(!p) return;
+  sv('edit-id',id);
+  document.getElementById('edit-id-show').textContent='ID: '+id;
+  sv('edit-type',p.type); sv('edit-status',p.status);
+  sv('edit-title',p.title); sv('edit-body',p.body);
+  sv('edit-tag',p.tag); sv('edit-date',p.date);
+  sv('edit-game-name',p.gameName); sv('edit-game-status',p.gameStatus||'In Development'); sv('edit-game-id',p.gameId);
+  sv('edit-role',p.role); sv('edit-duration',p.duration);
+  const la=document.getElementById('edit-links'); la.innerHTML='';
+  (p.links||[]).forEach(l=>addLink('edit-links',l.label,l.url));
+  editTypeChange();
+  document.getElementById('edit-overlay').classList.add('open');
+}
+function editTypeChange(){
+  const t=gv('edit-type');
+  document.getElementById('ef-game').style.display=t==='game'?'block':'none';
+  document.getElementById('ef-portfolio').style.display=t==='portfolio'?'block':'none';
+}
+function saveEdit(){
+  const id=gv('edit-id');
+  const p=DB.posts.find(x=>x.id===id); if(!p) return;
+  p.type=gv('edit-type'); p.status=gv('edit-status');
+  p.title=gv('edit-title'); p.body=gv('edit-body');
+  p.tag=gv('edit-tag'); p.date=gv('edit-date')||today();
+  p.links=collectLinks('edit-links');
+  p.gameName=gv('edit-game-name'); p.gameStatus=gv('edit-game-status'); p.gameId=gv('edit-game-id');
+  p.role=gv('edit-role'); p.duration=gv('edit-duration');
+  saveDB(); closeEdit(); refreshManage(); refreshDash();
+  toast('Post saved.');
+}
+function closeEdit(){ document.getElementById('edit-overlay').classList.remove('open'); }
+
+// ── LINKS ARRAY ──
+function addLink(arrId, label='', url=''){
+  const row=document.createElement('div'); row.className='link-row';
+  row.innerHTML=`<input class="finput link-lbl" placeholder="Label" value="${esc(label)}" style="font-size:11px">
+    <input class="finput link-url" placeholder="URL" value="${esc(url)}" style="font-size:11px">
+    <button class="icon-btn rm" onclick="this.parentElement.remove()" title="Remove">&#x2715;</button>`;
+  document.getElementById(arrId).appendChild(row);
+}
+function collectLinks(arrId){
+  return Array.from(document.getElementById(arrId).querySelectorAll('.link-row'))
+    .map(r=>({ label:r.querySelector('.link-lbl').value.trim(), url:r.querySelector('.link-url').value.trim() }))
+    .filter(l=>l.label||l.url);
+}
+
+// ── SECTION SETTINGS ──
+function applySecTitles(){
+  if(!DB.settings.secTitles) DB.settings.secTitles={};
+  DB.settings.secTitles.pinned=gv('st-pinned')||'Featured Post';
+  DB.settings.secTitles.main=gv('st-main')||'Latest Posts';
+  DB.settings.secTitles.games=gv('st-games')||'Games';
+  DB.settings.secTitles.group=gv('st-group')||'Group Updates';
+  DB.settings.secTitles.portfolio=gv('st-portfolio')||'Portfolio';
+  DB.settings.secTitles.about=gv('st-about')||'About EEK Developers';
+  saveDB(); toast('Section titles applied.');
+}
+function applyAbout(){
+  const s=DB.settings;
+  s.aboutBody=gv('s-about-body');
+  s.ac1t=gv('s-ac1t'); s.ac1b=gv('s-ac1b');
+  s.ac2t=gv('s-ac2t'); s.ac2b=gv('s-ac2b');
+  s.ac3t=gv('s-ac3t'); s.ac3b=gv('s-ac3b');
+  saveDB(); toast('About section applied.');
+}
+function togSec(key,togId){
+  if(!DB.settings.visibility) DB.settings.visibility={};
+  const t=document.getElementById(togId);
+  const isOn=t.classList.contains('on');
+  t.classList.toggle('on',!isOn);
+  DB.settings.visibility[key]=!isOn;
+  const smap={pinned:'sec-pinned',posts:'sec-posts',games:'sec-games',group:'sec-group',portfolio:'sec-portfolio',about:'sec-about'};
+  if(smap[key]){ const el=document.getElementById(smap[key]); if(el) el.style.display=!isOn?'':'none'; }
+  saveDB();
+}
+function togStats(togId){
+  if(!DB.settings.visibility) DB.settings.visibility={};
+  const t=document.getElementById(togId); const isOn=t.classList.contains('on');
+  t.classList.toggle('on',!isOn); DB.settings.visibility.stats=!isOn;
+  document.getElementById('h-stats').style.display=!isOn?'':'none';
+  saveDB();
+}
+function togSidebar(togId){
+  if(!DB.settings.visibility) DB.settings.visibility={};
+  const t=document.getElementById(togId); const isOn=t.classList.contains('on');
+  t.classList.toggle('on',!isOn); DB.settings.visibility.sidebar=!isOn;
+  const sb=document.querySelector('.sidebar'); if(sb) sb.style.display=!isOn?'':'none';
+  saveDB();
+}
+
+// ── SITE SETTINGS ──
+function applyHero(){
+  const s=DB.settings;
+  s.name=gv('s-name')||s.name; s.pre=gv('s-pre');
+  s.desc=gv('s-desc'); s.b1l=gv('s-b1l'); s.b1u=gv('s-b1u')||'#';
+  s.b2l=gv('s-b2l'); s.b2u=gv('s-b2u')||'#sec-posts';
+  saveDB(); toast('Hero applied.');
+}
+function applyStats(){
+  const s=DB.settings;
+  s.s1n=gv('s-s1n')||'—'; s.s1l=gv('s-s1l');
+  s.s2n=gv('s-s2n')||'—'; s.s2l=gv('s-s2l');
+  s.s3n=gv('s-s3n')||'—'; s.s3l=gv('s-s3l');
+  saveDB(); toast('Stats applied.');
+}
+function applyFooter(){
+  const s=DB.settings;
+  s.roblox=gv('s-roblox')||'#'; s.discord=gv('s-discord')||'#'; s.twitter=gv('s-twitter')||'#';
+  s.youtube=gv('s-youtube'); s.tiktok=gv('s-tiktok'); s.copy=gv('s-copy');
+  saveDB(); toast('Footer applied.');
+}
+function applyMeta(){
+  DB.settings.tabTitle=gv('s-tab-title')||'EEK Developers';
+  document.title=DB.settings.tabTitle;
+  saveDB(); toast('Meta applied.');
+}
+function changePwd(){
+  const op=document.getElementById('s-op').value;
+  const np=document.getElementById('s-np').value;
+  const cp=document.getElementById('s-cp').value;
+  if(op!==adminPass){ toast('Current password wrong.','err'); return; }
+  if(np.length<6){ toast('New password too short (min 6).','err'); return; }
+  if(np!==cp){ toast('Passwords do not match.','err'); return; }
+  adminPass=np; localStorage.setItem('eek_pass',np);
+  sv('s-op',''); sv('s-np',''); sv('s-cp','');
   toast('Password changed.');
 }
 
-// ─── GITHUB SYNC ─────────────────────────────────────────────────────────
-async function saveToGitHub() {
-  if (!githubToken || !githubRepo || !githubFile) {
-    toast('Set GitHub token, repo, and file path first.','err'); return;
-  }
-  document.getElementById('sync-status').textContent = 'Pushing to GitHub...';
-  try {
-    // Get current SHA
-    const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${githubFile}`, {
-      headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    let sha = undefined;
-    if (getRes.ok) { const d = await getRes.json(); sha = d.sha; }
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(siteData, null, 2))));
-    const body = { message: 'Update site data', content, ...(sha?{sha}:{}) };
-    const putRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${githubFile}`, {
-      method: 'PUT',
-      headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
-      body: JSON.stringify(body)
-    });
-    if (putRes.ok) {
-      document.getElementById('sync-status').textContent = 'Successfully pushed to GitHub at ' + new Date().toLocaleTimeString();
-      toast('Pushed to GitHub.');
-    } else {
-      const err = await putRes.json();
-      document.getElementById('sync-status').textContent = 'Error: ' + (err.message||'Unknown error');
-      toast('GitHub push failed.','err');
-    }
-  } catch(e) {
-    document.getElementById('sync-status').textContent = 'Network error: ' + e.message;
-    toast('Network error.','err');
-  }
+// ── THEME ──
+const COLOR_KEYS=[
+  ['c-bg','Background'],['c-bg2','Background 2'],['c-bg3','Background 3'],['c-bg4','Background 4'],
+  ['c-border','Border'],['c-border2','Border 2'],
+  ['c-text','Text'],['c-text2','Text 2'],['c-text3','Text 3'],
+  ['c-accent','Accent'],['c-accent2','Accent 2'],
+  ['c-red','Red'],['c-green','Green'],['c-blue','Blue'],['c-yellow','Yellow'],['c-pin','Pin Color']
+];
+function loadThemeForm(){
+  const t=DB.theme||{};
+  // colors
+  const grid=document.getElementById('color-grid');
+  grid.innerHTML=COLOR_KEYS.map(([k,lbl])=>{
+    const val=t[k]||getComputedStyle(document.documentElement).getPropertyValue('--'+k).trim()||'#000000';
+    return `<div class="color-item">
+      <div class="color-lbl">${lbl}</div>
+      <div class="color-row">
+        <div class="color-swatch" style="background:${esc(val)}" onclick="document.getElementById('ci-${k}').click()"></div>
+        <input type="color" id="ci-${k}" value="${esc(val)}" oninput="syncColor('${k}',this.value)">
+        <input class="color-hex" id="ch-${k}" value="${esc(val)}" maxlength="9" oninput="syncHex('${k}',this.value)">
+      </div>
+    </div>`;
+  }).join('');
+  // typo
+  sv('t-font-display',t['font-display']||'Bebas Neue');
+  sv('t-font-body',t['font-body']||'DM Sans');
+  sv('t-font-mono',t['font-mono']||'DM Mono');
+  sv('t-hero-size',t['hero-size']||'clamp(64px,11vw,130px)');
+  sv('t-radius',t['radius']||'0px');
 }
-
-async function loadFromGitHub() {
-  if (!githubToken || !githubRepo || !githubFile) {
-    toast('Set GitHub token, repo, and file path first.','err'); return;
-  }
-  document.getElementById('sync-status').textContent = 'Pulling from GitHub...';
-  try {
-    const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${githubFile}`, {
-      headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (!res.ok) { toast('File not found on GitHub.','err'); return; }
-    const data = await res.json();
-    const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
-    siteData = JSON.parse(decoded);
-    saveLocal(); renderSite(); refreshAdminDashboard(); refreshManageList(); loadSettingsForm();
-    document.getElementById('sync-status').textContent = 'Pulled from GitHub at ' + new Date().toLocaleTimeString();
-    toast('Pulled from GitHub.');
-  } catch(e) {
-    document.getElementById('sync-status').textContent = 'Error: ' + e.message;
-    toast('Pull failed.','err');
-  }
+function syncColor(k,v){
+  const hex=document.getElementById('ch-'+k); if(hex) hex.value=v;
+  const sw=document.querySelector(`#color-grid .color-swatch[onclick*="${k}"]`); if(sw) sw.style.background=v;
+  if(!DB.theme) DB.theme={};
+  DB.theme[k]=v;
+  document.documentElement.style.setProperty('--'+k,v);
 }
-
-function exportJSON() {
-  const blob = new Blob([JSON.stringify(siteData,null,2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'eek-data.json';
-  a.click();
-  toast('JSON exported.');
+function syncHex(k,v){
+  if(!/^#[0-9a-fA-F]{3,8}$/.test(v)) return;
+  const picker=document.getElementById('ci-'+k); if(picker) picker.value=v;
+  const sw=document.querySelector(`#color-grid .color-swatch[onclick*="${k}"]`); if(sw) sw.style.background=v;
+  if(!DB.theme) DB.theme={};
+  DB.theme[k]=v;
+  document.documentElement.style.setProperty('--'+k,v);
 }
-function importJSON() { document.getElementById('import-file').click(); }
-function handleImport(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    try {
-      siteData = JSON.parse(ev.target.result);
-      saveLocal(); renderSite(); refreshAdminDashboard(); refreshManageList(); loadSettingsForm();
-      toast('Data imported.');
-    } catch { toast('Invalid JSON file.','err'); }
+function applyTheme(){
+  COLOR_KEYS.forEach(([k])=>{ const v=gv('ch-'+k); if(v) { DB.theme[k]=v; document.documentElement.style.setProperty('--'+k,v); } });
+  saveDB(); toast('Theme applied.');
+}
+function applyTypo(){
+  const fd=gv('t-font-display')||'Bebas Neue';
+  const fb=gv('t-font-body')||'DM Sans';
+  const fm=gv('t-font-mono')||'DM Mono';
+  const hs=gv('t-hero-size')||'clamp(64px,11vw,130px)';
+  const r=gv('t-radius')||'0px';
+  DB.theme['font-display']=fd; DB.theme['font-body']=fb; DB.theme['font-mono']=fm;
+  DB.theme['hero-size']=hs; DB.theme['radius']=r;
+  // Inject Google Font
+  const link=document.createElement('link');
+  link.rel='stylesheet';
+  link.href=`https://fonts.googleapis.com/css2?family=${encodeURIComponent(fd)}&family=${encodeURIComponent(fb)}&family=${encodeURIComponent(fm)}&display=swap`;
+  document.head.appendChild(link);
+  applyThemeToDOM(); saveDB(); toast('Typography applied.');
+}
+function resetTheme(){
+  DB.theme={'c-bg':'#0a0a0a','c-bg2':'#111111','c-bg3':'#181818','c-bg4':'#222222','c-border':'#252525','c-border2':'#333333','c-text':'#f2f2f2','c-text2':'#999999','c-text3':'#555555','c-accent':'#ffffff','c-accent2':'#dddddd','c-red':'#ff4040','c-green':'#40ff90','c-blue':'#4090ff','c-yellow':'#ffcc40','c-pin':'#ffcc40','font-display':'Bebas Neue','font-body':'DM Sans','font-mono':'DM Mono','hero-size':'clamp(64px,11vw,130px)','radius':'0px'};
+  applyThemeToDOM(); loadThemeForm(); saveDB(); toast('Theme reset.');
+}
+function themePreset(name){
+  const presets={
+    dark:{'c-bg':'#000000','c-bg2':'#0d0d0d','c-bg3':'#141414','c-text':'#ffffff','c-text2':'#888888'},
+    light:{'c-bg':'#f8f8f6','c-bg2':'#f0f0ee','c-bg3':'#e8e8e5','c-bg4':'#e0e0dc','c-border':'#d0d0cc','c-border2':'#c0c0bc','c-text':'#111111','c-text2':'#555555','c-text3':'#999999'},
+    red:{'c-green':'#ff4040','c-blue':'#ff6060','c-yellow':'#ff8040','c-pin':'#ff4040','c-accent':'#ff4040'},
+    blue:{'c-green':'#4090ff','c-blue':'#60b0ff','c-yellow':'#40c8ff','c-pin':'#4090ff','c-accent':'#4090ff'}
   };
-  r.readAsText(file);
-  e.target.value='';
+  const p=presets[name]; if(!p) return;
+  Object.assign(DB.theme, p);
+  applyThemeToDOM(); loadThemeForm(); saveDB();
+  toast(name+' preset applied.');
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────
-// Initialize create form
-addLinkRow('cp-links-array');
-renderSite();
+// ── LOAD SETTINGS FORMS ──
+function loadAllSettingsForms(){
+  const s=DB.settings;
+  const ST=s.secTitles||{};
+  const V=s.visibility||{};
+  // hero
+  sv('s-name',s.name); sv('s-pre',s.pre); sv('s-desc',s.desc);
+  sv('s-b1l',s.b1l); sv('s-b1u',s.b1u); sv('s-b2l',s.b2l); sv('s-b2u',s.b2u);
+  // stats
+  sv('s-s1n',s.s1n); sv('s-s1l',s.s1l); sv('s-s2n',s.s2n); sv('s-s2l',s.s2l); sv('s-s3n',s.s3n); sv('s-s3l',s.s3l);
+  // footer
+  sv('s-roblox',s.roblox); sv('s-discord',s.discord); sv('s-twitter',s.twitter);
+  sv('s-youtube',s.youtube); sv('s-tiktok',s.tiktok); sv('s-copy',s.copy);
+  sv('s-tab-title',s.tabTitle||s.name);
+  // section titles
+  sv('st-pinned',ST.pinned||'Featured Post'); sv('st-main',ST.main||'Latest Posts');
+  sv('st-games',ST.games||'Games'); sv('st-group',ST.group||'Group Updates');
+  sv('st-portfolio',ST.portfolio||'Portfolio'); sv('st-about',ST.about||'About EEK Developers');
+  // about
+  sv('s-about-body',s.aboutBody); sv('s-ac1t',s.ac1t); sv('s-ac1b',s.ac1b);
+  sv('s-ac2t',s.ac2t); sv('s-ac2b',s.ac2b); sv('s-ac3t',s.ac3t); sv('s-ac3b',s.ac3b);
+  // toggles
+  const setToggle=(id,val)=>{ const el=document.getElementById(id); if(el) el.classList.toggle('on',val!==false); };
+  setToggle('tog-pinned',V.pinned); setToggle('tog-posts',V.posts); setToggle('tog-games',V.games);
+  setToggle('tog-group',V.group); setToggle('tog-portfolio',V.portfolio); setToggle('tog-about',V.about);
+  setToggle('tog-stats',V.stats); setToggle('tog-sidebar',V.sidebar);
+}
+
+// ── GITHUB SYNC ──
+async function ghPush(){
+  if(!ghToken||!ghRepo||!ghFile){ toast('Set GitHub token, repo & file path first.','warn'); return; }
+  document.getElementById('sync-status').textContent='Pushing...';
+  try{
+    const getR=await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghFile}`,
+      {headers:{'Authorization':'token '+ghToken,'Accept':'application/vnd.github.v3+json'}});
+    let sha; if(getR.ok){ const d=await getR.json(); sha=d.sha; }
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(DB,null,2))));
+    const body={message:'Update EEK site data',content,...(sha?{sha}:{})};
+    const putR=await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghFile}`,
+      {method:'PUT',headers:{'Authorization':'token '+ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
+    if(putR.ok){ document.getElementById('sync-status').textContent='Pushed at '+new Date().toLocaleTimeString(); toast('Pushed to GitHub.'); }
+    else{ const e=await putR.json(); document.getElementById('sync-status').textContent='Error: '+(e.message||'Unknown'); toast('Push failed.','err'); }
+  }catch(e){ document.getElementById('sync-status').textContent='Error: '+e.message; toast('Network error.','err'); }
+}
+async function ghPull(){
+  if(!ghToken||!ghRepo||!ghFile){ toast('Set GitHub token, repo & file path first.','warn'); return; }
+  document.getElementById('sync-status').textContent='Pulling...';
+  try{
+    const r=await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghFile}`,
+      {headers:{'Authorization':'token '+ghToken,'Accept':'application/vnd.github.v3+json'}});
+    if(!r.ok){ toast('File not found on GitHub.','err'); return; }
+    const d=await r.json();
+    const decoded=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+    DB=JSON.parse(decoded); saveDB(); renderAll(); loadAllSettingsForms(); refreshDash(); refreshManage();
+    document.getElementById('sync-status').textContent='Pulled at '+new Date().toLocaleTimeString();
+    toast('Pulled from GitHub.');
+  }catch(e){ document.getElementById('sync-status').textContent='Error: '+e.message; toast('Pull failed.','err'); }
+}
+function exportJSON(){
+  const a=document.createElement('a');
+  a.href='data:application/json,'+encodeURIComponent(JSON.stringify(DB,null,2));
+  a.download='eek-data.json'; a.click(); toast('JSON exported.');
+}
+function importJSON(e){
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{ try{ DB=JSON.parse(ev.target.result); saveDB(); renderAll(); loadAllSettingsForms(); refreshDash(); refreshManage(); toast('Data imported.'); }catch{ toast('Invalid JSON.','err'); } };
+  r.readAsText(file); e.target.value='';
+}
+
+// ══════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════
+renderAll();
 </script>
 </body>
 </html>
